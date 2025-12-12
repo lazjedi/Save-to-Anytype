@@ -37,6 +37,7 @@ body {
     min-height: 600px;
     max-height: 600px;
     overflow-y: auto;
+    overflow-x: hidden;
     scrollbar-gutter: stable;
 }
 
