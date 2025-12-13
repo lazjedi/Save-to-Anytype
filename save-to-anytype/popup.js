@@ -406,8 +406,20 @@ async function loadState() {
         state.language = saved.language;
     }
     else {
-        const langShort = (navigator.language || navigator.userLanguage).split('-')[0];
-        state.language = langShort;
+        state.language = "en";
+
+        loadLocalization().then(() => {
+            const langShort = (navigator.language || navigator.userLanguage).split('-')[0];
+
+            const languageExist = CheckLanguageExist(langShort);
+
+            consoleLog("language: " + langShort + " , language exist: " + languageExist);
+
+            if (languageExist)
+                state.language = langShort;
+
+            UpdateTheTranslation();
+        });
     }
 
     if (saved.accentColor) {

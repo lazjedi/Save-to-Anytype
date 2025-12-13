@@ -14,6 +14,10 @@ let localizationData = { languages: [] };
 
 let languagesDict = {};
 
+function CheckLanguageExist(lang) {
+    return (lang in languagesDict);
+}
+
 async function loadLocalization() {
 
     if (localizationLoaded) return;
