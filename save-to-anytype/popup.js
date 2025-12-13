@@ -941,36 +941,40 @@ function SetNameForForm() {
 }
 
 elements.saveFormBtn.addEventListener('click', async () => {
+    try {
+        let propertiesList = [];
 
-    let propertiesList = [];
+        for (let index = 0; index < propertiesListForSaving.length; index++) {
+            const obj = propertiesListForSaving[index];
 
-    for (let index = 0; index < propertiesListForSaving.length; index++) {
-        const obj = propertiesListForSaving[index];
+            propertiesList.push(
+                {
+                    AnyTypeProperty: obj?.AnyTypeProperty,
+                    SelectedValueByUser: obj?.choice?.getValue(true)
+                }
+            );
+        }
 
-        propertiesList.push(
-            {
-                AnyTypeProperty: obj.AnyTypeProperty,
-                SelectedValueByUser: obj.choice.getValue(true)
-            }
-        );
+        const form = {
+            formId: generateRandomId(),
+            formName: elements.FormNameInput?.value,
+            spaceId: selectedSpaceId,
+            type: selectedType,
+            collectionId: collectionSelectChoices?.getValue(true),
+            templateId: templateSelectChoices?.getValue(true),
+            properties: propertiesList
+        }
+
+        consoleLog("saving form: ", form);
+
+        state.forms.push(form);
+
+        saveState();
+        showMainSection();
     }
-
-    const form = {
-        formId: generateRandomId(),
-        formName: elements.FormNameInput.value,
-        spaceId: selectedSpaceId,
-        type: selectedType,
-        collectionId: collectionSelectChoices?.getValue(true),
-        templateId: templateSelectChoices?.getValue(true),
-        properties: propertiesList
+    catch (error) {
+        console.log(error);
     }
-
-    consoleLog("saving form: ", form);
-
-    state.forms.push(form);
-
-    saveState();
-    showMainSection();
 });
 
 // Space selection change
