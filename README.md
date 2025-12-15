@@ -4,7 +4,7 @@ Save important web pages with your selected text in Markdown format to Anytype. 
 - [Chrome Webstore](https://chromewebstore.google.com/detail/save-to-anytype/ihbpeejeggadkdkapklgnmpebfnipkco)
 - [Firefox Add-ons](https://addons.mozilla.org/tr/firefox/addon/save-to-anytype/)
 - [Microsoft Edge Addons](https://microsoftedge.microsoft.com/addons/detail/save-to-anytype/dclpkaljnjdfanngmhccigekcnpgjkhj)
-- Opera: Waiting approval
+- ~~Opera: Waiting approval~~
 
 # Features
 - Save web pages to Anytype with one click
