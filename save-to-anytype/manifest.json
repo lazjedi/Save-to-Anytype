@@ -1,14 +1,23 @@
 {
   "manifest_version": 3,
   "name": "Save to Anytype",
-  "version": "0.0.2",
+  "version": "0.1.1",
   "description": "Save important web pages with your selected text in Markdown format to Anytype.",
-  "permissions": ["activeTab", "storage", "tabs", "contextMenus", "alarms"],
-  "host_permissions": ["http://localhost:31009/*"],
+  "permissions": [
+    "scripting",
+    "activeTab",
+    "storage",
+    "tabs",
+    "contextMenus",
+    "alarms"
+  ],
+  "host_permissions": ["<all_urls>"],
   "background": {
     "service_worker": "background.js",
     "type": "module"
   },
+  "author": "lazjedi, diemonic1",
+  "homepage_url": "https://github.com/lazjedi/Save-to-Anytype",
   "icons": {
     "16": "assets/icon16.png",
     "48": "assets/icon48.png",
@@ -26,6 +35,18 @@
       "512": "assets/icon512.png"
     }
   },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "style.css",
+        "assets/settings.svg",
+        "assets/cross.svg",
+        "assets/dots.svg",
+        "assets/trash.svg"
+      ],
+      "matches": ["<all_urls>"]
+    }
+  ],
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
