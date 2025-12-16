@@ -5,422 +5,269 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Save to Anytype</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
 
-        body {
-            width: 400px;
-            min-height: 500px;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: #0f0f0f;
-        }
+    <link rel="stylesheet" href="style.css">
 
-        .container {
-            padding: 20px;
-        }
-
-        h1 {
-            color: #ffffff;
-            font-size: 24px;
-            margin-bottom: 20px;
-            text-align: center;
-            font-weight: 600;
-        }
-
-        .card {
-            background: #000000;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 15px;
-            border: 1px solid #2a2a2a;
-        }
-
-        .section-title {
-            font-size: 12px;
-            font-weight: 600;
-            color: #888888;
-            margin-bottom: 10px;
-            letter-spacing: 1px;
-        }
-
-        input,
-        select,
-        textarea {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1px solid #2a2a2a;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: all 0.3s ease;
-            background: #1a1a1a;
-            color: #e0e0e0;
-        }
-
-        input::placeholder,
-        textarea::placeholder {
-            color: #666666;
-        }
-
-        input:focus,
-        select:focus,
-        textarea:focus {
-            outline: none;
-            border-color: #404040;
-            background: #222222;
-        }
-
-        select {
-            cursor: pointer;
-        }
-
-        select option {
-            background: #1a1a1a;
-            color: #e0e0e0;
-        }
-
-        textarea {
-            resize: vertical;
-            min-height: 80px;
-            font-family: inherit;
-        }
-
-        button {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            letter-spacing: 0.5px;
-        }
-
-        .btn-primary {
-            background: #2a2a2a;
-            color: #ffffff;
-        }
-
-        .btn-primary:hover {
-            background: #353535;
-            transform: translateY(-1px);
-        }
-
-        .btn-primary:active {
-            transform: translateY(0);
-        }
-
-        .btn-secondary {
-            background: #1a1a1a;
-            color: #e0e0e0;
-            border: 1px solid #2a2a2a;
-        }
-
-        .btn-secondary:hover {
-            background: #222222;
-        }
-
-        .btn-danger {
-            background: #1a1a1a;
-            color: #ff6b6b;
-            border: 1px solid #ff6b6b;
-        }
-
-        .btn-danger:hover {
-            background: #ff6b6b;
-            color: #000000;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .status {
-            padding: 12px;
-            border-radius: 8px;
-            margin-top: 15px;
-            margin-bottom: 15px;
-            text-align: center;
-            font-size: 13px;
-            font-weight: 500;
-            border: 1px solid transparent;
-        }
-
-        .status.success {
-            background: #1a3a1a;
-            color: #4ade80;
-            border-color: #2a4a2a;
-        }
-
-        .status.error {
-            background: #3a1a1a;
-            color: #ff6b6b;
-            border-color: #4a2a2a;
-        }
-
-        .status.info {
-            background: #1a2a3a;
-            color: #60a5fa;
-            border-color: #2a3a4a;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .loading {
-            display: inline-block;
-            width: 14px;
-            height: 14px;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 0.8s linear infinite;
-            margin-right: 8px;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        .select-group {
-            display: flex;
-            gap: 10px;
-        }
-
-        .select-group select {
-            flex: 1;
-        }
-
-        #authSection {
-            animation: slideIn 0.5s ease;
-        }
-
-        #mainSection {
-            animation: slideIn 0.5s ease;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .emoji-icon {
-            font-size: 32px;
-            margin-bottom: 10px;
-            text-align: center;
-        }
-
-        .tab-container {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 20px;
-            background: #1a1a1a;
-            padding: 4px;
-            border-radius: 10px;
-        }
-
-        .tab {
-            flex: 1;
-            padding: 10px;
-            text-align: center;
-            background: transparent;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-weight: 500;
-            font-size: 13px;
-            color: #888888;
-        }
-
-        .tab:hover {
-            color: #ffffff;
-        }
-
-        .tab.active {
-            background: #2a2a2a;
-            color: #ffffff;
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        .collections-list {
-            max-height: 150px;
-            overflow-y: auto;
-            border: 1px solid #2a2a2a;
-            border-radius: 8px;
-            padding: 8px;
-            margin-top: 10px;
-            margin-bottom: 10px;
-            background: #1a1a1a;
-        }
-
-        .collections-list::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .collections-list::-webkit-scrollbar-track {
-            background: #1a1a1a;
-            border-radius: 3px;
-        }
-
-        .collections-list::-webkit-scrollbar-thumb {
-            background: #2a2a2a;
-            border-radius: 3px;
-        }
-
-        .collections-list::-webkit-scrollbar-thumb:hover {
-            background: #353535;
-        }
-
-        .collection-item {
-            padding: 10px;
-            margin-bottom: 4px;
-            background: #222222;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            color: #e0e0e0;
-            font-size: 13px;
-            border: 1px solid transparent;
-        }
-
-        .collection-item:hover {
-            background: #2a2a2a;
-            border-color: #353535;
-        }
-
-        .collection-item.selected {
-            background: #2a2a2a;
-            color: #ffffff;
-            border-color: #404040;
-        }
-
-        strong {
-            color: #ffffff;
-        }
-    </style>
+    <script src='LocalizationService.js'></script>
+    <script src="Libraries/choices.min.js"></script>
+    <script src='Libraries/jquery-3.7.1.min.js'></script>
+    <script src='Libraries/Sortable.js'></script>
+    <script src='Libraries/jscolor.js'></script>
 </head>
 
 <body>
     <div class="container">
-        <h1>Save to Anytype</h1>
-
-
+        <h2><img src="assets/icon16.png" alt=""> Save to Anytype</h2>
 
         <!-- Auth -->
         <div id="authSection" class="card">
             <div class="tab-container">
-                <div class="tab active" data-tab="apikey">API Key</div>
-                <div class="tab" data-tab="challenge">Challenge Auth</div>
-            </div>
-
-            <!-- API Key Tab -->
-            <div id="apikeyTab" class="tab-content active">
-                <div class="section-title">Connect with API Key</div>
-                <div class="form-group">
-                    <input type="password" id="apiKeyInput" placeholder="Enter your API Key">
-                </div>
-                <button id="connectBtn" class="btn-primary">
-                    Connect
-                </button>
+                <div class="tab active" data-tab="challenge" data-locale-key="ChallengeAuth">Challenge Auth</div>
+                <div class="tab" data-tab="apikey" data-locale-key="APIKey">API Key</div>
             </div>
 
             <!-- Challenge Auth Tab -->
-            <div id="challengeTab" class="tab-content">
-                <div class="section-title">Challenge Auth</div>
+            <div id="challengeTab" class="tab-content active">
+                <div class="section-title" data-locale-key="AppNameHint">Challenge Auth</div>
                 <div class="form-group">
-                    <input type="text" id="appNameInput" placeholder="App name" value="Save to Anytype Extension">
+                    <input type="text" id="appNameInput" data-locale-placeholder="AppName" placeholder="App name"
+                        value="Save to Anytype">
                 </div>
                 <button id="startChallengeBtn" class="btn-primary">
-                    Start Challenge
+                    <span data-locale-key="StartChallenge">Start Challenge</span>
                 </button>
                 <div id="codeSection" class="hidden">
                     <div class="form-group" style="margin-top: 15px;">
-                        <div class="section-title">Enter the 4-digit code displayed in Anytype:</div>
+                        <div class="section-title" data-locale-key="Enter4digit">Enter the 4-digit code displayed in Anytype</div>
                         <input type="text" id="codeInput" placeholder="1234" maxlength="4">
                     </div>
                     <button id="verifyCodeBtn" class="btn-primary">
-                        Verify
+                        <span data-locale-key="Verify">Verify</span>
                     </button>
                 </div>
             </div>
-        </div>
-
-        <!-- Main content -->
-        <div id="mainSection" class="hidden">
-            <!-- Connection status -->
-            <div class="card">
-                <button id="disconnectBtn" class="btn-danger">
-                    Disconnect
+            <!-- API Key Tab -->
+            <div id="apikeyTab" class="tab-content">
+                <div class="section-title" data-locale-key="ConnectWithAPIKey">Connect with API Key</div>
+                <div class="form-group">
+                    <input type="password" id="apiKeyInput" data-locale-placeholder="EnterYourAPIKey" placeholder="Enter your API Key">
+                </div>
+                <button id="connectBtn" class="btn-primary">
+                    <span data-locale-key="Connect">Connect</span>
                 </button>
             </div>
 
-            <!-- Space, Collection and Type selection -->
-            <div class="card">
-                <div class="section-title">Select Space</div>
-                <div class="form-group">
-                    <select id="spaceSelect">
-                        <option value="">Select Space</option>
-                    </select>
-                </div>
+        </div>
 
-                <div id="collectionSection" class="hidden">
-                    <div class="section-title">Select Collection</div>
-                    <div class="collections-list" id="collectionsList">
-                        <div class="collection-item">Collections are loading...</div>
+        <div id="mainSection" class="hidden">
+            <button id="settingsButton" class="btn-right-top">
+                <img id="settingsButtonIcon" class="icon" width="25px" height="25px" src="assets/settings.svg" alt="">
+            </button>
+            <div id="mainSectionAnimation">
+                <div id="handlerForLoadedForms" class="card-smaller-padding column-flex-table">
+                </div>
+                <div class="form-card">
+                    <!--<img class="new-form-icon" src="assets/new-form.svg" alt="">-->
+                    <div data-locale-key="FormWelcomeText">You need create a form before saving an object to Anytype. You can think of forms as templates. Forms reflect the way objects are saved.</div>
+                </div>
+                    <button id="createFormButton" class="btn-primary">
+                    <span id="createFormButtonText" data-locale-key="CreateForm">Create Form</span>
+                </button>
+            </div>
+        </div>
+
+        <div id="createFormSection" class="hidden">
+            <div id="createFormTipButton" class="btn-left-top-tip">
+                ?
+            </div>
+
+            <button id="mainSectionButton" class="btn-right-top">
+                <img id="crossButtonIcon" class="icon" width="20px" height="20px" src="assets/cross.svg" alt="">
+            </button>
+
+            <div id="createFormSectionAnimation">
+                <div class="card">
+                    <div class="form-group">
+                        <div class="section-title" data-locale-key="SelectSpace">Select Space</div>
+
+                        <select id="spaceSelect">
+                            <option value="" data-locale-key="SelectSpace">Select Space</option>
+                        </select>
+                    </div>
+
+                    <div id="typeSection" class="hidden">
+                        <div class="section-title" data-locale-key="SelectType">Select Type</div>
+                        <div class="form-group">
+                            <select id="typeSelect">
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="FormNameInputSection" class="form-group" class="hidden">
+                        <div class="section-title" data-locale-key="FormNameInput">FormNameInput</div>
+                        <input id="FormNameInput" type="text" data-locale-placeholder="FormNameInput" placeholder="Form Name Input">
+                    </div>
+
+                    <div id="collectionSection" class="hidden">
+                        <div class="section-title" data-locale-key="SelectCollection">Select Collection</div>
+                        <div class="form-group">
+                            <div id="collectionsList">
+                                <div class="collection-item" data-locale-key="CollectionsLoading">Collections are loading...</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="objectTemplateSection" class="hidden">
+                        <div class="section-title" data-locale-key="SelectObjectTemplate">Select Object Template</div>
+                        <div class="form-group">
+                            <select id="objectTemplateSectionSelect">
+                            </select>
+                        </div>
                     </div>
                 </div>
 
-                <div class="section-title">Select Type</div>
-                <div class="form-group">
-                    <select id="typeSelect">
-                        <option value="page">Page (Default)</option>
-                    </select>
+                <div id="propertiesSection" class="hidden">
+                    <div class="section-title" data-locale-key="ObjectProperties">Object Properties</div>
+                    <div class="card" id="propertiesListHandler">
+                    </div>
                 </div>
+
+                <button id="saveFormBtn" class="btn-primary">
+                    <span id="saveFormBtnText" data-locale-key="SaveForm">Save Form</span>
+                </button>
             </div>
-            <!-- Page info -->
-            <div class="card">
-                <div class="section-title">Page Info (Markdown)</div>
-                <div class="form-group">
-                    <input type="text" id="pageTitle" placeholder="Page Title">
-                </div>
-                <div class="form-group">
-                    <input type="url" id="pageUrl" placeholder="URL">
-                </div>
-                <div class="form-group">
-                    <textarea id="pageDescription" placeholder="Description"></textarea>
-                </div>
-            </div>
-            <!-- Save button -->
-            <button id="saveBtn" class="btn-primary">
-                <span id="saveBtnText">Save to Anytype</span>
-            </button>
         </div>
+        
+        <div id="settingsSection" class="hidden">
+            <button id="mainSectionButton2" class="btn-right-top">
+                <img id="crossButtonIcon2" class="icon" width="20px" height="20px" src="assets/cross.svg" alt="">
+            </button>
+
+            <div id="settingsSectionAnimation">
+                <div class="section-title" data-locale-key="ReopenSettings">ReopenSettings</div>
+                <div class="card">
+                    
+                    <div class="form-group">
+                        <div class="section-title" data-locale-key="SelectLanguage">Select Language</div>
+                        <select id="languageSelect">
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="section-title" data-locale-key="SelectTheme">Select Theme</div>
+                        <select id="themeSelect">
+                            <option value="dark" data-locale-key="Dark">Dark</option>
+                            <option value="white" data-locale-key="White">Light</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="section-title" data-locale-key="WhatDoOnStart">WhatDoOnStart</div>
+                        <select id="whatDoOnStartSelect">
+                            <option value="Nothing" data-locale-key="Nothing">Nothing</option>
+                            <option value="OpenFirstForm" data-locale-key="OpenFirstForm">OpenFirstForm</option>
+                            <option value="OpenLastUsedForm" data-locale-key="OpenLastUsedForm">OpenLastUsedForm</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="section-title" data-locale-key="ChooseAccentColor">choose an accent color</div>
+                        <input id="colorInput" class="jscolor" value="ab2567">
+                    </div>
+
+                    <div class="form-group">
+                        <div class="section-title" data-locale-key="BugNote">If you found a bug, write about this to GitHub:</div>
+                        <button id="openGitHubBtn" class="btn-primary">
+                            <span id="openGitHubBtnText" data-locale-key="OpenGitHub">Open GitHub</span>
+                        </button>
+                    </div>
+
+                    <div class="form-group">
+                        <button id="disconnectBtn" class="btn-danger" data-locale-key="DisconnectAnytype">
+                            Disconnect Anytype
+                        </button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div id="SaveToAnytypeVersion" class="section-title" style="margin-top: -10px; text-align: center;">
+                        auto insert from manifest
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="confirmDeleteFormSection" class="hidden">
+            <button id="mainSectionButton3" class="btn-right-top">
+                <img id="crossButtonIcon3" class="icon" width="20px" height="20px" src="assets/cross.svg" alt="">
+            </button>
+
+            <div id="confirmDeleteFormSectionAnimation">
+                <div>
+                    <div class="card">
+                        <div class="section-title" data-locale-key="DeleteFormQuestion">are you sure you want delete form?</div>
+                        <button id="deleteFormBtn" class="btn-danger" data-locale-key="ConfirmDeleteForm">
+                            Delete form
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="saveObjectSection" class="hidden">
+            <button id="mainSectionButton4" class="btn-right-top">
+                <img id="crossButtonIcon" class="icon" width="20px" height="20px" src="assets/cross.svg" alt="">
+            </button>
+
+            <div id="saveObjectSectionAnimation">
+                <div class="card">
+                    <h3 id="objectNameToSave">ObjectNameToSave</h3>
+                </div>
+
+                <div class="card" id="propertiesSaveObjectListWithoutDefaultValueHandler">
+                </div>
+
+                <div class="card" id="propertiesSaveObjectListWithDefaultValueHandler">
+                </div>
+
+                <!-- Save button -->
+                <button id="saveObjectBtn" class="btn-primary">
+                    <span id="saveObjectBtnText" data-locale-key="SaveObjectButton">SaveObjectButton</span>
+                </button>
+            </div>
+        </div>
+        
+        <div id="objectSavedSection" class="hidden">
+            <div id="objectSavedSectionAnimation">
+                <div class="card">
+                    <div class="section-title" data-locale-key="objectSavedSection">objectSavedSection</div>
+                </div>
+
+                <button id="OpenInAnytypeBtn" class="btn-primary">
+                    <span id="OpenInAnytypeBtnText" data-locale-key="OpenInAnytype">OpenInAnytype</span>
+                </button>
+            </div>
+        </div>
+
+        <div id="blockedSection" class="hidden">
+            <div id="blockedSectionAnimation">
+                <div class="card">
+                    <div id="blockedSectionText" class="section-title">blockedSection</div>
+                </div>
+
+                <button id="OpenAnytypeBtn" class="btn-primary">
+                    <span id="OpenAnytypeBtnText" data-locale-key="OpenAnytype">OpenAnytype</span>
+                </button>
+            </div>
+        </div>
+
+        <div id="loadingSection" class="hidden">
+            <div class="card">
+                <div class="section-title" data-locale-key="Loading">blockedSection</div>
+            </div>
+        </div>
+
         <!-- Status messages -->
         <div id="status" class="status hidden"></div>
-        <div class="section-title" style="margin-top: 5px; text-align: center;">
-            v0.0.2
-        </div>
     </div>
 
     <script src="popup.js"></script>

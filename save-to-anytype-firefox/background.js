@@ -1,105 +1,147 @@
-// Background script for Anytype Web Clipper (Firefox Compatible)
+// Background service worker for Anytype Web Clipper
 
-const browserAPI = typeof browser !== 'undefined' ? browser : chrome;
+let consoleLog = function (messageText, ...argsL) {
+    if (argsL !== undefined && argsL.length > 0)
+        console.log("[SaveToAnytype] %c[Back]%c " + messageText + " %c[Params]%c", "color: green; font-weight: bold;", "", "color: blue; font-weight: bold;", "", argsL);
+    else
+        console.log("[SaveToAnytype] %c[Back]%c " + messageText, "color: green; font-weight: bold;", "");
+}
 
-console.log('Background script loading... (Firefox compatible)');
+let consoleError = function (messageText, ...argsL) {
+    if (argsL !== undefined && argsL.length > 0)
+        console.error("[SaveToAnytype] %c[Back]%c " + messageText + " %c[Params]%c", "color: green; font-weight: bold;", "", "color: blue; font-weight: bold;", "", argsL);
+    else
+        console.error("[SaveToAnytype] %c[Back]%c " + messageText, "color: green; font-weight: bold;", "");
+}
+
+consoleLog('Background script loading...');
+
+// Utility function to get the appropriate browser API
+function getAPI() {
+    if (typeof chrome !== 'undefined' && chrome.contextMenus) {
+        return chrome;
+    }
+    if (typeof browser !== 'undefined' && browser.contextMenus) {
+        return browser;
+    }
+    consoleError('No browser API available!');
+    return null;
+}
 
 // Create context menus on installation
-browserAPI.runtime.onInstalled.addListener(function () {
-    console.log('Save to Anytype installed');
+function CreateContextMenusButtons(request) {
+    consoleLog('CreateContextMenusButtons');
+
+    const api = getAPI();
+    if (!api) {
+        consoleError('Browser API not available, cannot create context menus');
+        return;
+    }
 
     // Remove all existing context menus first
-    browserAPI.contextMenus.removeAll(function () {
-        console.log('Old context menus removed');
+    api.contextMenus.removeAll(function () {
+        consoleLog('Old context menus removed');
+        consoleLog('request', request);
 
         // Create page context menu
-        browserAPI.contextMenus.create({
-            id: "save-to-anytype",
-            title: "Save to Anytype",
+        api.contextMenus.create({
+            id: "save-to-Anytype",
+            title: request.menuOption1,
             contexts: ["page", "link"]
         }, function () {
-            if (browserAPI.runtime.lastError) {
-                console.error('Error creating save-to-anytype menu:', browserAPI.runtime.lastError.message);
+            if (chrome.runtime.lastError) {
+                consoleError('Error creating save-to-Anytype menu:', chrome.runtime.lastError.message);
             } else {
-                console.log('✓ Context menu "save-to-anytype" created');
+                consoleLog('✓ Context menu "save-to-Anytype" created');
             }
         });
 
         // Create selection context menu
-        browserAPI.contextMenus.create({
-            id: "save-selection-to-anytype",
-            title: "Save the Selected Text to Anytype",
+        chrome.contextMenus.create({
+            id: "save-selection-to-Anytype",
+            title: request.menuOption2,
             contexts: ["selection"]
         }, function () {
-            if (browserAPI.runtime.lastError) {
-                console.error('Error creating save-selection menu:', browserAPI.runtime.lastError.message);
+            if (chrome.runtime.lastError) {
+                consoleError('Error creating save-selection menu:', chrome.runtime.lastError.message);
             } else {
-                console.log('✓ Context menu "save-selection-to-anytype" created');
+                consoleLog('✓ Context menu "save-selection-to-Anytype" created');
             }
         });
     });
-});
+};
 
 // Handle context menu clicks
-browserAPI.contextMenus.onClicked.addListener(async function (info, tab) {
-    console.log('Context menu clicked:', info.menuItemId);
+if (chrome && chrome.contextMenus && chrome.contextMenus.onClicked) {
+    chrome.contextMenus.onClicked.addListener(async function (info, tab) {
+        consoleLog('Context menu clicked:', info.menuItemId);
 
-    if (info.menuItemId === "save-to-anytype") {
-        // Normal page save
-        console.log('Opening popup for page save');
-        await handleContextMenuClick(tab, null);
-    }
-    else if (info.menuItemId === "save-selection-to-anytype") {
-        // Save selected text
-        console.log('Saving selected text');
-        await handleContextMenuClick(tab, info.selectionText);
-    }
-});
-
-// Firefox'ta openPopup() çalışmadığı için alternatif çözüm
-async function handleContextMenuClick(tab, selectionText) {
-    try {
-        if (selectionText) {
-            await browserAPI.storage.local.set({
-                selectedText: selectionText,
-                selectedTextTimestamp: Date.now()
-            });
-            console.log('Selected text saved to storage');
+        if (info.menuItemId === "save-to-Anytype") {
+            // Normal page save - just open popup
+            consoleLog('Opening popup for page save');
+            try {
+                await chrome.action.openPopup();
+            } catch (error) {
+                consoleError('Could not open popup:', error);
+            }
         }
+        else if (info.menuItemId === "save-selection-to-Anytype") {
+            // Save selected text
+            consoleLog('Saving selected text');
+            try {
+                // Get selected text from content scriptlet response = null;
+                let response = null;
+                try {
+                    response = await chrome.tabs.sendMessage(tab.id, { action: "getSelection" });
+                } catch (err) {
+                    consoleError("sendMessage failed — probably no content script on this tab:", err);
+                }
 
-        try {
-            await browserAPI.action.openPopup();
-            console.log('Popup opened successfully');
-        } catch (error) {
-            console.log('openPopup not supported, showing notification');
+                if (response && response.selectedText) {
+                    // Save selected text to storage
+                    await chrome.storage.local.set({
+                        selectedText: response.selectedText,
+                        selectedTextTimestamp: Date.now()
+                    });
+                    consoleLog('Selected text saved to storage');
+                }
 
-            // Alternatif: Badge göster
-            browserAPI.action.setBadgeText({ text: "!" });
-            browserAPI.action.setBadgeBackgroundColor({ color: "#667eea" });
-
-            // Alternatif: Notification göster (opsiyonel - izin gerektirir)
-            // browserAPI.notifications.create({
-            //     type: "basic",
-            //     iconUrl: "icon48.png",
-            //     title: "Anytype Web Clipper",
-            //     message: "Kaydetmek için eklenti ikonuna tıklayın"
-            // });
-
-            console.log('Badge set - user needs to click extension icon');
+                // Open popup
+                await chrome.action.openPopup();
+            } catch (error) {
+                consoleError('Error handling selection:', error);
+                // Still try to open popup
+                try {
+                    await chrome.action.openPopup();
+                } catch (popupError) {
+                    consoleError('Could not open popup:', popupError);
+                }
+            }
         }
-    } catch (error) {
-        console.error('Error handling context menu click:', error);
-    }
+    });
+} else {
+    consoleError('contextMenus API not available');
 }
 
 // Message handling for communication between popup and content scripts
-browserAPI.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-    console.log('Message received:', request.action);
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+    if (request.type === "log") {
+        if (request.args !== undefined && request.args.length > 0)
+            console.log("[SaveToAnytype] %c[Popap]%c " + request.message + " %c[Params]%c", "color: yellow; font-weight: bold;", "", "color: blue; font-weight: bold;", "", request.args);
+        else
+            console.log("[SaveToAnytype] %c[Popap]%c " + request.message, "color: yellow; font-weight: bold;", "");
+    }
+    else if (request.type === "error") {
+        if (request.args !== undefined && request.args.length > 0)
+            console.error("[SaveToAnytype] %c[Popap]%c " + request.message + " %c[Params]%c", "color: yellow; font-weight: bold;", "", "color: blue; font-weight: bold;", "", request.args);
+        else
+            console.error("[SaveToAnytype] %c[Popap]%c " + request.message, "color: yellow; font-weight: bold;", "");
+    }
 
     if (request.action === "getTabInfo") {
-        browserAPI.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
             if (tabs[0]) {
-                console.log('Sending tab info:', tabs[0].title);
+                consoleLog('Sending tab info:', tabs[0].title);
                 sendResponse({
                     title: tabs[0].title,
                     url: tabs[0].url
@@ -110,30 +152,29 @@ browserAPI.runtime.onMessage.addListener(function (request, sender, sendResponse
     }
 
     if (request.action === "saveToAnytype") {
-        console.log('Saving to Anytype...');
+        consoleLog('Saving to Anytype...');
         handleSaveToAnytype(request.data)
             .then(function (response) {
-                console.log('Save successful');
+                consoleLog('Save successful');
                 sendResponse({ success: true, data: response });
             })
             .catch(function (error) {
-                console.error('Save failed:', error);
+                consoleError('Save failed:', error);
                 sendResponse({ success: false, error: error.message });
             });
         return true;
     }
 
-    // Clear badge when popup opens
-    if (request.action === "popupOpened") {
-        browserAPI.action.setBadgeText({ text: "" });
-        sendResponse({ success: true });
+    if (request.action === "CreateContextMenusButtons") {
+        consoleLog('Saving to Anytype menu options ', request);
+        CreateContextMenusButtons(request);
         return true;
     }
 });
 
 // Helper function to save to Anytype
 async function handleSaveToAnytype(data) {
-    console.log('handleSaveToAnytype called with:', data);
+    consoleLog('handleSaveToAnytype called with:', data);
 
     const apiKey = data.apiKey;
     const spaceId = data.spaceId;
@@ -156,7 +197,7 @@ async function handleSaveToAnytype(data) {
         type_key: "page"
     };
 
-    console.log('Creating object with data:', objectData);
+    consoleLog('Creating object with data:', objectData);
 
     const response = await fetch(API_BASE_URL + '/spaces/' + spaceId + '/objects', {
         method: 'POST',
@@ -175,12 +216,12 @@ async function handleSaveToAnytype(data) {
     const responseData = await response.json();
     const createdObject = responseData.object;
 
-    console.log('Object created:', createdObject);
+    consoleLog('Object created:', createdObject);
 
     // If a collection is selected, add the object to it
     if (collectionId && createdObject && createdObject.id) {
         try {
-            console.log('Adding to collection:', collectionId);
+            consoleLog('Adding to collection:', collectionId);
 
             await fetch(API_BASE_URL + '/spaces/' + spaceId + '/lists/' + collectionId + '/objects', {
                 method: 'POST',
@@ -192,18 +233,21 @@ async function handleSaveToAnytype(data) {
                 body: JSON.stringify({ objects: [createdObject.id] })
             });
 
-            console.log('Added to collection successfully');
+            consoleLog('Added to collection successfully');
         } catch (error) {
-            console.log('Could not add to collection:', error);
+            consoleLog('Could not add to collection:', error);
         }
     }
 
     return createdObject;
 }
 
-// Clear badge on startup
-browserAPI.runtime.onStartup.addListener(function () {
-    browserAPI.action.setBadgeText({ text: "" });
+// Keep service worker alive
+chrome.alarms.create('keep-alive', { periodInMinutes: 1 });
+chrome.alarms.onAlarm.addListener(function (alarm) {
+    if (alarm.name === 'keep-alive') {
+        consoleLog('Service worker keep-alive ping');
+    }
 });
 
-console.log('Background script loaded successfully (Firefox compatible)');
+consoleLog('Background script loaded successfully');
