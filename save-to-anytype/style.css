@@ -9,7 +9,7 @@
     --color5: #f2f2f2;
     --card-color: #ffffff;
     --icon-brightness: 0;
-    --accent-color: #ff2929;
+    --accent-color: #ff3030ff;
     --background: #1a1a1a;
     --background-focus: #1a1a1a;
     --input-text-color: #e0e0e0;
@@ -133,11 +133,10 @@ h3 {
 }
 
 .new-form-icon {
-  height: 200px;
-  width: 200px;
-  background-color: var(--color4);
-  -webkit-mask: url(assets/new-form.svg) center / contain no-repeat;
-  mask: url(assets/new-form.svg) center / contain no-repeat;
+    mask: url(assets/new-form.svg) no-repeat center / contain;
+    -webkit-mask: url(assets/new-form.svg) no-repeat center / contain;
+    height: 200px;
+    width: 200px;
 }
 
 .card {
@@ -175,6 +174,14 @@ h3 {
 .section-title {
     font-size: 12px;
     font-weight: 600;
+    color: var(--section-title-color);
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+}
+.alert-loading-title {
+    text-align: center;
+    font-size: 16px;
+    font-weight: 400;
     color: var(--section-title-color);
     margin-bottom: 10px;
     letter-spacing: 1px;

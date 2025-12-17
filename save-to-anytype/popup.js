@@ -3,7 +3,7 @@ const API_BASE_URL = 'http://localhost:31009/v1';
 const API_VERSION = '2025-11-08';
 
 // constants
-const DEFAULT_ACCENT_COLOR = '#FF9ED2';
+const DEFAULT_ACCENT_COLOR = '#ff3030ff';
 
 // State
 let state = {
