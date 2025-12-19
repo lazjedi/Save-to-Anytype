@@ -14,6 +14,7 @@ let state = {
     accentColor: null,
     whatDoOnStart: null,
     LastUsedForm: null,
+    zoom: null,
     forms: []
 };
 
@@ -101,7 +102,10 @@ const elements = {
     blockedSection: document.getElementById('blockedSection'),
     blockedSectionText: document.getElementById('blockedSectionText'),
     loadingSection: document.getElementById('loadingSection'),
-    whatDoOnStartSelect: document.getElementById('whatDoOnStartSelect')
+    whatDoOnStartSelect: document.getElementById('whatDoOnStartSelect'),
+    zoomRangeValue: document.getElementById('zoomRangeValue'),
+    zoomCurrentRange: document.getElementById('zoomCurrentRange'),
+    zoomContainer: document.getElementById('zoomContainer')
 };
 
 // Tab management
@@ -384,7 +388,7 @@ function findDescription() {
 // Load saved state
 async function loadState() {
     const saved = await chrome.storage.local.get(
-        ['apiKey', 'selectedSpaceId', 'theme', 'language', 'accentColor', 'whatDoOnStart', 'LastUsedForm', 'forms']
+        ['apiKey', 'selectedSpaceId', 'theme', 'language', 'accentColor', 'whatDoOnStart', 'LastUsedForm', 'zoom', 'forms']
     );
 
     if (saved.apiKey) {
@@ -443,6 +447,13 @@ async function loadState() {
         state.LastUsedForm = "null";
     }
 
+    if (saved.zoom) {
+        state.zoom = saved.zoom;
+    }
+    else {
+        state.zoom = 1;
+    }
+
     if (saved.forms) {
         state.forms = saved.forms;
     }
@@ -470,6 +481,7 @@ async function saveState() {
         accentColor: state.accentColor,
         whatDoOnStart: state.whatDoOnStart,
         LastUsedForm: state.LastUsedForm,
+        zoom: elements.zoomRangeValue.value,
         forms: state.forms
     });
 
@@ -516,6 +528,10 @@ ChangeTheme = function () {
 
     document.documentElement.style.setProperty('--accent-color', state.accentColor);
     elements.colorInput.jscolor.fromString(state.accentColor);
+
+    elements.zoomRangeValue.value = state.zoom;
+    elements.zoomContainer.style.zoom = state.zoom;
+    elements.zoomCurrentRange.textContent = state.zoom;
 }
 
 elements.colorInput.addEventListener("change", () => {
@@ -543,6 +559,16 @@ elements.colorInput.addEventListener("change", () => {
 //#endregion
 
 //#region settings
+
+elements.zoomRangeValue.addEventListener('input', () => {
+    elements.zoomCurrentRange.textContent = elements.zoomRangeValue.value;
+
+    state.zoom = elements.zoomRangeValue.value;
+
+    saveState();
+
+    ChangeTheme();
+});
 
 elements.themeSelect.addEventListener('change', async (e) => {
     state.theme = themeSelectChoices.getValue(true);
