@@ -132,6 +132,47 @@ h3 {
     font-weight: 600;
 }
 
+#zoomRangeValue {
+  -webkit-appearance: none;
+  width: 300px;
+  height: 8px;
+  background: none; 
+  border-radius: 5px;
+  border: none;
+  outline: none;
+}
+
+#zoomRangeValue::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  background: var(--accent-color);
+  border-radius: 50%;
+  cursor: pointer;
+  margin-top: -6px;
+}
+
+#zoomRangeValue::-webkit-slider-runnable-track {
+  height: 8px;
+  border-radius: 5px;
+  background: var(--color4);
+}
+
+#zoomRangeValue::-moz-range-track {
+  height: 8px;
+  border-radius: 5px;
+  background: var(--color4);
+}
+
+#zoomRangeValue::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: var(--accent-color);
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+}
+
 .new-form-icon {
     mask: url(assets/new-form.svg) no-repeat center / contain;
     -webkit-mask: url(assets/new-form.svg) no-repeat center / contain;
