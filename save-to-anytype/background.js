@@ -1,5 +1,3 @@
-// Background service worker for Anytype Web Clipper
-
 let consoleLog = function (messageText, ...argsL) {
     if (argsL !== undefined && argsL.length > 0)
         console.log("[SaveToAnytype] %c[Back]%c " + messageText + " %c[Params]%c", "color: green; font-weight: bold;", "", "color: blue; font-weight: bold;", "", argsL);
@@ -80,7 +78,7 @@ if (chrome && chrome.contextMenus && chrome.contextMenus.onClicked) {
             // Normal page save - just open popup
             consoleLog('Opening popup for page save');
             try {
-                await chrome.action.openPopup();
+                await chrome.tabs.sendMessage(tab.id, { action: "OPEN_OVERLAY" });
             } catch (error) {
                 consoleError('Could not open popup:', error);
             }
@@ -107,12 +105,12 @@ if (chrome && chrome.contextMenus && chrome.contextMenus.onClicked) {
                 }
 
                 // Open popup
-                await chrome.action.openPopup();
+                await chrome.tabs.sendMessage(tab.id, { action: "OPEN_OVERLAY" });
             } catch (error) {
                 consoleError('Error handling selection:', error);
                 // Still try to open popup
                 try {
-                    await chrome.action.openPopup();
+                    await chrome.tabs.sendMessage(tab.id, { action: "OPEN_OVERLAY" });
                 } catch (popupError) {
                     consoleError('Could not open popup:', popupError);
                 }
@@ -169,6 +167,30 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         consoleLog('Saving to Anytype menu options ', request);
         CreateContextMenusButtons(request);
         return true;
+    }
+});
+
+chrome.action.onClicked.addListener(async (tab) => {
+    const url = tab.url;
+
+    const Qr = [
+        "chrome://",
+        "https://chrome.google.com/",
+        "https://www.homedepot.com",
+        "edge://",
+        "arc://",
+        "view-source:",
+        "devtools:",
+    ];
+
+    if (Qr.some((t) => url.startsWith(t)) || url == "") {
+        await chrome.action.setPopup({
+            popup: "popupBlocked.html",
+            tabId: tab.id,
+        });
+        await chrome.action.openPopup();
+    } else {
+        chrome.tabs.sendMessage(tab.id, { action: "TOGGLE_OVERLAY" });
     }
 });
 

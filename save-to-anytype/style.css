@@ -14,6 +14,8 @@
     --background-focus: #1a1a1a;
     --input-text-color: #e0e0e0;
     --section-title-color: #888888;
+    --btnSaveObject: #355d33;
+    --btnSaveObjectHover: #264525;
 }
 
 .jscolor-border {
@@ -35,39 +37,42 @@
 }
 
 body {
-    width: 450px;
-    min-height: 600px;
-    max-height: 600px;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    background: var(--back-color);
-    color: var(--text-color);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background: var(--back-color);
+  color: var(--text-color);
+  height: 100vh;
+  overflow: hidden;
 }
 
 .container {
-    padding: 20px;
-
-    min-height: 600px;
-    max-height: 600px;
-    overflow-y: auto;
-    overflow-x: hidden;
-    scrollbar-gutter: stable;
+  padding: 10px;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
 }
 
-.container::-webkit-scrollbar {
+.containerPopapBlocked{
+  padding: 20px;
+  min-height: 300px;
+  min-width: 300px;
+}
+
+*::-webkit-scrollbar {
     width: 6px;
 }
 
-.container::-webkit-scrollbar-track {
+*::-webkit-scrollbar-track {
     background: var(--color3);
     border-radius: 3px;
 }
 
-.container::-webkit-scrollbar-thumb {
+*::-webkit-scrollbar-thumb {
     background: var(--color4);
     border-radius: 3px;
 }
 
-.container::-webkit-scrollbar-thumb:hover {
+*::-webkit-scrollbar-thumb:hover {
     background: var(--color5);
 }
 
@@ -165,6 +170,88 @@ h3 {
 }
 
 #zoomRangeValue::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: var(--accent-color);
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+}
+
+#heightRangeValue {
+  -webkit-appearance: none;
+  width: 300px;
+  height: 8px;
+  background: none; 
+  border-radius: 5px;
+  border: none;
+  outline: none;
+}
+
+#heightRangeValue::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  background: var(--accent-color);
+  border-radius: 50%;
+  cursor: pointer;
+  margin-top: -6px;
+}
+
+#heightRangeValue::-webkit-slider-runnable-track {
+  height: 8px;
+  border-radius: 5px;
+  background: var(--color4);
+}
+
+#heightRangeValue::-moz-range-track {
+  height: 8px;
+  border-radius: 5px;
+  background: var(--color4);
+}
+
+#heightRangeValue::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: var(--accent-color);
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+}
+
+#widthRangeValue {
+  -webkit-appearance: none;
+  width: 300px;
+  height: 8px;
+  background: none; 
+  border-radius: 5px;
+  border: none;
+  outline: none;
+}
+
+#widthRangeValue::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  background: var(--accent-color);
+  border-radius: 50%;
+  cursor: pointer;
+  margin-top: -6px;
+}
+
+#widthRangeValue::-webkit-slider-runnable-track {
+  height: 8px;
+  border-radius: 5px;
+  background: var(--color4);
+}
+
+#widthRangeValue::-moz-range-track {
+  height: 8px;
+  border-radius: 5px;
+  background: var(--color4);
+}
+
+#widthRangeValue::-moz-range-thumb {
   width: 20px;
   height: 20px;
   background: var(--accent-color);
@@ -291,17 +378,35 @@ button {
     transform: translateY(-1px);
 }
 
+.btn-save-object {
+  position: fixed;
+  bottom: 10px;
+  width: 50%;
+  left: 25%;
+  background: var(--btnSaveObject);
+  animation: slideInShort 0.55s cubic-bezier(1, 0.05, 1, 1);
+}
+
+.btn-save-object:hover {
+  background: var(--btnSaveObjectHover);
+  transform: translateY(-1px);
+}
+
 .btn-right-top {
     position: absolute;
     width: 25px;
     height: 25px;
-    top: 25px;
-    right: 35px;
+    top: 16px;
+    right: 23px;
     cursor: pointer;
     z-index: 99999;
     padding: 0;
     background: none;
     filter: brightness(var(--icon-brightness));
+}
+
+.redText {
+  color: #ff3737;
 }
 
 .btn-right-top:hover {
@@ -461,7 +566,8 @@ button {
 }
 
 #saveObjectSectionAnimation {
-    animation: slideIn 0.5s ease;
+  padding-bottom: 15px;
+  animation: slideIn 0.5s ease;
 }
 
 #confirmDeleteFormSectionAnimation {
@@ -480,6 +586,18 @@ button {
     from {
         opacity: 0;
         transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInShort {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
     }
 
     to {

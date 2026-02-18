@@ -9,7 +9,7 @@
 </head>
 
 <body>
-    <div class="container">
+    <div class="containerPopapBlocked">
         <div id="zoomContainer">
             <h2><img src="assets/icon16.png" alt=""> Save to Anytype</h2>
 
@@ -154,7 +154,7 @@
                 </button>
 
                 <div id="settingsSectionAnimation">
-                    <div class="section-title redText" data-locale-key="ReopenSettings">ReopenSettings</div>
+                    <div class="section-title" data-locale-key="ReopenSettings">ReopenSettings</div>
                     <div class="card">
                         
                         <div class="form-group">
@@ -198,20 +198,10 @@
                         <div class="form-group">
                             <div for="heightRangeValue" class="section-title">
                                 <span data-locale-key="HeightOfPopap">HeightOfPopap</span>
-                                <span id="heightCurrentRange">70</span>
+                                <span id="heightCurrentRange">600</span>
                             </div>
                             <center>
-                                <input type="range" id="heightRangeValue" min="30" max="100" step="1" value="70">
-                            </center>
-                        </div>
-
-                        <div class="form-group">
-                            <div for="widthRangeValue" class="section-title">
-                                <span data-locale-key="WidthOfPopap">WidthOfPopap</span>
-                                <span id="widthCurrentRange">70</span>
-                            </div>
-                            <center>
-                                <input type="range" id="widthRangeValue" min="20" max="40" step="1" value="24">
+                                <input type="range" id="heightRangeValue" min="400" max="900" step="1" value="600">
                             </center>
                         </div>
 
