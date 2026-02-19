@@ -405,6 +405,10 @@ async function localPopapInited() {
         linkCSS = document.documentElement;
 
         if (state.theme === "dark") { // dark mode
+            linkCSS.style.setProperty('--background', '#1a1a1a');
+            linkCSS.style.setProperty('--background-focus', '#1a1a1a');
+            linkCSS.style.setProperty('--input-text-color', '#e0e0e0');
+            linkCSS.style.setProperty('--section-title-color', '#888888');
             linkCSS.style.setProperty('--text-color', '#e0e0e0');
             linkCSS.style.setProperty('--text-color-inverted', '#080808');
             linkCSS.style.setProperty('--back-color', '#0f0f0f');
@@ -1906,13 +1910,14 @@ async function localPopapInited() {
 
                         propertyHTML.innerHTML = `
                                     <div class="section-title">` + property.name + `</div>
-                                    <div class="form-group">
+                                    <div class="form-group ` + (property.format === "checkbox" ? "checkbox-rect" : "") + `">
                                         <` + (printTextarea ? "textarea " : "input") + ` 
                                             id="` + property.id + `_SO" 
                                             type="` + (property.format !== "phone" ? property.format : "tel") + `" 
                                             placeholder="` + property.name + `" `
                             + (savedPropertyValueExist && !printTextarea ? (`value="` + value + `" `) : (` `)) + `
                                         >` + (printTextarea ? (savedPropertyValueExist ? (value + "</textarea>") : "</textarea>") : "") + `
+                                    ` + (property.format === "checkbox" ? '<label for="' + property.id + '_SO"></label>' : "") + `    
                                     </div>
                                 `;
                     }
@@ -1956,6 +1961,11 @@ async function localPopapInited() {
                                         </select>
                                     </div>
                                 `;
+                    }
+
+                    if (property.format === "checkbox") {
+                        propertyHTML.style.display = "flex";
+                        propertyHTML.style.gap = "7px";
                     }
 
                     if (savedPropertyValueExist && property.id !== "nameId")
