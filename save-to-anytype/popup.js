@@ -2093,6 +2093,7 @@ async function localPopapInited() {
 
     elements.saveObjectBtn.addEventListener('click', async () => {
         consoleLog("Start saving object");
+        consoleLog("properties List For Saving: " + propertiesListForSaving);
 
         elements.saveObjectBtnText.innerHTML = '<span class="loading"></span> ' + Localize("Saving", state.language);
         elements.saveObjectBtn.disabled = true;
@@ -2121,7 +2122,7 @@ async function localPopapInited() {
                     else
                         value = document.getElementById(propiertyPrinted.IdInHTML).value;
 
-                    if (value !== null && value !== undefined && value !== "" && value.length > 0)
+                    if (value !== null && value !== undefined && value !== "")
                         properties_final_list.push({ key: propiertyPrinted.KeyForAnytypeAPI, [propiertyPrinted.value_type]: value });
                 }
                 else if (propiertyPrinted.KeyForAnytypeAPI === "nameKeySaveToAnytype") {
