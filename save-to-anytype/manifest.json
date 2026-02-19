@@ -39,8 +39,9 @@
       "resources": [
         "style.css",
         "popup.html",
-        "popupBlocked.html",
         "popup.js",
+        "popupBlocked.html",
+        "popupBlocked.js",
         "localizations.json",
         "assets/settings.svg",
         "assets/cross.svg",
