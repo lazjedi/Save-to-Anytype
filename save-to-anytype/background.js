@@ -181,6 +181,7 @@ chrome.action.onClicked.addListener(async (tab) => {
         "arc://",
         "view-source:",
         "devtools:",
+        "https://chromewebstore.google.com/"
     ];
 
     if (Qr.some((t) => url.startsWith(t)) || url == "") {
