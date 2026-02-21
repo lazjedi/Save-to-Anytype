@@ -118,7 +118,15 @@ body {
   opacity: 1;
 }
 
+.poperty-head {
+  display: flex;
+  gap: 7px;
+}
+
 /* checkbox-rect */
+.checkbox-rect {
+  
+}
 .checkbox-rect input[type="checkbox"] {
   display: none;
   cursor: pointer;
