@@ -17,6 +17,7 @@ let state = {
     zoom: null,
     height: null,
     width: null,
+    collapseOnOpenForm: null,
     forms: []
 };
 
@@ -48,6 +49,8 @@ let currentForm = null;
 let CashedTypes = null;
 
 let URLWasRejected = false;
+
+let WasSubscribeToggleCollapsedButton = false;
 
 // Initialize
 
@@ -102,7 +105,12 @@ async function localPopapInited() {
         objectNameToSave: document.getElementById('objectNameToSave'),
         saveObjectSection: document.getElementById('saveObjectSection'),
         propertiesSaveObjectListWithDefaultValueHandler: document.getElementById('propertiesSaveObjectListWithDefaultValueHandler'),
+        propertiesSaveObjectListWithDefaultValueHandlerContent: document.getElementById('propertiesSaveObjectListWithDefaultValueHandlerContent'),
+        propertiesSaveObjectListWithDefaultValueHandlerToggle: document.getElementById('propertiesSaveObjectListWithDefaultValueHandlerToggle'),
         propertiesSaveObjectListWithoutDefaultValueHandler: document.getElementById('propertiesSaveObjectListWithoutDefaultValueHandler'),
+        propertiesSaveObjectListWithDefaultValueHandlerToggleText: document.getElementById('propertiesSaveObjectListWithDefaultValueHandlerToggleText'),
+        propertiesSaveObjectListWithDefaultValueHandlerToggleSign: document.getElementById('propertiesSaveObjectListWithDefaultValueHandlerToggleSign'),
+        collapseInputSettings: document.getElementById('collapseInputSettings'),
         objectSavedSection: document.getElementById('objectSavedSection'),
         OpenInAnytypeBtn: document.getElementById('OpenInAnytypeBtn'),
         OpenAnytypeBtn: document.getElementById('OpenAnytypeBtn'),
@@ -481,7 +489,8 @@ async function localPopapInited() {
     async function loadState() {
         const saved = await chrome.storage.local.get(
             ['apiKey', 'selectedSpaceId', 'theme', 'language', 'accentColor',
-                'whatDoOnStart', 'LastUsedForm', 'zoom', 'height', 'width', 'forms']
+                'whatDoOnStart', 'LastUsedForm', 'zoom', 'height', 'width',
+                'collapseOnOpenForm', 'forms']
         );
 
         if (saved.apiKey) {
@@ -561,6 +570,13 @@ async function localPopapInited() {
             state.width = 24;
         }
 
+        if (saved.collapseOnOpenForm) {
+            state.collapseOnOpenForm = saved.collapseOnOpenForm;
+        }
+        else {
+            state.collapseOnOpenForm = "false";
+        }
+
         if (saved.forms) {
             state.forms = saved.forms;
         }
@@ -591,6 +607,7 @@ async function localPopapInited() {
             zoom: elements.zoomRangeValue.value,
             height: elements.heightRangeValue.value,
             width: elements.widthRangeValue.value,
+            collapseOnOpenForm: elements.collapseInputSettings.checked.toString(),
             forms: state.forms
         });
 
@@ -600,6 +617,14 @@ async function localPopapInited() {
     //#endregion
 
     //#region settings
+
+    elements.collapseInputSettings.addEventListener('input', () => {
+        state.collapseOnOpenForm = elements.collapseInputSettings.checked.toString();
+
+        saveState();
+
+        ChangeTheme();
+    });
 
     elements.zoomRangeValue.addEventListener('input', () => {
         elements.zoomCurrentRange.textContent = elements.zoomRangeValue.value;
@@ -932,6 +957,9 @@ async function localPopapInited() {
         }
 
         languageSelectChoices.setChoiceByValue(state.language);
+
+        elements.collapseInputSettings.checked = state.collapseOnOpenForm === "true";
+        //elements.collapseInputSettings.value = state.collapseOnOpenForm;
     }
 
     function authSection() {
@@ -1822,7 +1850,7 @@ async function localPopapInited() {
             consoleLog('Loading type object for save in space: ' + form.spaceId + ' , type.id: ' + form.type.id);
 
             elements.propertiesSaveObjectListWithoutDefaultValueHandler.innerHTML = '';
-            elements.propertiesSaveObjectListWithDefaultValueHandler.innerHTML = '';
+            elements.propertiesSaveObjectListWithDefaultValueHandlerContent.innerHTML = '';
 
             const response = await chrome.tabs.query({ active: true, currentWindow: true });
 
@@ -2062,7 +2090,7 @@ async function localPopapInited() {
                 for (let index = 0; index < propertiesForPrintWithDefaultValue.length; index++) {
                     const propertieForPrint = propertiesForPrintWithDefaultValue[index];
 
-                    elements.propertiesSaveObjectListWithDefaultValueHandler.appendChild(propertieForPrint.propertyHTML);
+                    elements.propertiesSaveObjectListWithDefaultValueHandlerContent.appendChild(propertieForPrint.propertyHTML);
 
                     propertiesListForSaving.push({ KeyForAnytypeAPI: propertieForPrint.propertyKey, IdInHTML: propertieForPrint.propertyId + "_SO", value_type: propertieForPrint.value_type });
 
@@ -2076,6 +2104,34 @@ async function localPopapInited() {
                         if (propertieForPrint.needToDisableChoice)
                             choice.removeActiveItems();
                     }
+                }
+
+                elements.propertiesSaveObjectListWithDefaultValueHandlerToggleText.textContent = Localize("FilledProperties", state.language);
+
+                if (state.collapseOnOpenForm == "true") {
+                    if (!elements.propertiesSaveObjectListWithDefaultValueHandler.classList.contains('collapsed'))
+                        elements.propertiesSaveObjectListWithDefaultValueHandler.classList.add('collapsed');
+
+                    elements.propertiesSaveObjectListWithDefaultValueHandlerToggleSign.textContent = "▼";
+                }
+                else {
+                    if (elements.propertiesSaveObjectListWithDefaultValueHandler.classList.contains('collapsed'))
+                        elements.propertiesSaveObjectListWithDefaultValueHandler.classList.remove('collapsed');
+
+                    elements.propertiesSaveObjectListWithDefaultValueHandlerToggleSign.textContent = "▲";
+                }
+
+                if (!WasSubscribeToggleCollapsedButton) {
+                    WasSubscribeToggleCollapsedButton = true;
+                    elements.propertiesSaveObjectListWithDefaultValueHandlerToggle.addEventListener('click', () => {
+                        elements.propertiesSaveObjectListWithDefaultValueHandler.classList.toggle('collapsed');
+
+                        if (elements.propertiesSaveObjectListWithDefaultValueHandler.classList.contains('collapsed')) {
+                            elements.propertiesSaveObjectListWithDefaultValueHandlerToggleSign.textContent = "▼";
+                        } else {
+                            elements.propertiesSaveObjectListWithDefaultValueHandlerToggleSign.textContent = "▲";
+                        }
+                    });
                 }
 
 

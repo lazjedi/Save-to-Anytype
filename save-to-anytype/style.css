@@ -295,19 +295,52 @@ h3 {
 }
 
 .new-form-icon {
-    mask: url(assets/new-form.svg) no-repeat center / contain;
-    -webkit-mask: url(assets/new-form.svg) no-repeat center / contain;
-    height: 200px;
-    width: 200px;
+  mask: url(assets/new-form.svg) no-repeat center / contain;
+  -webkit-mask: url(assets/new-form.svg) no-repeat center / contain;
+  height: 200px;
+  width: 200px;
 }
 
 .card {
-    background: var(--card-color);
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 15px;
-    border: 1px solid #2a2a2a;
+  background: var(--card-color);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 15px;
+  border: 1px solid #2a2a2a;
+  transition: all 0.3s ease;
 }
+
+/* collapsed card start */
+.toggle-btn {
+  cursor: pointer;
+  font-size: 17px;
+  user-select: none;
+  margin-bottom: 10px;
+  transition: all 0.3s ease;
+  display: flex;
+  justify-content: space-between;
+}
+
+.toggle-btn:hover {
+  scale: 1.02;
+}
+
+.propertiesSaveObjectListWithDefaultValueHandlerContent {
+  transition: all 0.3s ease;
+}
+
+.collapsed .propertiesSaveObjectListWithDefaultValueHandlerContent {
+  display: none;
+  transition: all 0.3s ease;
+}
+
+.collapsed::after {
+  content: "";
+  display: block;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+/* collapsed card end */
 
 .form-card {
   background: var(--card-color);
@@ -418,7 +451,7 @@ button {
   width: 50%;
   left: 25%;
   background: var(--btnSaveObject);
-  animation: slideInShort 0.55s cubic-bezier(1, 0.05, 1, 1);
+  animation: slideInShort 0.15s linear;
 }
 
 .btn-save-object:hover {
@@ -528,7 +561,7 @@ button {
     padding: 12px;
     border-radius: 8px;
     margin-top: 15px;
-    margin-bottom: 15px;
+    margin-bottom: 50px;
     text-align: center;
     font-size: 13px;
     font-weight: 500;

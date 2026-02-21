@@ -154,7 +154,10 @@
                 </button>
 
                 <div id="settingsSectionAnimation">
-                    <div class="section-title redText" data-locale-key="ReopenSettings">ReopenSettings</div>
+                    <center>
+                        <div class="section-title redText" data-locale-key="ReopenSettings">ReopenSettings</div>
+                    </center>
+
                     <div class="card">
                         
                         <div class="form-group">
@@ -183,6 +186,12 @@
                         <div class="form-group">
                             <div class="section-title" data-locale-key="ChooseAccentColor">choose an accent color</div>
                             <input id="colorInput" class="jscolor" value="ab2567">
+                        </div>
+
+                        <div class="form-group checkbox-rect">
+                            <div class="section-title" data-locale-key="FilledPropertiesSetting">FilledPropertiesSetting</div>
+                            <input id="collapseInputSettings" type="checkbox">
+                            <label for="collapseInputSettings"></label>
                         </div>
 
                         <div class="form-group">
@@ -267,13 +276,17 @@
                     </div>
 
                     <div class="card" id="propertiesSaveObjectListWithDefaultValueHandler">
+                        <div class="toggle-btn" id="propertiesSaveObjectListWithDefaultValueHandlerToggle">
+                            <div id="propertiesSaveObjectListWithDefaultValueHandlerToggleText"></div>
+                            <div id="propertiesSaveObjectListWithDefaultValueHandlerToggleSign"></div>
+                        </div>
+                        <div class="propertiesSaveObjectListWithDefaultValueHandlerContent" id="propertiesSaveObjectListWithDefaultValueHandlerContent"></div>
                     </div>
-
-                <!-- Save button -->
-                <button id="saveObjectBtn" class="btn-save-object">
-                    <span id="saveObjectBtnText" data-locale-key="SaveObjectButton">SaveObjectButton</span>
-                </button>
             </div>
+            <!-- Save button -->
+            <button id="saveObjectBtn" class="btn-save-object">
+                <span id="saveObjectBtnText" data-locale-key="SaveObjectButton">SaveObjectButton</span>
+            </button>
         </div>
         
         <div id="objectSavedSection" class="hidden">
