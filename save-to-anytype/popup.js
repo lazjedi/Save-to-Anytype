@@ -53,7 +53,7 @@ let URLWasRejected = false;
 let WasSubscribeToggleCollapsedButton = false;
 
 function GetPropertyIconSVG(property) {
-    // text, url, multi_select, checkbox, select, collection, template, objects
+    // text, url, multi_select, checkbox, select, collection, template, objects, email, phone, number, date - I added icons
 
     if (property == "text") {
         return `<svg style="margin-bottom: 10px; height: 16px; width: 16px; fill: var(--section-title-color)"
@@ -73,7 +73,7 @@ function GetPropertyIconSVG(property) {
                     />
                 </svg>`
     }
-    else if (property == "url") {
+    else if (property == "url" || property == "URL" || property == "Url") {
         return `<svg style="margin-bottom: 10px; height: 16px; width: 16px; fill: var(--section-title-color)"
                     viewBox="0 -2 14 14" xmlns="http://www.w3.org/2000/svg">
                     <path d="M3.73333 1.86667L7.46667 1.86667C8.49613 1.86667 9.33333 2.70387 9.33333 3.73333C9.33333 4.7628 8.49613 5.6 7.46667 5.6L6.53333 
@@ -119,7 +119,7 @@ function GetPropertyIconSVG(property) {
                     </path>
                 </svg>`
     }
-    else if (property == "collection") {
+    else if (property == "collection" || property == "collections") {
         return `<svg style="margin-bottom: 10px; height: 20px; width: 16px; fill: var(--section-title-color)"
                     viewBox="800 -2300 1550 1550" xmlns="http://www.w3.org/2000/svg">
                         <g transform="scale(0.300000,-0.300000)"
@@ -457,7 +457,7 @@ function GetPropertyIconSVG(property) {
                     </path>
                 </svg>`
     }
-    else if (property == "template") {
+    else if (property == "template" || property == "templates") {
         return `<svg style="margin-bottom: 10px; height: 20px; width: 16px; fill: var(--section-title-color)"
                     viewBox="800 -6500 5500 5500" xmlns="http://www.w3.org/2000/svg">
                         <g transform="scale(1.0,-1.0)"
@@ -486,6 +486,48 @@ function GetPropertyIconSVG(property) {
                     8.69951ZM13 12.5884V20.3005L20 16.4116V8.69951L13 12.5884Z" 
                     />
                 </svg>`
+    }
+    else if (property == "email") {
+        return `<svg style="margin-bottom: 10px; height: 16px; width: 16px; fill: var(--section-title-color)"
+                    viewBox="0 -3 22 22" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3.87 4h13.25C18.37 4 19 4.59 19 5.79v8.42c0 1.19-.63 1.79-1.88 1.79H3.87c-1.25 0-1.88-.6-1.88-1.79V5.79c0-1.2.63-1.79 1.88-1.79m6.62 
+                    8.6l6.74-5.53c.24-.2.43-.66.13-1.07c-.29-.41-.82-.42-1.17-.17l-5.7 3.86L4.8 5.83c-.35-.25-.88-.24-1.17.17c-.3.41-.11.87.13 1.07z" 
+                    />
+                </svg>`
+    }
+    else if (property == "phone") {
+        return `<svg style="margin-bottom: 10px; height: 16px; width: 16px; fill: var(--section-title-color)"
+                    viewBox="0 -2 26 26" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M10.554 6.24L7.171 2.335c-.39-.45-1.105-.448-1.558.006L2.831 5.128c-.828.829-1.065 2.06-.586 3.047a29.207 29.207 0 0 0 13.561 13.58c.986.479
+                     2.216.242 3.044-.587l2.808-2.813c.455-.455.456-1.174.002-1.564l-3.92-3.365c-.41-.352-1.047-.306-1.458.106l-1.364 1.366a.462.462 0 0 1-.553.088a14.557
+                      14.557 0 0 1-5.36-5.367a.463.463 0 0 1 .088-.554l1.36-1.361c.412-.414.457-1.054.101-1.465"/" 
+                    />
+                </svg>`
+    }
+    else if (property == "number") {
+        return `<svg style="margin-bottom: 10px; height: 16px; width: 16px; fill: var(--section-title-color)"
+                    viewBox="100 0 900 900" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M508 280h-63.3c-3.3 0-6 2.7-6 6v340.2H433L197.4 282.6c-1.1-1.6-3-2.6-4.9-2.6H126c-3.3 0-6 2.7-6 6v464c0 3.3 2.7 6 
+                    6 6h62.7c3.3 0 6-2.7 6-6V405.1h5.7l238.2 348.3c1.1 1.6 3 2.6 5 2.6H508c3.3 0 6-2.7 6-6V286c0-3.3-2.7-6-6-6m378 413H582c-4.4 
+                    0-8 3.6-8 8v48c0 4.4 3.6 8 8 8h304c4.4 0 8-3.6 8-8v-48c0-4.4-3.6-8-8-8m-152.2-63c52.9 0 95.2-17.2 126.2-51.7c29.4-32.9 44-75.8 
+                    44-128.8c0-53.1-14.6-96.5-44-129.3c-30.9-34.8-73.2-52.2-126.2-52.2c-53.7 0-95.9 17.5-126.3 52.8c-29.2 33.1-43.4 75.9-43.4 128.7c0 
+                    52.4 14.3 95.2 43.5 128.3c30.6 34.7 73 52.2 126.2 52.2m-71.5-263.7c16.9-20.6 40.3-30.9 71.4-30.9c31.5 0 54.8 9.6 71 29.1c16.4 20.3 
+                    24.9 48.6 24.9 84.9c0 36.3-8.4 64.1-24.8 83.9c-16.5 19.4-40 29.2-71.1 29.2c-31.2 0-55-10.3-71.4-30.4c-16.3-20.1-24.5-47.3-24.5-82.6c.1-35.8 8.2-63 24.5-83.2" 
+                    />
+                </svg>`
+    }
+    else if (property == "date") {
+        return `<svg style="margin-bottom: 10px; height: 16px; width: 16px; fill: var(--section-title-color)"
+                        viewBox="1 -1 23 23" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M21 8.5v9.25A3.25 3.25 0 0 1 17.75 21H6.25A3.25 3.25 0 0 1 3 17.75V8.5zm-7.005 2.195q-.996 0-1.582.532t-.586 1.441q0 
+                        .522.266.93q.267.408.725.642a1.94 1.94 0 0 0-.85.698a1.8 1.8 0 0 0-.302 1.026q0 .933.637 1.484Q12.94 18 14 18q1.054 0 
+                        1.69-.55q.634-.549.634-1.486q0-.566-.3-1.016a2.03 2.03 0 0 0-.857-.708q.464-.234.732-.642q.27-.408.269-.93q0-.908-.586-1.44q-.586-.533-1.587-.533m-3.775.074h-.152l-2.773 
+                        1.02v1.001l1.743-.596v5.708h1.182zm3.77 3.96q.518 0 .833.324q.315.325.315.852q0 
+                        .543-.3.845q-.3.303-.838.303q-.537 0-.842-.313q-.306-.312-.306-.835q0-.532.31-.854t.828-.322m.005-3.081q.454 0 
+                        .723.3t.268.764q0 .488-.266.776q-.265.288-.72.288t-.72-.288q-.267-.287-.266-.776q0-.493.263-.779q.264-.285.718-.285M17.75 3A3.25 3.25 0 0 1 21 
+                        6.25V7H3v-.75A3.25 3.25 0 0 1 6.25 3z" 
+                        />
+                    </svg>`
     }
 
     // multi_select or other
@@ -2125,7 +2167,10 @@ async function localPopapInited() {
                     || property.format === "date" || property.format === "checkbox" || property.key === "description"
                     || property.format === "phone") {
                     propertyHTML.innerHTML = `
-                                <div class="section-title">` + property.name + `</div>
+                                <div class="poperty-head">
+                                    ` + GetPropertyIconSVG(property.format) + `
+                                    <div class="section-title">` + property.name + `</div>
+                                </div>
                                 <div class="form-group">
                                     <select id="` + property.key + `">
                                         ${WebPagePropierties.map(o => `
@@ -2139,7 +2184,10 @@ async function localPopapInited() {
                     await loadAllObjects();
 
                     propertyHTML.innerHTML = `
-                                <div class="section-title">` + property.name + `</div>
+                                <div class="poperty-head">
+                                    ` + GetPropertyIconSVG(property.format) + `
+                                    <div class="section-title">` + property.name + `</div>
+                                </div>
                                 <div class="form-group">
                                     <select id="` + property.key + `">
                                         ${allObjects.map(o => `
@@ -2153,7 +2201,10 @@ async function localPopapInited() {
                     const tags = await loadPropertieTags(property.id);
 
                     propertyHTML.innerHTML = `
-                                <div class="section-title">` + property.name + `</div>
+                                <div class="poperty-head">
+                                    ` + GetPropertyIconSVG(property.format) + `
+                                    <div class="section-title">` + property.name + `</div>
+                                </div>
                                 <div class="form-group">
                                     <select id="` + property.key + `" ` + (property.format === "multi_select" ? `multiple` : ``) + `>
                                         ${tags.map(o => `
