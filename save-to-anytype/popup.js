@@ -52,6 +52,8 @@ let URLWasRejected = false;
 
 let WasSubscribeToggleCollapsedButton = false;
 
+let turndownService = undefined;
+
 function GetPropertyIconSVG(property) {
     // text, url, multi_select, checkbox, select, collection, template, objects, email, phone, number, date - I added icons
 
@@ -622,6 +624,40 @@ async function localPopapInited() {
         widthCurrentRange: document.getElementById('widthCurrentRange')
     };
 
+    function createTurndownService() {
+        const service = new TurndownService({
+            headingStyle: 'atx',
+            hr: '---',
+            bulletListMarker: '-',
+            codeBlockStyle: 'fenced',
+            emDelimiter: '_'
+        });
+
+        service.keep(['iframe', 'script', 'style']);
+
+        service.addRule('figures', {
+            filter: 'figure',
+            replacement: (content, node) => {
+                const img = node.querySelector('img');
+                const caption = node.querySelector('figcaption');
+                if (img) {
+                    const alt = img.getAttribute('alt') || '';
+                    const src = img.getAttribute('src') || '';
+                    const captionText = caption ? caption.textContent : '';
+                    return `
+
+![${alt}](${src})
+${captionText}
+
+`;
+                }
+                return content;
+            }
+        });
+
+        return service;
+    }
+
     // Tab management
     document.querySelectorAll('.tab').forEach(tab => {
         tab.addEventListener('click', () => {
@@ -754,9 +790,17 @@ async function localPopapInited() {
                 func: extractPageText
             });
 
-            consoleLog("Founded content: " + resultExtractPageText[0].result);
+            if (turndownService == undefined)
+                turndownService = createTurndownService();
 
-            WebPagePropierties.find(p => p.id == "page_content").value = resultExtractPageText[0].result || '';
+            let markdown = turndownService.turndown(resultExtractPageText[0].result);
+
+            // Post-processing: Collapse multiple newlines (3+) into max 2
+            markdown = markdown.replace(/\n{3,}/g, '\n\n').trim();
+
+            consoleLog("Founded content: " + markdown);
+
+            WebPagePropierties.find(p => p.id == "page_content").value = markdown || '';
         }
 
         elements.SaveToAnytypeVersion.innerText = chrome.runtime.getManifest().version;
@@ -774,22 +818,60 @@ async function localPopapInited() {
         return WebPagePropierties.find(p => p.id == propiertie_key).value;
     }
 
-    function extractPageText(maxLength = 600) {
-        const bodyClone = document.body.cloneNode(true);
+    function extractPageText() {
+        try {
+            if (!document || !document.body) {
+                throw new Error('Document body not found');
+            }
 
-        const selectorsToRemove = ['script', 'style', 'noscript', 'iframe', 'svg', 'img'];
-        bodyClone.querySelectorAll(selectorsToRemove.join(',')).forEach(el => el.remove());
+            const getIframeContent = (iframe) => {
+                try {
+                    const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+                    if (!iframeDoc || !iframeDoc.body) return '';
+                    const iframeClone = iframeDoc.body.cloneNode(true);
+                    iframeClone.querySelectorAll('script, style, nav, footer, aside, .ads, .comments').forEach(el => el.remove());
+                    return `<div class="iframe-content">${iframeClone.innerHTML}</div>`;
+                } catch (e) {
+                    return '';
+                }
+            };
 
-        let text = bodyClone.innerText || '';
+            const bodyClone = document.body.cloneNode(true);
 
-        text = text.replace(/\s+/g, ' ').trim();
+            const iframes = document.querySelectorAll('iframe');
+            let iframeContents = [];
+            iframes.forEach((iframe) => {
+                const content = getIframeContent(iframe);
+                if (content) iframeContents.push(content);
+            });
 
-        if (text.length > maxLength) {
-            text = text.slice(0, maxLength).trim();
-            text += '...';
+            const unwanted = bodyClone.querySelectorAll(
+                'script, style, nav, footer, aside, .ads, .comments, [role="complementary"], .cookie-banner, .popup, .overlay, .modal'
+            );
+            unwanted.forEach(el => el.remove());
+
+            const mainSelectors = ['main', 'article', '.content', '.post', '.entry', '[role="main"]', '#content', '.main'];
+            let mainContent = null;
+
+            for (const selector of mainSelectors) {
+                const found = bodyClone.querySelector(selector);
+                if (found && found.innerHTML.trim().length > 100) {
+                    mainContent = found;
+                    break;
+                }
+            }
+
+            let finalContent = mainContent ? mainContent.innerHTML : bodyClone.innerHTML;
+
+            if (iframeContents.length > 0) {
+                finalContent += '<h2>Embedded Content</h2>' + iframeContents.join('<hr>');
+            }
+
+            return finalContent;
+
+        } catch (error) {
+            return "PAGE PARSE ERROR";
         }
-
-        return text;
     }
 
     // Load selected text from storage
