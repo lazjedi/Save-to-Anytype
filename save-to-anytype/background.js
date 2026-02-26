@@ -175,12 +175,15 @@ chrome.action.onClicked.addListener(async (tab) => {
 
     const Qr = [
         "chrome://",
-        "https://chrome.google.com/",
+        "chrome.google.com/webstore'",
         "https://www.homedepot.com",
         "edge://",
         "arc://",
         "view-source:",
         "devtools:",
+        "chrome-extension://",
+        "about:",
+        "about:",
         "https://chromewebstore.google.com/"
     ];
 
