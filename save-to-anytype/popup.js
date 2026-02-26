@@ -770,9 +770,9 @@ ${captionText}
             WebPagePropierties.find(p => p.id == "tab_title").value = tab.title || '';
             WebPagePropierties.find(p => p.id == "page_url").value = tab.url || '';
 
-            const result = await chrome.scripting.executeScript({
-                target: { tabId: tab.id },
-                func: findLargestVisibleImage
+            const result = await chrome.runtime.sendMessage({
+                action: "executeScript_findLargestVisibleImage",
+                target: { tabId: tab.id }
             });
 
             const largestImgSrc = result[0].result;
@@ -780,18 +780,18 @@ ${captionText}
 
             WebPagePropierties.find(p => p.id == "page_image").value = largestImgSrc || '';
 
-            const resultDescription = await chrome.scripting.executeScript({
+            const resultDescription = await chrome.runtime.sendMessage({
+                action: "executeScript_findDescription",
                 target: { tabId: tab.id },
-                func: findDescription
             });
 
             consoleLog("Founded description: " + resultDescription[0].result);
 
             WebPagePropierties.find(p => p.id == "page_description").value = resultDescription[0].result || '';
 
-            const resultExtractPageText = await chrome.scripting.executeScript({
+            const resultExtractPageText = await chrome.runtime.sendMessage({
+                action: "executeScript_extractPageText",
                 target: { tabId: tab.id },
-                func: extractPageText
             });
 
             if (turndownService == undefined)
@@ -820,62 +820,6 @@ ${captionText}
 
     function GetPagePropiertie(propiertie_key) {
         return WebPagePropierties.find(p => p.id == propiertie_key).value;
-    }
-
-    function extractPageText() {
-        try {
-            if (!document || !document.body) {
-                throw new Error('Document body not found');
-            }
-
-            const getIframeContent = (iframe) => {
-                try {
-                    const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
-                    if (!iframeDoc || !iframeDoc.body) return '';
-                    const iframeClone = iframeDoc.body.cloneNode(true);
-                    iframeClone.querySelectorAll('script, style, nav, footer, aside, .ads, .comments').forEach(el => el.remove());
-                    return `<div class="iframe-content">${iframeClone.innerHTML}</div>`;
-                } catch (e) {
-                    return '';
-                }
-            };
-
-            const bodyClone = document.body.cloneNode(true);
-
-            const iframes = document.querySelectorAll('iframe');
-            let iframeContents = [];
-            iframes.forEach((iframe) => {
-                const content = getIframeContent(iframe);
-                if (content) iframeContents.push(content);
-            });
-
-            const unwanted = bodyClone.querySelectorAll(
-                'script, style, nav, footer, aside, .ads, .comments, [role="complementary"], .cookie-banner, .popup, .overlay, .modal'
-            );
-            unwanted.forEach(el => el.remove());
-
-            const mainSelectors = ['main', 'article', '.content', '.post', '.entry', '[role="main"]', '#content', '.main'];
-            let mainContent = null;
-
-            for (const selector of mainSelectors) {
-                const found = bodyClone.querySelector(selector);
-                if (found && found.innerHTML.trim().length > 100) {
-                    mainContent = found;
-                    break;
-                }
-            }
-
-            let finalContent = mainContent ? mainContent.innerHTML : bodyClone.innerHTML;
-
-            if (iframeContents.length > 0) {
-                finalContent += '<h2>Embedded Content</h2>' + iframeContents.join('<hr>');
-            }
-
-            return finalContent;
-
-        } catch (error) {
-            return "PAGE PARSE ERROR";
-        }
     }
 
     // Load selected text from storage
@@ -908,74 +852,6 @@ ${captionText}
             console.error(error);
             consoleError('Selected text could not be loaded: ', error.messsage);
         }
-    }
-
-    function findLargestVisibleImage() {
-        const imgs = Array.from(document.querySelectorAll("img"));
-
-        let largestImg = null;
-        let largestArea = 0;
-
-        imgs.forEach(img => {
-            const rect = img.getBoundingClientRect();
-
-            // Пропускаем скрытые элементы
-            if (rect.width <= 0 || rect.height <= 0) return;
-            if (!img.src) return;
-
-            const style = window.getComputedStyle(img);
-            if (
-                style.display === "none" ||
-                style.visibility === "hidden" ||
-                parseFloat(style.opacity) === 0
-            ) return;
-
-            // Пропускаем “пустые” изображения
-            if (img.naturalWidth <= 1 || img.naturalHeight <= 1) return;
-
-            // Проверяем, что хотя бы центр изображения видим и не перекрыт
-            const cx = rect.left + rect.width / 2;
-            const cy = rect.top + rect.height / 2;
-            const topElement = document.elementFromPoint(cx, cy);
-
-            if (!img.contains(topElement) && topElement !== img) return;
-
-            // Площадь на экране
-            const area = rect.width * rect.height;
-
-            if (area > largestArea) {
-                largestArea = area;
-                largestImg = img;
-            }
-        });
-
-        return largestImg?.src || null;
-    }
-
-    function findDescription() {
-        // 1. meta description
-        let el = document.querySelector('meta[name="description"]');
-        if (el?.content?.trim()) return el.content.trim();
-
-        // 2. og:description
-        el = document.querySelector('meta[property="og:description"]');
-        if (el?.content?.trim()) return el.content.trim();
-
-        // 3. twitter:description
-        el = document.querySelector('meta[name="twitter:description"]');
-        if (el?.content?.trim()) return el.content.trim();
-
-        // 4. first meaningful <p>
-        const p = Array.from(document.querySelectorAll("p"))
-            .map(p => p.innerText.trim())
-            .find(text => text.length > 30 && text.length < 100);
-        if (p) return p;
-
-        // 5. title
-        if (document.title?.trim()) return document.title.trim();
-
-        // 6. fallback
-        return '';
     }
 
     //#endregion
