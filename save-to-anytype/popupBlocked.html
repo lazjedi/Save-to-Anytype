@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Save to Anytype</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="containerPopapBlocked">
+        <div id="zoomContainer">
+            <h2><img src="assets/icon16.png" alt=""> Save to Anytype</h2>
+
+            <div id="blockedSection" class="hidden">
+                <div id="blockedSectionAnimation">
+                    <div class="card">
+                        <div id="blockedSectionText" class="alert-loading-title">❌ You cannot use the extension on this page</div>
+                    </div>
+
+                        <button id="OpenAnytypeBtn" class="btn-primary">
+                            <span id="OpenAnytypeBtnText" data-locale-key="OpenAnytype">OpenAnytype</span>
+                        </button>
+                    </div>
+                </div>
+
+            <div id="loadingSection" class="hidden">
+                <div class="card">
+                    <div class="alert-loading-title" data-locale-key="Loading">❌ You cannot use the extension on this page</div>
+                </div>
+            </div>
+
+            <!-- Status messages -->
+            <div id="status" class="status hidden"></div>
+        </div>
+    </div>
+</body>
+
+    <script src='LocalizationService.js'></script>
+    <script src='popupBlocked.js'></script>
+
+</html>

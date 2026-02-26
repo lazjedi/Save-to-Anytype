@@ -5,14 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Save to Anytype</title>
-
     <link rel="stylesheet" href="style.css">
-
-    <script src='LocalizationService.js'></script>
-    <script src="Libraries/choices.min.js"></script>
-    <script src='Libraries/jquery-3.7.1.min.js'></script>
-    <script src='Libraries/Sortable.js'></script>
-    <script src='Libraries/jscolor.js'></script>
 </head>
 
 <body>
@@ -161,7 +154,10 @@
                 </button>
 
                 <div id="settingsSectionAnimation">
-                    <div class="section-title" data-locale-key="ReopenSettings">ReopenSettings</div>
+                    <center>
+                        <div class="section-title redText" data-locale-key="ReopenSettings">ReopenSettings</div>
+                    </center>
+
                     <div class="card">
                         
                         <div class="form-group">
@@ -192,6 +188,12 @@
                             <input id="colorInput" class="jscolor" value="ab2567">
                         </div>
 
+                        <div class="form-group checkbox-rect">
+                            <div class="section-title" data-locale-key="FilledPropertiesSetting">FilledPropertiesSetting</div>
+                            <input id="collapseInputSettings" type="checkbox">
+                            <label for="collapseInputSettings"></label>
+                        </div>
+
                         <div class="form-group">
                             <div for="zoomRangeValue" class="section-title">
                                 <span data-locale-key="ScaleOfElements">ScaleOfElements</span>
@@ -199,6 +201,26 @@
                             </div>
                             <center>
                                 <input type="range" id="zoomRangeValue" min="0.75" max="1.25" step="0.01" value="1">
+                            </center>
+                        </div>
+
+                        <div class="form-group">
+                            <div for="heightRangeValue" class="section-title">
+                                <span data-locale-key="HeightOfPopap">HeightOfPopap</span>
+                                <span id="heightCurrentRange">70</span>
+                            </div>
+                            <center>
+                                <input type="range" id="heightRangeValue" min="30" max="100" step="1" value="70">
+                            </center>
+                        </div>
+
+                        <div class="form-group">
+                            <div for="widthRangeValue" class="section-title">
+                                <span data-locale-key="WidthOfPopap">WidthOfPopap</span>
+                                <span id="widthCurrentRange">70</span>
+                            </div>
+                            <center>
+                                <input type="range" id="widthRangeValue" min="20" max="40" step="1" value="24">
                             </center>
                         </div>
 
@@ -254,13 +276,17 @@
                     </div>
 
                     <div class="card" id="propertiesSaveObjectListWithDefaultValueHandler">
+                        <div class="toggle-btn" id="propertiesSaveObjectListWithDefaultValueHandlerToggle">
+                            <div id="propertiesSaveObjectListWithDefaultValueHandlerToggleText"></div>
+                            <div id="propertiesSaveObjectListWithDefaultValueHandlerToggleSign"></div>
+                        </div>
+                        <div class="propertiesSaveObjectListWithDefaultValueHandlerContent" id="propertiesSaveObjectListWithDefaultValueHandlerContent"></div>
                     </div>
-
-                <!-- Save button -->
-                <button id="saveObjectBtn" class="btn-primary">
-                    <span id="saveObjectBtnText" data-locale-key="SaveObjectButton">SaveObjectButton</span>
-                </button>
             </div>
+            <!-- Save button -->
+            <button id="saveObjectBtn" class="btn-save-object">
+                <span id="saveObjectBtnText" data-locale-key="SaveObjectButton">SaveObjectButton</span>
+            </button>
         </div>
         
         <div id="objectSavedSection" class="hidden">
@@ -297,8 +323,14 @@
             <div id="status" class="status hidden"></div>
         </div>
     </div>
-
-    <script src="popup.js"></script>
 </body>
+
+    <script src='LocalizationService.js'></script>
+    <script src="Libraries/choices.min.js"></script>
+    <script src='Libraries/jquery-3.7.1.min.js'></script>
+    <script src='Libraries/Sortable.js'></script>
+    <script src='Libraries/jscolor.js'></script>
+    <script src='Libraries/turndown.js'></script>
+    <script src='popup.js'></script>
 
 </html>

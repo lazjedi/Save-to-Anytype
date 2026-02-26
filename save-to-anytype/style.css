@@ -14,6 +14,8 @@
     --background-focus: #1a1a1a;
     --input-text-color: #e0e0e0;
     --section-title-color: #888888;
+    --btnSaveObject: #355d33;
+    --btnSaveObjectHover: #264525;
 }
 
 .jscolor-border {
@@ -35,39 +37,42 @@
 }
 
 body {
-    width: 450px;
-    min-height: 600px;
-    max-height: 600px;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    background: var(--back-color);
-    color: var(--text-color);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background: var(--back-color);
+  color: var(--text-color);
+  height: 100vh;
+  overflow: hidden;
 }
 
 .container {
-    padding: 20px;
-
-    min-height: 600px;
-    max-height: 600px;
-    overflow-y: auto;
-    overflow-x: hidden;
-    scrollbar-gutter: stable;
+  padding: 10px;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
 }
 
-.container::-webkit-scrollbar {
+.containerPopapBlocked{
+  padding: 20px;
+  min-height: 300px;
+  min-width: 300px;
+}
+
+*::-webkit-scrollbar {
     width: 6px;
 }
 
-.container::-webkit-scrollbar-track {
+*::-webkit-scrollbar-track {
     background: var(--color3);
     border-radius: 3px;
 }
 
-.container::-webkit-scrollbar-thumb {
+*::-webkit-scrollbar-thumb {
     background: var(--color4);
     border-radius: 3px;
 }
 
-.container::-webkit-scrollbar-thumb:hover {
+*::-webkit-scrollbar-thumb:hover {
     background: var(--color5);
 }
 
@@ -113,10 +118,52 @@ body {
   opacity: 1;
 }
 
-input[type="checkbox"] {
-  scale: 2;
-  accent-color: var(--accent-color);
+.poperty-head {
+  display: flex;
+  gap: 7px;
 }
+
+/* checkbox-rect */
+.checkbox-rect {
+  
+}
+.checkbox-rect input[type="checkbox"] {
+  display: none;
+  cursor: pointer;
+}
+.checkbox-rect input[type="checkbox"]:hover + label:before {
+  background: rgba(255, 255, 255, 0.3); /* background: var(--accent-color); */
+  box-shadow: inset 0px 0px 0px 2px var(--card-color);
+  cursor: pointer;
+}
+.checkbox-rect input[type="checkbox"] + label:last-child {
+  margin-bottom: 0;
+  cursor: pointer;
+}
+.checkbox-rect input[type="checkbox"] + label:before {
+  content: "";
+  display: block;
+  width: 1.6em;
+  height: 1.6em;
+  border: 1px solid var(--accent-color);
+  border-radius: 0.2em;
+  -webkit-transition: all 0.2s, background 0.2s ease-in-out;
+  transition: all 0.2s, background 0.2s ease-in-out;
+  background: var(--card-color);
+  cursor: pointer;
+}
+.checkbox-rect input[type="checkbox"]:checked + label:before {
+  width: 1.6em;
+  height: 1.6em;
+  border-radius: 0.2em;
+  border: 2px solid var(--card-color);
+  -webkit-transform: rotate(90deg);
+  transform: rotate(90deg);
+  background: var(--accent-color);
+  box-shadow: 0 0 0 1px var(--accent-color);
+  cursor: pointer;
+}
+/* checkbox-rect end */
 
 h2 {
     font-size: 24px;
@@ -173,20 +220,135 @@ h3 {
   cursor: pointer;
 }
 
+#heightRangeValue {
+  -webkit-appearance: none;
+  width: 300px;
+  height: 8px;
+  background: none; 
+  border-radius: 5px;
+  border: none;
+  outline: none;
+}
+
+#heightRangeValue::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  background: var(--accent-color);
+  border-radius: 50%;
+  cursor: pointer;
+  margin-top: -6px;
+}
+
+#heightRangeValue::-webkit-slider-runnable-track {
+  height: 8px;
+  border-radius: 5px;
+  background: var(--color4);
+}
+
+#heightRangeValue::-moz-range-track {
+  height: 8px;
+  border-radius: 5px;
+  background: var(--color4);
+}
+
+#heightRangeValue::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: var(--accent-color);
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+}
+
+#widthRangeValue {
+  -webkit-appearance: none;
+  width: 300px;
+  height: 8px;
+  background: none; 
+  border-radius: 5px;
+  border: none;
+  outline: none;
+}
+
+#widthRangeValue::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  background: var(--accent-color);
+  border-radius: 50%;
+  cursor: pointer;
+  margin-top: -6px;
+}
+
+#widthRangeValue::-webkit-slider-runnable-track {
+  height: 8px;
+  border-radius: 5px;
+  background: var(--color4);
+}
+
+#widthRangeValue::-moz-range-track {
+  height: 8px;
+  border-radius: 5px;
+  background: var(--color4);
+}
+
+#widthRangeValue::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: var(--accent-color);
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+}
+
 .new-form-icon {
-    mask: url(assets/new-form.svg) no-repeat center / contain;
-    -webkit-mask: url(assets/new-form.svg) no-repeat center / contain;
-    height: 200px;
-    width: 200px;
+  mask: url(assets/new-form.svg) no-repeat center / contain;
+  -webkit-mask: url(assets/new-form.svg) no-repeat center / contain;
+  height: 200px;
+  width: 200px;
 }
 
 .card {
-    background: var(--card-color);
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 15px;
-    border: 1px solid #2a2a2a;
+  background: var(--card-color);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 15px;
+  border: 1px solid #2a2a2a;
+  transition: all 0.3s ease;
 }
+
+/* collapsed card start */
+.toggle-btn {
+  cursor: pointer;
+  font-size: 17px;
+  user-select: none;
+  margin-bottom: 10px;
+  transition: all 0.3s ease;
+  display: flex;
+  justify-content: space-between;
+}
+
+.toggle-btn:hover {
+  scale: 1.02;
+}
+
+.propertiesSaveObjectListWithDefaultValueHandlerContent {
+  transition: all 0.3s ease;
+}
+
+.collapsed .propertiesSaveObjectListWithDefaultValueHandlerContent {
+  display: none;
+  transition: all 0.3s ease;
+}
+
+.collapsed::after {
+  content: "";
+  display: block;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+/* collapsed card end */
 
 .form-card {
   background: var(--card-color);
@@ -291,17 +453,35 @@ button {
     transform: translateY(-1px);
 }
 
+.btn-save-object {
+  position: fixed;
+  bottom: 10px;
+  width: 50%;
+  left: 25%;
+  background: var(--btnSaveObject);
+  animation: slideInShort 0.15s linear;
+}
+
+.btn-save-object:hover {
+  background: var(--btnSaveObjectHover);
+  transform: translateY(-1px);
+}
+
 .btn-right-top {
     position: absolute;
     width: 25px;
     height: 25px;
-    top: 25px;
-    right: 35px;
+    top: 16px;
+    right: 23px;
     cursor: pointer;
     z-index: 99999;
     padding: 0;
     background: none;
     filter: brightness(var(--icon-brightness));
+}
+
+.redText {
+  color: #ff3737;
 }
 
 .btn-right-top:hover {
@@ -389,7 +569,7 @@ button {
     padding: 12px;
     border-radius: 8px;
     margin-top: 15px;
-    margin-bottom: 15px;
+    margin-bottom: 50px;
     text-align: center;
     font-size: 13px;
     font-weight: 500;
@@ -461,7 +641,8 @@ button {
 }
 
 #saveObjectSectionAnimation {
-    animation: slideIn 0.5s ease;
+  padding-bottom: 15px;
+  animation: slideIn 0.5s ease;
 }
 
 #confirmDeleteFormSectionAnimation {
@@ -480,6 +661,18 @@ button {
     from {
         opacity: 0;
         transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInShort {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
     }
 
     to {
