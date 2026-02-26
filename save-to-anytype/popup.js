@@ -624,6 +624,10 @@ async function localPopapInited() {
         widthCurrentRange: document.getElementById('widthCurrentRange')
     };
 
+    const chromeTABS = await chrome.runtime.sendMessage({
+        action: "GET_TABS"
+    });
+
     function createTurndownService() {
         const service = new TurndownService({
             headingStyle: 'atx',
@@ -761,7 +765,7 @@ ${captionText}
         }
 
         // Get current tab info
-        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        const [tab] = chromeTABS;
         if (tab) {
             WebPagePropierties.find(p => p.id == "tab_title").value = tab.title || '';
             WebPagePropierties.find(p => p.id == "page_url").value = tab.url || '';
@@ -1828,8 +1832,6 @@ ${captionText}
             // Update type select dropdown
             elements.typeSelect.innerHTML = '';
 
-            const response = await chrome.tabs.query({ active: true, currentWindow: true });
-
             const typesResponse = await fetch(`${API_BASE_URL}/spaces/${selectedSpaceId}/types`, {
                 headers: {
                     'Authorization': `Bearer ${state.apiKey}`,
@@ -2069,8 +2071,6 @@ ${captionText}
 
     async function loadObjectTemplates(selectedTypeId) {
         try {
-            const response = await chrome.tabs.query({ active: true, currentWindow: true });
-
             consoleLog('Loading Templates for space: ' + selectedSpaceId + " , type.id " + selectedTypeId);
 
             const typesTemplatesResponse = await fetch(`${API_BASE_URL}/spaces/${selectedSpaceId}/types/${selectedTypeId}/templates`, {
@@ -2203,8 +2203,6 @@ ${captionText}
     async function loadObjectProperties() {
         try {
             consoleLog('Loading Properties for space:', selectedSpaceId);
-
-            const response = await chrome.tabs.query({ active: true, currentWindow: true });
 
             elements.propertiesListHandler.innerHTML = "";
             propertiesListSpawned = [];
@@ -2433,8 +2431,6 @@ ${captionText}
 
             elements.propertiesSaveObjectListWithoutDefaultValueHandler.innerHTML = '';
             elements.propertiesSaveObjectListWithDefaultValueHandlerContent.innerHTML = '';
-
-            const response = await chrome.tabs.query({ active: true, currentWindow: true });
 
             currentForm = form;
             propertiesListForSaving = [];

@@ -168,6 +168,16 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         CreateContextMenusButtons(request);
         return true;
     }
+
+    if (request.action === "GET_TABS") {
+        chrome.tabs.query(
+            { active: true, currentWindow: true },
+            (tabs) => {
+                sendResponse(tabs);
+            }
+        );
+        return true;
+    }
 });
 
 chrome.action.onClicked.addListener(async (tab) => {
