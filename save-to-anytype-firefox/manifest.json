@@ -1,9 +1,16 @@
 {
   "manifest_version": 3,
   "name": "Save to Anytype",
-  "version": "0.1.3",
+  "version": "0.1.5",
   "description": "Save important web pages with your selected text in Markdown format to Anytype.",
-  "permissions": ["scripting", "activeTab", "storage", "tabs", "contextMenus", "alarms"],
+  "permissions": [
+    "scripting",
+    "activeTab",
+    "storage",
+    "tabs",
+    "contextMenus",
+    "alarms"
+  ],
   "host_permissions": ["http://localhost:31009/*"],
   "background": {
     "scripts": ["background.js"]
@@ -16,7 +23,6 @@
     "512": "assets/icon512.png"
   },
   "action": {
-    "default_popup": "popup.html",
     "default_icon": {
       "16": "assets/icon16.png",
       "48": "assets/icon48.png",
@@ -26,6 +32,23 @@
     },
     "default_title": "Save to Anytype"
   },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "style.css",
+        "popup.html",
+        "popup.js",
+        "popupBlocked.html",
+        "popupBlocked.js",
+        "localizations.json",
+        "assets/settings.svg",
+        "assets/cross.svg",
+        "assets/dots.svg",
+        "assets/trash.svg"
+      ],
+      "matches": ["<all_urls>"]
+    }
+  ],
   "content_scripts": [
     {
       "matches": ["<all_urls>"],

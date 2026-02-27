@@ -84,7 +84,11 @@
       "OpenFirstForm": "Open first form",
       "OpenLastUsedForm": "Open last used Form",
       "FormWelcomeText": "You need create a form before saving an object to Anytype. You can think of forms as templates. Forms reflect the way objects are saved.",
-      "ScaleOfElements": "Scale of elements: "
+      "ScaleOfElements": "Scale of elements: ",
+      "HeightOfPopap": "Window height (%): ",
+      "WidthOfPopap": "Window width (%): ",
+      "FilledProperties": "Filled properties",
+      "FilledPropertiesSetting": "When opening the form, the filled properties are collapsed"
     },
     {
       "languageName": "Русский",
@@ -170,7 +174,11 @@
       "OpenFirstForm": "Открывать первую форму",
       "OpenLastUsedForm": "Открыть последнюю использованную форму",
       "FormWelcomeText": "Перед сохранением объекта в Anytype необходимо создать форму. Формы можно рассматривать как шаблоны. Формы отражают способ сохранения объектов.",
-      "ScaleOfElements": "Масштаб элементов: "
+      "ScaleOfElements": "Масштаб элементов: ",
+      "HeightOfPopap": "Высота окна (%): ",
+      "WidthOfPopap": "Ширина окна (%): ",
+      "FilledProperties": "Заполненные свойства",
+      "FilledPropertiesSetting": "При открытии формы заполненые свойства свернуты"
     },
     {
       "languageName": "Türkçe",
@@ -256,7 +264,11 @@
       "OpenFirstForm": "İlk formu aç",
       "OpenLastUsedForm": "Son kullanılan formu aç",
       "FormWelcomeText": "Anytype'a nesne kaydetmeden önce bir form oluşturmalısın. Formları şablon gibi düşünebilirsin. Formlar, nesneleri kaydetme biçimini yansıtır.",
-      "ScaleOfElements": "Arayüz ölçeği: "
+      "ScaleOfElements": "Arayüz ölçeği: ",
+      "HeightOfPopap": "Pencere yüksekliği (%): ",
+      "WidthOfPopap": "Pencere genişliği (%): ",
+      "FilledProperties": "Doldurulmuş özellikler",
+      "FilledPropertiesSetting": "Form açıldığında doldurulmuş özellikler daraltılır"
     },
     {
       "languageName": "Deutsch",
@@ -342,7 +354,11 @@
       "OpenFirstForm": "Erstes Formular öffnen",
       "OpenLastUsedForm": "Zuletzt verwendetes Formular öffnen",
       "FormWelcomeText": "Bevor Sie ein Objekt in Anytype speichern, müssen Sie ein Formular erstellen. Formulare können Sie sich wie Vorlagen vorstellen. Formulare spiegeln die Art und Weise wider, wie Objekte gespeichert werden.",
-      "ScaleOfElements": "Element skalierung: "
+      "ScaleOfElements": "Element skalierung: ",
+      "HeightOfPopap": "Fensterhöhe (%): ",
+      "WidthOfPopap": "Fensterbreite (%): ",
+      "FilledProperties": "Ausgefüllte Eigenschaften",
+      "FilledPropertiesSetting": "Beim Öffnen des Formulars werden ausgefüllte Eigenschaften eingeklappt angezeigt"
     },
     {
       "languageName": "Français",
@@ -428,7 +444,11 @@
       "OpenFirstForm": "Ouvrir le premier formulaire",
       "OpenLastUsedForm": "Ouvrir le dernier formulaire utilisé",
       "FormWelcomeText": "Vous devez créer un formulaire avant d'enregistrer un objet dans Anytype. Vous pouvez considérer les formulaires comme des modèles. Les formulaires reflètent la manière dont les objets sont enregistrés.",
-      "ScaleOfElements": "Échelle des éléments: "
+      "ScaleOfElements": "Échelle des éléments: ",
+      "HeightOfPopap": "Hauteur de la fenêtre (%): ",
+      "WidthOfPopap": "Largeur de la fenêtre (%): ",
+      "FilledProperties": "Propriétés remplies",
+      "FilledPropertiesSetting": "Lors de l'ouverture du formulaire, les propriétés remplies s'affichent réduites"
     },
     {
       "languageName": "Español",
@@ -514,7 +534,11 @@
       "OpenFirstForm": "Abrir el primer formulario",
       "OpenLastUsedForm": "Abrir el último formulario utilizado",
       "FormWelcomeText": "Es necesario crear un formulario antes de guardar un objeto en Anytype. Los formularios pueden considerarse como plantillas. Los formularios reflejan la forma en que se guardan los objetos.",
-      "ScaleOfElements": "Escala de elementos: "
+      "ScaleOfElements": "Escala de elementos: ",
+      "HeightOfPopap": "Altura de la ventana (%): ",
+      "WidthOfPopap": "Ancho de la ventana (%): ",
+      "FilledProperties": "Propiedades completadas",
+      "FilledPropertiesSetting": "Al abrir el formulario, las propiedades completadas se muestran plegadas"
     },
     {
       "languageName": "Italiano",
@@ -600,7 +624,11 @@
       "OpenFirstForm": "Apri il primo modulo",
       "OpenLastUsedForm": "Apri l'ultimo modulo utilizzato",
       "FormWelcomeText": "È necessario creare un modulo prima di salvare un oggetto su Anytype. I moduli possono essere considerati come modelli. I moduli riflettono il modo in cui vengono salvati gli oggetti.",
-      "ScaleOfElements": "Scala degli elementi: "
+      "ScaleOfElements": "Scala degli elementi: ",
+      "HeightOfPopap": "Altezza della finestra (%): ",
+      "WidthOfPopap": "Larghezza della finestra (%): ",
+      "FilledProperties": "Proprietà compilate",
+      "FilledPropertiesSetting": "All'apertura del modulo, le proprietà compilate vengono visualizzate ridotte"
     },
     {
       "languageName": "Polski",
@@ -686,7 +714,11 @@
       "OpenFirstForm": "Otwórz pierwszy formularz",
       "OpenLastUsedForm": "Otwórz ostatnio używany formularz",
       "FormWelcomeText": "Przed zapisaniem obiektu w Anytype należy utworzyć formularz. Formularze można traktować jako szablony. Formularze odzwierciedlają sposób zapisywania obiektów.",
-      "ScaleOfElements": "Skala elementów: "
+      "ScaleOfElements": "Skala elementów: ",
+      "HeightOfPopap": "Wysokość okna (%): ",
+      "WidthOfPopap": "Szerokość okna (%): ",
+      "FilledProperties": "Wypełnione właściwości",
+      "FilledPropertiesSetting": "Po otwarciu formularza wypełnione właściwości są wyświetlane złożone"
     },
     {
       "languageName": "러시아어",
@@ -772,7 +804,11 @@
       "OpenFirstForm": "첫 번째 폼 열기",
       "OpenLastUsedForm": "마지막으로 사용한 폼 열기",
       "FormWelcomeText": "Anytype에 객체를 저장하기 전에 양식을 생성해야 합니다. 양식은 템플릿으로 생각할 수 있습니다. 양식은 객체가 저장되는 방식을 반영합니다.",
-      "ScaleOfElements": "요소 크기: "
+      "ScaleOfElements": "요소 크기: ",
+      "HeightOfPopap": "창 높이 (%): ",
+      "WidthOfPopap": "창 너비 (%): ",
+      "FilledProperties": "채워진 속성",
+      "FilledPropertiesSetting": "양식을 열 때 채워진 속성이 접힌 상태로 열립니다"
     },
     {
       "languageName": "俄语",
@@ -858,7 +894,11 @@
       "OpenFirstForm": "打开第一个表单",
       "OpenLastUsedForm": "打开最后使用的表单",
       "FormWelcomeText": "在将对象保存至Anytype之前，您需要创建一个表单。表单可视为模板，它们决定了对象的保存方式。",
-      "ScaleOfElements": "元素缩放: "
+      "ScaleOfElements": "元素缩放: ",
+      "HeightOfPopap": "窗口高度 (%): ",
+      "WidthOfPopap": "窗口宽度 (%): ",
+      "FilledProperties": "已填写的属性",
+      "FilledPropertiesSetting": "打开表单时，已填写的属性以折叠状态显示"
     },
     {
       "languageName": "ロシア語",
@@ -944,7 +984,11 @@
       "OpenFirstForm": "最初のフォームを開く",
       "OpenLastUsedForm": "最後に使用したフォームを開く",
       "FormWelcomeText": "Anytypeにオブジェクトを保存する前に、フォームを作成する必要があります。フォームはテンプレートと考えてください。フォームはオブジェクトの保存方法を反映します。",
-      "ScaleOfElements": "要素のスケール: "
+      "ScaleOfElements": "要素のスケール: ",
+      "HeightOfPopap": "ウィンドウの高さ (%): ",
+      "WidthOfPopap": "ウィンドウの幅 (%): ",
+      "FilledProperties": "入力済みのプロパティ",
+      "FilledPropertiesSetting": "フォームを開くと、入力済みのプロパティが折りたたまれた状態で表示されます"
     },
     {
       "languageName": "रूसी",
@@ -1030,7 +1074,11 @@
       "OpenFirstForm": "पहला फ़ॉर्म खोलें",
       "OpenLastUsedForm": "अंतिम इस्तेमाल किया गया फ़ॉर्म खोलें",
       "FormWelcomeText": "किसी ऑब्जेक्ट को Anytype में सेव करने से पहले आपको एक फ़ॉर्म बनाना होगा। आप फ़ॉर्म को टेम्पलेट की तरह समझ सकते हैं। फ़ॉर्म ऑब्जेक्ट को सेव करने के तरीके को दिखाते हैं।",
-      "ScaleOfElements": "तत्व स्केल: "
+      "ScaleOfElements": "तत्व स्केल: ",
+      "HeightOfPopap": "विंडो की ऊँचाई (%): ",
+      "WidthOfPopap": "विंडो की चौड़ाई (%): ",
+      "FilledProperties": "भरी हुई विशेषताएँ",
+      "FilledPropertiesSetting": "फ़ॉर्म खोलने पर भरी हुई विशेषताएँ संकुचित अवस्था में खुलती हैं"
     }
   ]
 }
