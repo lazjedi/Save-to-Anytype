@@ -110,7 +110,7 @@ function extractPageText() {
         });
 
         const unwanted = bodyClone.querySelectorAll(
-            'script, style, nav, footer, aside, .ads, .comments, [role="complementary"], .cookie-banner, .popup, .overlay, .modal'
+            'script, style, nav, footer, aside, .ads, .comments, [role="complementary"], .cookie-banner, .popup, .overlay, .modal, #save-to-anytype-overlay'
         );
         unwanted.forEach(el => el.remove());
 
