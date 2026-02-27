@@ -12,6 +12,8 @@ if (document.readyState === "complete" || document.readyState === "interactive")
 }
 
 async function localPopapInited() {
+    const DEFAULT_ACCENT_COLOR = '#ff3030ff';
+
     const elements = {
         blockedSection: document.getElementById('blockedSection'),
         blockedSectionText: document.getElementById('blockedSectionText'),
@@ -97,7 +99,7 @@ async function localPopapInited() {
                 if (languageExist)
                     stateBlocked.language = langShort;
 
-                UpdateTheTranslation();
+                elements.blockedSectionText.innerText = Localize("blockedSectionURLRejected", stateBlocked.language);
             });
         }
 
