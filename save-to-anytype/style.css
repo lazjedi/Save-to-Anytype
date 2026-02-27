@@ -917,15 +917,16 @@ strong {
 .choices[data-type*="text"] .choices__button {
   position: relative;
   display: inline-block;
-  margin: 0-4px 0 8px;
+  margin: 0 -4px 0 8px;
   padding-left: 16px;
   border-left: 1px solid #003642;
-  background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjEiIGhlaWdodD0iMjEiIHZpZXdCb3g9IjAgMCAyMSAyMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSIjRkZGIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0yLjU5Mi4wNDRsMTguMzY0IDE4LjM2NC0yLjU0OCAyLjU0OEwuMDQ0IDIuNTkyeiIvPjxwYXRoIGQ9Ik0wIDE4LjM2NEwxOC4zNjQgMGwyLjU0OCAyLjU0OEwyLjU0OCAyMC45MTJ6Ii8+PC9nPjwvc3ZnPg==);
-  background-size: 8px;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="black" viewBox="6 6 12 12"><path d="M6 6L18 18M6 18L18 6" stroke="black" stroke-width="3"/></svg>');
+  background-size: 10px;
   width: 8px;
   line-height: 1;
   opacity: 0.75;
   border-radius: 0;
+  height: 5px;
 }
 .choices[data-type*="select-multiple"] .choices__button:focus,
 .choices[data-type*="select-multiple"] .choices__button:hover,
@@ -977,7 +978,7 @@ strong {
   display: inline;
 }
 .choices__list--multiple .choices__item {
-  display: inline-block;
+  display: inline-flex;
   vertical-align: middle;
   border-radius: 20px;
   padding: 4px 10px;
@@ -990,6 +991,9 @@ strong {
   color: var(--text-color-inverted);
   word-break: break-all;
   box-sizing: border-box;
+  height: fit-content;
+  width: fit-content;
+  align-items: center;
 }
 .choices__list--multiple .choices__item[data-deletable] {
   padding-right: 5px;
