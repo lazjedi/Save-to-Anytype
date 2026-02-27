@@ -2456,6 +2456,7 @@ ${captionText}
 
                     if (property.format === "checkbox") {
                         propertyHTML.classList.add("poperty-head");
+                        propertyHTML.classList.add("margin-bottom15");
                     }
 
                     if (savedPropertyValueExist && property.id !== "nameId")

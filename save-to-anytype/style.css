@@ -125,7 +125,7 @@ body {
 
 /* checkbox-rect */
 .checkbox-rect {
-  
+  margin-bottom: 0px !important;
 }
 .checkbox-rect input[type="checkbox"] {
   display: none;
@@ -927,6 +927,9 @@ strong {
   opacity: 0.75;
   border-radius: 0;
   height: 5px;
+}
+.margin-bottom15 {
+  margin-bottom: 15px;
 }
 .choices[data-type*="select-multiple"] .choices__button:focus,
 .choices[data-type*="select-multiple"] .choices__button:hover,
