@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Save to Anytype",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Save important web pages with your selected text in Markdown format to Anytype.",
   "permissions": [
     "scripting",
@@ -49,6 +49,11 @@
       "matches": ["<all_urls>"]
     }
   ],
+  "sidebar_action": {
+    "default_icon": "/assets/icon16.png",
+    "default_title": "Save to Anytype",
+    "default_panel": "sidepanel.html"
+  },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
