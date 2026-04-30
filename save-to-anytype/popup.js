@@ -7,7 +7,7 @@ const DEFAULT_ACCENT_COLOR = '#ff3030ff';
 
 // Color normalization
 function normalizeColor(colorValue) {
-    if (!colorValue) return "#181818";
+    if (!colorValue) return null;
 
     const colorMap = {
         'grey': '#414141',
@@ -2339,14 +2339,25 @@ ${captionText}
                 });
 
                 const applyColorToChoices = () => {
-                    const items = selectElement.parentElement.querySelectorAll('.choices__item');
+                    const items = selectElement.parentElement.parentElement.querySelectorAll('.choices__item');
                     items.forEach(item => {
                         const value = item.getAttribute('data-value');
                         const option = selectElement.querySelector(`option[value="${value}"]`);
                         if (option) {
                             const color = normalizeColor(option.getAttribute('prefered-color'));
                             if (color) {
-                                item.style.backgroundColor = color;
+                                if (item.hasAttribute('data-choice')) {
+                                    let colorDot = item.querySelector('.choice-color-dot');
+                                    if (!colorDot) {
+                                        colorDot = document.createElement('span');
+                                        colorDot.className = 'choice-color-dot';
+                                        item.insertBefore(colorDot, item.firstChild);
+                                    }
+                                    colorDot.style.backgroundColor = color;
+                                }
+                                else {
+                                    item.style.backgroundColor = color;
+                                }
                             }
                         }
                     });

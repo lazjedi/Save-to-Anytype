@@ -813,6 +813,15 @@ strong {
     color: #ffffff;
 }
 
+.choice-color-dot {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  margin-right: 6px;
+  margin-top: -2px;
+  vertical-align: middle;
+}
 .choices {
   position: relative;
   overflow: hidden;
