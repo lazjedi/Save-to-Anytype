@@ -39,36 +39,12 @@ async function localPopapInited() {
     });
 
     function ChangeTheme() {
-        linkCSS = document.documentElement;
+        const linkCSS = document.documentElement;
+        const themeConfig = window.ThemeConfig.getThemeConfig(stateBlocked.theme, stateBlocked.accentColor);
 
-        if (stateBlocked.theme === "dark") { // dark mode
-            linkCSS.style.setProperty('--text-color', '#e0e0e0');
-            linkCSS.style.setProperty('--text-color-inverted', '#080808');
-            linkCSS.style.setProperty('--back-color', '#0f0f0f');
-            linkCSS.style.setProperty('--color1', '#101010');
-            linkCSS.style.setProperty('--color2', '#070707');
-            linkCSS.style.setProperty('--color3', '#1a1a1a');
-            linkCSS.style.setProperty('--color4', '#333333');
-            linkCSS.style.setProperty('--color5', '#363636');
-            linkCSS.style.setProperty('--card-color', '#000000');
-            linkCSS.style.setProperty('--icon-brightness', '255');
-        }
-        else { // light mode
-            linkCSS.style.setProperty('--background', '#ffffff');
-            linkCSS.style.setProperty('--background-focus', '#ecececff');
-            linkCSS.style.setProperty('--input-text-color', '#080808');
-            linkCSS.style.setProperty('--section-title-color', '#080808');
-            linkCSS.style.setProperty('--text-color', '#080808');
-            linkCSS.style.setProperty('--text-color-inverted', '#e0e0e0');
-            linkCSS.style.setProperty('--back-color', '#ebebeb');
-            linkCSS.style.setProperty('--color1', '#ddd');
-            linkCSS.style.setProperty('--color2', '#fff');
-            linkCSS.style.setProperty('--color3', '#f9f9f9');
-            linkCSS.style.setProperty('--color4', '#b7b7b7');
-            linkCSS.style.setProperty('--color5', '#f2f2f2');
-            linkCSS.style.setProperty('--card-color', '#ffffff');
-            linkCSS.style.setProperty('--icon-brightness', '0');
-        }
+        Object.entries(themeConfig.variables).forEach(([key, val]) => {
+            linkCSS.style.setProperty(key, val);
+        });
     }
 
     async function loadState() {

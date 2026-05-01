@@ -363,7 +363,7 @@ chrome.action.onClicked.addListener(async (tab) => {
         "https://chromewebstore.google.com/"
     ];
 
-    if (Qr.some((t) => url.startsWith(t)) || url == "") {
+    if (url == undefined || Qr.some((t) => url.startsWith(t)) || url == "") {
         await chrome.action.setPopup({
             popup: "popupBlocked.html",
             tabId: tab.id,

@@ -1,4 +1,8 @@
 :root {
+    --background: #1a1a1a;
+    --background-focus: #1a1a1a;
+    --input-text-color: #e0e0e0;
+    --section-title-color: #888888;
     --text-color: #080808;
     --text-color-inverted: #080808;
     --back-color: #ebebeb;
@@ -8,14 +12,13 @@
     --color4: #b7b7b7;
     --color5: #f2f2f2;
     --card-color: #ffffff;
+    --borders-color: #2a2a2a;
     --icon-brightness: 0;
-    --accent-color: #ff3030ff;
-    --background: #1a1a1a;
-    --background-focus: #1a1a1a;
-    --input-text-color: #e0e0e0;
-    --section-title-color: #888888;
+
     --btnSaveObject: #355d33;
     --btnSaveObjectHover: #264525;
+
+    --accent-color: #ff3030ff;
 }
 
 .jscolor-border {
@@ -124,6 +127,15 @@ body {
 }
 
 /* checkbox-rect */
+.checkbox-rect-icon {
+  position: relative;
+  top: -22px;
+  stroke: var(--text-color-inverted);
+  display: none;
+}
+.checkbox-rect input[type="checkbox"]:checked + label .checkbox-rect-icon {
+  display: block;
+}
 .checkbox-rect {
   margin-bottom: 0px !important;
 }
@@ -139,6 +151,8 @@ body {
 .checkbox-rect input[type="checkbox"] + label:last-child {
   margin-bottom: 0;
   cursor: pointer;
+  height: 1px;
+  display: inline-grid;
 }
 .checkbox-rect input[type="checkbox"] + label:before {
   content: "";
@@ -314,7 +328,7 @@ h3 {
   border-radius: 12px;
   padding: 20px;
   margin-bottom: 15px;
-  border: 1px solid #2a2a2a;
+  border: 1px solid var(--borders-color);
   transition: all 0.3s ease;
 }
 
@@ -355,7 +369,7 @@ h3 {
   border-radius: 12px;
   padding: 20px;
   margin-bottom: 15px;
-  border: 1px solid #2a2a2a;
+  border: 1px solid var(--borders-color);
   text-align: center;
   font-size: 16px;
 }
@@ -365,7 +379,7 @@ h3 {
     border-radius: 12px;
     padding: 10px;
     margin-bottom: 15px;
-    border: 1px solid #2a2a2a;
+    border: 1px solid var(--borders-color);
 }
 
 .column-flex-table {
@@ -395,7 +409,7 @@ select,
 textarea {
     width: 100%;
     padding: 10px 12px;
-    border: 1px solid #2a2a2a;
+    border: 1px solid var(--borders-color);
     border-radius: 8px;
     font-size: 14px;
     transition: all 0.3s ease;
@@ -495,7 +509,7 @@ button {
 .btn-secondary {
     background: var(--color3);
     color: var(--text-color);
-    border: 1px solid #2a2a2a;
+    border: 1px solid var(--borders-color);
 }
 
 .btn-secondary:hover {
@@ -505,7 +519,7 @@ button {
 .btn-danger {
     background: var(--color3);
     color: #ff6b6b;
-    border: 1px solid #ff6b6b;
+    border: 1px solid var(--borders-color);
 }
 
 .icon {
@@ -729,7 +743,7 @@ button {
 .collections-list {
     max-height: 150px;
     overflow-y: auto;
-    border: 1px solid #2a2a2a;
+    border: 1px solid var(--borders-color);
     border-radius: 8px;
     padding: 8px;
     margin-top: 10px;
@@ -813,6 +827,15 @@ strong {
     color: #ffffff;
 }
 
+.choice-color-dot {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  margin-right: 6px;
+  margin-top: -2px;
+  vertical-align: middle;
+}
 .choices {
   position: relative;
   overflow: hidden;
@@ -919,8 +942,8 @@ strong {
   display: inline-block;
   margin: 0 -4px 0 8px;
   padding-left: 16px;
-  border-left: 1px solid #003642;
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="black" viewBox="6 6 12 12"><path d="M6 6L18 18M6 18L18 6" stroke="black" stroke-width="3"/></svg>');
+  border-left: 1px solid #bdbdbd;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="%23BDBDBD" viewBox="6 6 12 12"><path d="M6 6L18 18M6 18L18 6" stroke="%23BDBDBD" stroke-width="3"/></svg>');
   background-size: 10px;
   width: 8px;
   line-height: 1;
@@ -991,7 +1014,7 @@ strong {
   margin-bottom: 3.75px;
   background-color: var(--accent-color);
   border: 1px solid var(--color1);
-  color: var(--text-color-inverted);
+  color: #ffffff;
   word-break: break-all;
   box-sizing: border-box;
   height: fit-content;

@@ -5,6 +5,26 @@ const API_VERSION = '2025-11-08';
 // constants
 const DEFAULT_ACCENT_COLOR = '#ff3030ff';
 
+// Color normalization
+function normalizeColor(colorValue) {
+    if (!colorValue) return null;
+
+    const colorMap = {
+        'grey': '#414141',
+        'yellow': '#6c630f',
+        'orange': '#5c2a06',
+        'red': '#4a0a08',
+        'pink': '#4a0828',
+        'purple': '#3d0e68',
+        'blue': '#162060',
+        'ice': '#023a58',
+        'teal': '#0b4f4a',
+        'lime': '#1a3a0a'
+    };
+
+    return colorMap[colorValue.toLowerCase()] || colorValue;
+}
+
 // State
 let state = {
     apiKey: null,
@@ -545,6 +565,20 @@ function GetPropertyIconSVG(property) {
             </svg>`
 }
 
+function getCheckboxElement(id) {
+    return `
+        <label for="` + id + `">
+            <svg class="checkbox-rect-icon" viewBox="1 3 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g stroke-width="0"></g><g stroke-linecap="round" stroke-linejoin="round">
+                </g>
+                <g> 
+                    <path d="M4 12.6111L8.92308 17.5L20 6.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    </path> 
+                </g>
+            </svg>
+        </label>`;
+}
+
 // Initialize
 
 if (document.readyState === "complete" || document.readyState === "interactive") {
@@ -623,6 +657,14 @@ async function localPopapInited() {
         widthRangeValue: document.getElementById('widthRangeValue'),
         widthCurrentRange: document.getElementById('widthCurrentRange')
     };
+
+    // Inject SVG into collapseInputSettings label (only once)
+    const collapseLabel = document.querySelector('label[for="collapseInputSettings"]');
+    if (collapseLabel && collapseLabel.innerHTML.trim() === '') {
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = getCheckboxElement('collapseInputSettings');
+        collapseLabel.innerHTML = tempDiv.querySelector('label').innerHTML;
+    }
 
     const chromeTABS = await chrome.runtime.sendMessage({
         action: "GET_TABS"
@@ -862,44 +904,35 @@ ${captionText}
         return /^#([A-Fa-f0-9]{3}|[A-Fa-f0-9]{6}|[A-Fa-f0-9]{4}|[A-Fa-f0-9]{8})$/.test(str);
     }
 
+    function populateThemeSelectOptions() {
+        elements.themeSelect.innerHTML = '';
+
+        Object.entries(window.ThemeConfig.themes).forEach(([themeName, themeDefinition]) => {
+            const option = document.createElement('option');
+            option.value = themeName;
+
+            if (themeName === 'dark') {
+                option.textContent = Localize('Dark', state.language);
+            } else if (themeName === 'light') {
+                option.textContent = Localize('Light', state.language);
+            }
+            else {
+                option.textContent = themeDefinition.label;
+            }
+
+            elements.themeSelect.appendChild(option);
+        });
+    }
+
     function ChangeTheme() {
-        linkCSS = document.documentElement;
+        const linkCSS = document.documentElement;
+        const themeConfig = window.ThemeConfig.getThemeConfig(state.theme, state.accentColor);
 
-        if (state.theme === "dark") { // dark mode
-            linkCSS.style.setProperty('--background', '#1a1a1a');
-            linkCSS.style.setProperty('--background-focus', '#1a1a1a');
-            linkCSS.style.setProperty('--input-text-color', '#e0e0e0');
-            linkCSS.style.setProperty('--section-title-color', '#888888');
-            linkCSS.style.setProperty('--text-color', '#e0e0e0');
-            linkCSS.style.setProperty('--text-color-inverted', '#080808');
-            linkCSS.style.setProperty('--back-color', '#0f0f0f');
-            linkCSS.style.setProperty('--color1', '#101010');
-            linkCSS.style.setProperty('--color2', '#070707');
-            linkCSS.style.setProperty('--color3', '#1a1a1a');
-            linkCSS.style.setProperty('--color4', '#333333');
-            linkCSS.style.setProperty('--color5', '#363636');
-            linkCSS.style.setProperty('--card-color', '#000000');
-            linkCSS.style.setProperty('--icon-brightness', '255');
-        }
-        else { // light mode
-            linkCSS.style.setProperty('--background', '#ffffff');
-            linkCSS.style.setProperty('--background-focus', '#ecececff');
-            linkCSS.style.setProperty('--input-text-color', '#080808');
-            linkCSS.style.setProperty('--section-title-color', '#080808');
-            linkCSS.style.setProperty('--text-color', '#080808');
-            linkCSS.style.setProperty('--text-color-inverted', '#e0e0e0');
-            linkCSS.style.setProperty('--back-color', '#ebebeb');
-            linkCSS.style.setProperty('--color1', '#ddd');
-            linkCSS.style.setProperty('--color2', '#fff');
-            linkCSS.style.setProperty('--color3', '#f9f9f9');
-            linkCSS.style.setProperty('--color4', '#b7b7b7');
-            linkCSS.style.setProperty('--color5', '#f2f2f2');
-            linkCSS.style.setProperty('--card-color', '#ffffff');
-            linkCSS.style.setProperty('--icon-brightness', '0');
-        }
+        Object.entries(themeConfig.variables).forEach(([variableName, variableValue]) => {
+            linkCSS.style.setProperty(variableName, variableValue);
+        });
 
-        linkCSS.style.setProperty('--accent-color', state.accentColor);
-        elements.colorInput.jscolor.fromString(state.accentColor);
+        elements.colorInput.jscolor.fromString(themeConfig.accentColor);
 
         elements.zoomRangeValue.value = state.zoom;
         elements.zoomContainer.style.zoom = state.zoom;
@@ -914,7 +947,6 @@ ${captionText}
 
     elements.colorInput.addEventListener("change", () => {
         consoleLog("Selected color:", elements.colorInput.value);
-
 
         if (isHexColor(elements.colorInput.value)) {
             state.accentColor = elements.colorInput.value;
@@ -1057,10 +1089,10 @@ ${captionText}
             accentColor: state.accentColor,
             whatDoOnStart: state.whatDoOnStart,
             LastUsedForm: state.LastUsedForm,
-            zoom: elements.zoomRangeValue.value,
-            height: elements.heightRangeValue.value,
-            width: elements.widthRangeValue.value,
-            collapseOnOpenForm: elements.collapseInputSettings.checked.toString(),
+            zoom: state.zoom,
+            height: state.height,
+            width: state.width,
+            collapseOnOpenForm: state.collapseOnOpenForm,
             forms: state.forms
         });
 
@@ -1357,6 +1389,8 @@ ${captionText}
         elements.loadingSection.classList.add('hidden');
 
         if (themeSelectChoices === null) {
+            populateThemeSelectOptions();
+
             themeSelectChoices = new Choices(elements.themeSelect, {
                 removeItemButton: false,
                 searchEnabled: false,
@@ -1412,7 +1446,6 @@ ${captionText}
         languageSelectChoices.setChoiceByValue(state.language);
 
         elements.collapseInputSettings.checked = state.collapseOnOpenForm === "true";
-        //elements.collapseInputSettings.value = state.collapseOnOpenForm;
     }
 
     function authSection() {
@@ -2311,6 +2344,52 @@ ${captionText}
             currentForm = form;
             propertiesListForSaving = [];
 
+            const initializeChoicesWithColor = (selectElement, needToDisableChoice) => {
+                const choice = new Choices(selectElement, {
+                    removeItemButton: true,
+                    searchEnabled: true,
+                    shouldSort: false,
+                });
+
+                const applyColorToChoices = () => {
+                    const items = selectElement.parentElement.parentElement.querySelectorAll('.choices__item');
+                    items.forEach(item => {
+                        const value = item.getAttribute('data-value');
+                        const option = selectElement.querySelector(`option[value="${value}"]`);
+                        if (option) {
+                            const color = normalizeColor(option.getAttribute('prefered-color'));
+                            if (color) {
+                                if (item.hasAttribute('data-choice')) {
+                                    let colorDot = item.querySelector('.choice-color-dot');
+                                    if (!colorDot) {
+                                        colorDot = document.createElement('span');
+                                        colorDot.className = 'choice-color-dot';
+                                        item.insertBefore(colorDot, item.firstChild);
+                                    }
+                                    colorDot.style.backgroundColor = color;
+                                }
+                                else {
+                                    item.style.backgroundColor = color;
+                                }
+                            }
+                        }
+                    });
+                };
+
+                applyColorToChoices();
+
+                const observer = new MutationObserver(applyColorToChoices);
+                observer.observe(selectElement.parentElement, {
+                    childList: true,
+                    subtree: true
+                });
+
+                if (needToDisableChoice)
+                    choice.removeActiveItems();
+
+                return choice;
+            };
+
             const typesResponse = await fetch(`${API_BASE_URL}/spaces/${form.spaceId}/types/${form.type.id}`, {
                 headers: {
                     'Authorization': `Bearer ${state.apiKey}`,
@@ -2402,7 +2481,7 @@ ${captionText}
                                             placeholder="` + property.name + `" `
                             + (savedPropertyValueExist && !printTextarea ? (`value="` + value + `" `) : (` `)) + `
                                         >` + (printTextarea ? (savedPropertyValueExist ? (value + "</textarea>") : "</textarea>") : "") + `
-                                    ` + (property.format === "checkbox" ? '<label for="' + property.id + '_SO"></label>' : "") + `    
+                                    ` + (property.format === "checkbox" ? getCheckboxElement(property.id + "_SO") : "") + `    
                                     </div>
                                 `;
                     }
@@ -2433,6 +2512,7 @@ ${captionText}
                     else if (property.format === "select" || property.format === "multi_select") {
                         needToCreateChoices = true;
                         const tags = await loadPropertieTags(property.id);
+                        consoleLog(property.name + ' - variants: ', tags);
 
                         propertyHTML.innerHTML = `
                                     <div class="poperty-head">
@@ -2444,6 +2524,7 @@ ${captionText}
                                             ${tags.map(o => `
                                                 <option 
                                                     value="${o.id}" 
+                                                    prefered-color="${o.color || ''}"
                                                     ` + ((savedPropertyValueExist && savedProperty.SelectedValueByUser.includes(o.id)) ? "selected" : "") + `
                                                 >
                                                     ${o.name || o.id}
@@ -2545,14 +2626,7 @@ ${captionText}
                     propertiesListForSaving.push({ KeyForAnytypeAPI: propertieForPrint.propertyKey, IdInHTML: propertieForPrint.propertyId + "_SO", value_type: propertieForPrint.value_type });
 
                     if (propertieForPrint.needToCreateChoices) {
-                        const choice = new Choices(document.getElementById(propertieForPrint.propertyId + "_SO"), {
-                            removeItemButton: true,
-                            searchEnabled: true,
-                            shouldSort: false,
-                        });
-
-                        if (propertieForPrint.needToDisableChoice)
-                            choice.removeActiveItems();
+                        initializeChoicesWithColor(document.getElementById(propertieForPrint.propertyId + "_SO"), propertieForPrint.needToDisableChoice);
                     }
                 }
 
@@ -2564,14 +2638,7 @@ ${captionText}
                     propertiesListForSaving.push({ KeyForAnytypeAPI: propertieForPrint.propertyKey, IdInHTML: propertieForPrint.propertyId + "_SO", value_type: propertieForPrint.value_type });
 
                     if (propertieForPrint.needToCreateChoices) {
-                        const choice = new Choices(document.getElementById(propertieForPrint.propertyId + "_SO"), {
-                            removeItemButton: true,
-                            searchEnabled: true,
-                            shouldSort: false,
-                        });
-
-                        if (propertieForPrint.needToDisableChoice)
-                            choice.removeActiveItems();
+                        initializeChoicesWithColor(document.getElementById(propertieForPrint.propertyId + "_SO"), propertieForPrint.needToDisableChoice);
                     }
                 }
 

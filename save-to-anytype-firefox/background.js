@@ -105,9 +105,6 @@ function extractPageText() {
         const iframes = document.querySelectorAll('iframe');
         let iframeContents = [];
         iframes.forEach((iframe) => {
-            if (iframe.id == "save-to-anytype-overlay")
-                return;
-
             const content = getIframeContent(iframe);
             if (content) iframeContents.push(content);
         });
@@ -135,7 +132,6 @@ function extractPageText() {
         }
 
         return finalContent;
-        //return mainContent ? mainContent.innerHTML : document.body.innerHTML;
 
     } catch (error) {
         return "PAGE PARSE ERROR";
@@ -367,7 +363,7 @@ chrome.action.onClicked.addListener(async (tab) => {
         "https://chromewebstore.google.com/"
     ];
 
-    if (Qr.some((t) => url.startsWith(t)) || url == "") {
+    if (url == undefined || Qr.some((t) => url.startsWith(t)) || url == "") {
         await chrome.action.setPopup({
             popup: "popupBlocked.html",
             tabId: tab.id,
