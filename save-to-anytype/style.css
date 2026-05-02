@@ -45,6 +45,7 @@
     --choices-disabled-item-border: #919191;
     --choices-heading-border: #f7f7f7;
     --choices-heading-text: gray;
+    --text-color-choices-list--multiple: #ffffff;
 
     --btnSaveObject: #355d33;
     --btnSaveObjectHover: #264525;
@@ -993,14 +994,25 @@ strong {
   margin: 0 -4px 0 8px;
   padding-left: 16px;
   border-left: 1px solid var(--choices-remove-divider);
-  background-color: var(--choices-remove-icon);
-  mask: url(assets/cross.svg) no-repeat center / 10px 10px;
-  -webkit-mask: url(assets/cross.svg) no-repeat center / 10px 10px;
+  background: none;
   width: 8px;
   line-height: 1;
   opacity: 0.75;
   border-radius: 0;
   height: 5px;
+}
+.choices[data-type*="select-multiple"] .choices__button::before,
+.choices[data-type*="text"] .choices__button::before {
+  content: "";
+  position: absolute;
+  right: 9px;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  background-color: var(--choices-remove-icon);
+  mask: url(assets/cross.svg) no-repeat center / 10px 10px;
+  -webkit-mask: url(assets/cross.svg) no-repeat center / 10px 10px;
+  transform: translateY(-50%);
 }
 .margin-bottom15 {
   margin-bottom: 15px;
@@ -1058,6 +1070,7 @@ strong {
 }
 .choices__list--multiple .choices__item {
   display: inline-flex;
+  cursor: default;
   vertical-align: middle;
   border-radius: 20px;
   padding: 4px 10px;
@@ -1067,7 +1080,7 @@ strong {
   margin-bottom: 3.75px;
   background-color: var(--accent-color);
   border: 1px solid var(--color1);
-  color: var(--text-color);
+  color: var(--text-color-choices-list--multiple);
   word-break: break-all;
   box-sizing: border-box;
   height: fit-content;

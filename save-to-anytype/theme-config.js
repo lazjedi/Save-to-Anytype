@@ -65,7 +65,8 @@
                 '--choices-disabled-item-bg': '#aaa',
                 '--choices-disabled-item-border': '#919191',
                 '--choices-heading-border': '#f7f7f7',
-                '--choices-heading-text': 'gray'
+                '--choices-heading-text': 'gray',
+                '--text-color-choices-list--multiple': '#ffffff'
             }
         },
         light: {
@@ -117,7 +118,8 @@
                 '--choices-disabled-item-bg': '#aaa',
                 '--choices-disabled-item-border': '#919191',
                 '--choices-heading-border': '#f7f7f7',
-                '--choices-heading-text': 'gray'
+                '--choices-heading-text': 'gray',
+                '--text-color-choices-list--multiple': '#ffffff'
             }
         },
         total_black: {
@@ -169,7 +171,8 @@
                 '--choices-disabled-item-bg': '#aaa',
                 '--choices-disabled-item-border': '#919191',
                 '--choices-heading-border': '#f7f7f7',
-                '--choices-heading-text': 'gray'
+                '--choices-heading-text': 'gray',
+                '--text-color-choices-list--multiple': '#ffffff'
             }
         },
         haze: {
@@ -221,7 +224,8 @@
                 '--choices-disabled-item-bg': '#aaa',
                 '--choices-disabled-item-border': '#919191',
                 '--choices-heading-border': '#f7f7f7',
-                '--choices-heading-text': 'gray'
+                '--choices-heading-text': 'gray',
+                '--text-color-choices-list--multiple': '#ffffff'
             }
         },
         vs: {
@@ -273,7 +277,8 @@
                 '--choices-disabled-item-bg': '#aaa',
                 '--choices-disabled-item-border': '#919191',
                 '--choices-heading-border': '#f7f7f7',
-                '--choices-heading-text': 'gray'
+                '--choices-heading-text': 'gray',
+                '--text-color-choices-list--multiple': '#ffffff'
             }
         },
         gold: {
@@ -325,7 +330,8 @@
                 '--choices-disabled-item-bg': '#aaa',
                 '--choices-disabled-item-border': '#919191',
                 '--choices-heading-border': '#f7f7f7',
-                '--choices-heading-text': 'gray'
+                '--choices-heading-text': 'gray',
+                '--text-color-choices-list--multiple': '#ffffff'
             }
         },
         white: {
@@ -377,7 +383,8 @@
                 '--choices-disabled-item-bg': '#aaa',
                 '--choices-disabled-item-border': '#919191',
                 '--choices-heading-border': '#f7f7f7',
-                '--choices-heading-text': 'gray'
+                '--choices-heading-text': 'gray',
+                '--text-color-choices-list--multiple': '#ffffff'
             }
         }
     };
