@@ -724,7 +724,6 @@ ${captionText}
     function generateRandomId() {
         const now = new Date();
 
-        // Форматируем дату и время: YYYYMMDDHHMMSS
         const dateTime = now.getFullYear().toString() +
             String(now.getMonth() + 1).padStart(2, '0') +
             String(now.getDate()).padStart(2, '0') +
@@ -732,7 +731,6 @@ ${captionText}
             String(now.getMinutes()).padStart(2, '0') +
             String(now.getSeconds()).padStart(2, '0');
 
-        // Случайное 5-значное число
         const randomNumber = Math.floor(Math.random() * 100000)
             .toString()
             .padStart(5, '0');
@@ -759,6 +757,57 @@ ${captionText}
 
     function consoleError(messageText, ...argsL) {
         chrome.runtime.sendMessage({ message: messageText, type: "error", args: argsL });
+    }
+
+    function CreateImageReferenceForChoices(img, value) {
+        const escapedValue = (typeof CSS !== 'undefined' && CSS.escape)
+            ? CSS.escape(value)
+            : value.replace(/"/g, '\\"');
+
+        if (document.head.querySelector(`style[data-choices-value="${escapedValue}"]`)) return;
+        const isImageUrl = /^(https?:)?\/\//.test(img) || img.startsWith('data:');
+
+        const style = document.createElement("style");
+        style.dataset.choicesValue = escapedValue;
+        if (isImageUrl) {
+            style.textContent = `
+                .choices__item[data-value="${escapedValue}"]::after {
+                    content: "";
+                    background-image: url("${img}");
+                }
+            `;
+        } else {
+            style.textContent = `
+                .choices__item[data-value="${escapedValue}"]::after {
+                    content: ${JSON.stringify(img)} !important;
+                    background-image: none;
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+            `;
+        }
+
+        document.head.appendChild(style);
+    }
+
+    function GenerateChoicesWithIcons(selectElement, choicesData, choicesOptions = {}) {
+        const choicesInstance = new Choices(selectElement, {
+            removeItemButton: false,
+            searchEnabled: false,
+            shouldSort: false,
+            choices: choicesData,
+            ...choicesOptions
+        });
+
+        choicesData.forEach(choice => {
+            const img = choice?.customProperties?.img;
+            if (!img || img === "null") return;
+
+            CreateImageReferenceForChoices(img, String(choice.value ?? ""));
+        });
+
+        return choicesInstance;
     }
 
     function UpdateTheTranslation() {
@@ -1423,24 +1472,7 @@ ${captionText}
                 };
             });
 
-            languageSelectChoices = new Choices(elements.languageSelect, {
-                removeItemButton: false,
-                searchEnabled: false,
-                shouldSort: false,
-                choices: choicesData
-            });
-
-            choicesData.forEach(x => {
-                const url = x.customProperties.img;
-
-                const style = document.createElement("style");
-                style.textContent = `
-            .choices__item[data-value="${x.value}"]::after {
-                background-image: url("${url}");
-            }
-            `;
-                document.head.appendChild(style);
-            });
+            languageSelectChoices = GenerateChoicesWithIcons(elements.languageSelect, choicesData);
         }
 
         languageSelectChoices.setChoiceByValue(state.language);
@@ -1694,22 +1726,22 @@ ${captionText}
                         return;
                     }
 
-                    spaces.forEach(space => {
-                        const option = document.createElement('option');
-                        option.value = space.id;
-                        option.textContent = space.name || space.title || space.id || Localize('UntitledSpace', state.language);
-                        if (space.id === selectedSpaceId) {
-                            option.selected = true;
-                        }
-                        elements.spaceSelect.appendChild(option);
-                    });
-
                     AllSpaces = spaces;
 
-                    spaceSelectChoices = new Choices(document.getElementById("spaceSelect"), {
+                    const choicesData = spaces.map(space => {
+                        return {
+                            value: space.id,
+                            label: space.name || space.title || space.id || Localize('UntitledSpace', state.language),
+                            customProperties: {
+                                img: space?.icon?.file || space?.icon?.emoji
+                            }
+                        };
+                    });
+
+                    spaceSelectChoices = GenerateChoicesWithIcons(document.getElementById("spaceSelect"), choicesData, {
                         removeItemButton: false,
                         searchEnabled: true,
-                        shouldSort: false,
+                        shouldSort: false
                     });
 
                     if (!URLWasRejected && needToShowMainSection)
@@ -1768,11 +1800,19 @@ ${captionText}
                 if (types.length === 0) {
                     // Fallback to default types
                     elements.typeSelect.innerHTML = `
-                    <option value="page" selected>Page</option>
-                    <option value="note">Note</option>
-                    <option value="task">Task</option>
-                    <option value="bookmark">Bookmark</option>
-                `;
+                        <option value="page" selected>Page</option>
+                        <option value="note">Note</option>
+                        <option value="task">Task</option>
+                        <option value="bookmark">Bookmark</option>
+                    `;
+
+                    typeSelectChoices = new Choices(document.getElementById("typeSelect"), {
+                        removeItemButton: false,
+                        searchEnabled: true,
+                        shouldSort: false,
+                        choices: choicesData
+                    });
+
                     consoleLog('No types found, using defaults');
                 } else {
                     consoleLog('Found types:', types.length);
@@ -1793,27 +1833,29 @@ ${captionText}
 
                     CashedTypes = sortedTypes;
 
-                    sortedTypes.forEach(type => {
-                        const option = document.createElement('option');
+                    const choicesData = sortedTypes.map(type => {
                         const typeKey = type.key || type.type_key || type.id;
                         const typeName = type.name || type.title || typeKey;
 
-                        option.value = typeKey;
-                        option.textContent = typeName;
+                        return {
+                            value: typeKey,
+                            label: typeName,
+                            customProperties: {
+                                img: type?.icon?.file || type?.icon?.emoji
+                            }
+                        };
+                    });
 
-                        elements.typeSelect.appendChild(option);
+                    typeSelectChoices = GenerateChoicesWithIcons(document.getElementById("typeSelect"), choicesData, {
+                        removeItemButton: false,
+                        searchEnabled: true,
+                        shouldSort: false
                     });
 
                     selectedType = sortedTypes[0];
 
                     SetNameForForm();
                 }
-
-                typeSelectChoices = new Choices(document.getElementById("typeSelect"), {
-                    removeItemButton: false,
-                    searchEnabled: true,
-                    shouldSort: false,
-                });
 
                 loadObjectProperties();
                 loadObjectTemplates(selectedType.id);
@@ -1969,12 +2011,6 @@ ${captionText}
             elements.FormNameInputSection.classList.remove('hidden');
         } catch (error) {
             consoleLog('Collections could not be loaded:', error);
-            elements.collectionSection.classList.add('hidden');
-            elements.collectionsList.innerHTML = `
-            <div class="collection-item" style="font-size: 12px; color: #666;">
-                Set/Collection yüklenemedi<br>
-                <small style="color: #999;">You can also save directly to Space</small>
-            </div>`;
         }
     }
 
@@ -2012,10 +2048,9 @@ ${captionText}
                 } else {
                     consoleLog('Found types templates:', typesTemplates.length);
 
-                    // Sort types: put common ones first
-                    let sortedTypes = []
+                    let templatesForObject = []
 
-                    sortedTypes = sortedTypes.concat(typesTemplates.sort((a, b) => {
+                    templatesForObject = templatesForObject.concat(typesTemplates.sort((a, b) => {
                         const aKey = a.key || a.type_key || '';
                         const bKey = b.key || b.type_key || '';
 
@@ -2025,11 +2060,11 @@ ${captionText}
                         return (a.name || '').localeCompare(b.name || '');
                     }));
 
-                    allTemplatesForObject = sortedTypes;
+                    allTemplatesForObject = templatesForObject;
 
-                    consoleLog("sortedTypes: ", sortedTypes);
+                    consoleLog("allTemplatesForObject: ", allTemplatesForObject);
 
-                    sortedTypes.forEach(type => {
+                    templatesForObject.forEach(type => {
                         const option = document.createElement('option');
                         const typeKey = type.key || type.type_key || type.id;
                         const typeName = type.name || type.title || typeKey;
@@ -2073,6 +2108,13 @@ ${captionText}
             if (response.ok) {
                 allObjects = await response.json();
                 allObjects = allObjects.data;
+
+                allObjects.forEach(element => {
+                    console.log("object: ", element);
+                    if (element?.icon)
+                        CreateImageReferenceForChoices(element?.icon?.file || element?.icon?.emoji, String(element?.id ?? ""));
+                });
+
                 consoleLog("all objects response ", allObjects);
             }
             else {
@@ -2150,6 +2192,7 @@ ${captionText}
                 if (property.name === "Creation date") continue; // we don't need this
 
                 let propertyHTML = document.createElement(`div`);
+                let choice = null;
 
                 if (property.format === "text" || property.format === "email"
                     || property.format === "number" || property.format === "url"
@@ -2172,6 +2215,16 @@ ${captionText}
                 else if (property.format === "objects") {
                     await loadAllObjects();
 
+                    const choicesData = allObjects.map(o => {
+                        return {
+                            value: o.id,
+                            label: o.name || o.title || o.id,
+                            customProperties: {
+                                img: o?.icon?.file || o?.icon?.emoji
+                            }
+                        };
+                    });
+
                     propertyHTML.innerHTML = `
                                 <div class="poperty-head">
                                     ` + GetPropertyIconSVG(property.format) + `
@@ -2179,12 +2232,18 @@ ${captionText}
                                 </div>
                                 <div class="form-group">
                                     <select id="` + property.key + `">
-                                        ${allObjects.map(o => `
-                                            <option value="${o.id}">${o.name || o.id}</option>
-                                            `).join("")}
                                     </select>
                                 </div>
                             `;
+
+                    elements.propertiesListHandler.appendChild(propertyHTML);
+                    propertiesListSpawned.push(propertyHTML);
+
+                    choice = GenerateChoicesWithIcons(document.getElementById(property.key), choicesData, {
+                        removeItemButton: false,
+                        searchEnabled: true,
+                        shouldSort: false
+                    });
                 }
                 else if (property.format === "select" || property.format === "multi_select") {
                     const tags = await loadPropertieTags(property.id);
@@ -2204,14 +2263,16 @@ ${captionText}
                             `;
                 }
 
-                elements.propertiesListHandler.appendChild(propertyHTML);
-                propertiesListSpawned.push(propertyHTML);
+                if (property.format != "objects") {
+                    elements.propertiesListHandler.appendChild(propertyHTML);
+                    propertiesListSpawned.push(propertyHTML);
 
-                const choice = new Choices(document.getElementById(property.key), {
-                    removeItemButton: true,
-                    searchEnabled: true,
-                    shouldSort: false,
-                });
+                    choice = new Choices(document.getElementById(property.key), {
+                        removeItemButton: true,
+                        searchEnabled: true,
+                        shouldSort: false,
+                    });
+                }
 
                 propertiesListForSaving.push(
                     { AnytypeProperty: property, choice: choice }

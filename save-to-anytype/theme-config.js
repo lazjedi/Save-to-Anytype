@@ -22,7 +22,7 @@
                 '--background': '#1a1a1a',
                 '--background-focus': '#1a1a1a',
                 '--input-text-color': '#e0e0e0',
-                '--section-title-color': '#888888',
+                '--section-title-color': '#d1d1d1',
                 '--text-color': '#e0e0e0',
                 '--text-color-inverted': '#080808',
                 '--back-color': '#0f0f0f',
