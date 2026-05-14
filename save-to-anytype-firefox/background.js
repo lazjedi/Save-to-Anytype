@@ -82,6 +82,7 @@ function findDescription() {
     return '';
 }
 
+// Markdown START
 function extractPageText() {
     try {
         if (!document || !document.body) {
@@ -92,8 +93,14 @@ function extractPageText() {
             try {
                 const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
                 if (!iframeDoc || !iframeDoc.body) return '';
+
                 const iframeClone = iframeDoc.body.cloneNode(true);
-                iframeClone.querySelectorAll('script, style, nav, footer, aside, .ads, .comments').forEach(el => el.remove());
+
+                const unwantedIframeElements = iframeClone.querySelectorAll(
+                    'script, style, nav, footer, aside, header, button, form, .ads, .comments, [role="complementary"]'
+                );
+                unwantedIframeElements.forEach(el => el.remove());
+
                 return `<div class="iframe-content">${iframeClone.innerHTML}</div>`;
             } catch (e) {
                 return '';
@@ -102,6 +109,29 @@ function extractPageText() {
 
         const bodyClone = document.body.cloneNode(true);
 
+        const unwantedSelectors = [
+            'script', 'style', 'nav', 'footer', 'aside', 'header', 'button', 'form',
+            'iframe', 'noscript', 'svg', 'canvas', 'map', 'object', 'embed',
+            '[role="banner"]', '[role="navigation"]', '[role="contentinfo"]', '[role="complementary"]', '[role="dialog"]',
+            '[aria-hidden="true"]',
+            '.ads', '#ads', '.comments', '#comments', '.cookie-banner', '.popup', '.overlay', '.modal',
+            '#save-to-anytype-overlay', '.social-share', '.share-buttons', '.widget', '.promo',
+            '.sidebar', '#sidebar', '.menu', '#menu', '.navbar', '#navbar', '.pagination',
+            '.breadcrumbs', '.related-posts', '.newsletter-form', '.author-bio', '.toc',
+            'input', 'textarea', 'select', 'dialog'
+        ].join(', ');
+
+        const unwanted = bodyClone.querySelectorAll(unwantedSelectors);
+        unwanted.forEach(el => el.remove());
+
+        const emptyElements = bodyClone.querySelectorAll('h1, h2, h3, h4, h5, h6, p, span, div');
+        emptyElements.forEach(el => {
+            if (el.textContent.trim().length === 0 && el.children.length === 0) {
+                el.remove();
+            }
+            el.removeAttribute('style');
+        });
+
         const iframes = document.querySelectorAll('iframe');
         let iframeContents = [];
         iframes.forEach((iframe) => {
@@ -109,17 +139,27 @@ function extractPageText() {
             if (content) iframeContents.push(content);
         });
 
-        const unwanted = bodyClone.querySelectorAll(
-            'script, style, nav, footer, aside, .ads, .comments, [role="complementary"], .cookie-banner, .popup, .overlay, .modal, #save-to-anytype-overlay'
-        );
-        unwanted.forEach(el => el.remove());
+        const mainSelectors = [
+            'article',
+            '[role="main"]',
+            'main',
+            '.post-content',
+            '.entry-content',
+            '.article-content',
+            '.markdown-body',
+            '#main-content',
+            '#content',
+            '.content',
+            '.post',
+            '.entry',
+            '.main'
+        ];
 
-        const mainSelectors = ['main', 'article', '.content', '.post', '.entry', '[role="main"]', '#content', '.main'];
         let mainContent = null;
 
         for (const selector of mainSelectors) {
             const found = bodyClone.querySelector(selector);
-            if (found && found.innerHTML.trim().length > 100) {
+            if (found && found.textContent.trim().length > 200) {
                 mainContent = found;
                 break;
             }
@@ -128,15 +168,17 @@ function extractPageText() {
         let finalContent = mainContent ? mainContent.innerHTML : bodyClone.innerHTML;
 
         if (iframeContents.length > 0) {
-            finalContent += '<h2>Embedded Content</h2>' + iframeContents.join('<hr>');
+            finalContent += '<br><hr><h2>Embed contents</h2><br>' + iframeContents.join('<hr>');
         }
 
         return finalContent;
 
     } catch (error) {
+        console.error("Content Extraction Error: ", error);
         return "PAGE PARSE ERROR";
     }
 }
+// END
 
 // Utility function to get the appropriate browser API
 function getAPI() {
