@@ -1833,7 +1833,7 @@ ${captionText}
                                 </select>
                             </div>
                             <div class="poperty-head">
-                                ` + GetPropertyIconSVG("text") + `
+                                ` + GetPropertyIconSVG("editable") + `
                                 <div class="section-title">` + Localize("FileNameFormat", state.language) + `</div>
                             </div>
                             <div class="form-group">
@@ -2002,10 +2002,11 @@ ${captionText}
             currentForm = form;
             propertiesListForSaving = [];
 
-            const initializeChoicesWithColor = (selectElement, needToDisableChoice) => {
+            const initializeChoicesWithColor = (selectElement, needToDisableChoice, 
+                useDeleteButtonInChoices = true, searchEnabled = true) => {
                 const choice = new Choices(selectElement, {
-                    removeItemButton: true,
-                    searchEnabled: true,
+                    removeItemButton: useDeleteButtonInChoices,
+                    searchEnabled: searchEnabled,
                     shouldSort: false,
                 });
 
@@ -2099,6 +2100,8 @@ ${captionText}
                 for (const property of properties) {
 
                     let needToCreateChoices = false;
+                    let useDeleteButtonInChoices = true;
+                    let searchEnabled = true;
 
                     const savedProperty = form.properties.find(p => p.AnytypeProperty.id === property.id);
                     const savedPropertyValueExist = savedProperty !== null && savedProperty !== undefined
@@ -2193,6 +2196,12 @@ ${captionText}
                     }
                     else if (property.format === "files") {
                         needToCreateChoices = true;
+                        useDeleteButtonInChoices = false;
+                        searchEnabled = false;
+
+                        // TODO: нужно добавить свойство, определяющее, нужно ли у чойсеса спавнить кнопку удаления выбора, 
+                        // и для файлов эту кнопку запретить
+
 
                         // TODO: здесь добавляем предпоказ имени и картинки
                         propertyHTML.innerHTML = `
@@ -2222,9 +2231,9 @@ ${captionText}
                     }
 
                     if ((savedPropertyValueExist && property.id !== "nameId" && property.format !== "files") || (property.format === "files" && savedProperty.SelectedValueByUser !== "none_file"))
-                        propertiesForPrintWithDefaultValue.push({ needToCreateChoices: needToCreateChoices, needToDisableChoice: !savedPropertyValueExist, propertyHTML: propertyHTML, propertyId: property.id, propertyKey: property.key, value_type: property.format });
+                        propertiesForPrintWithDefaultValue.push({ needToCreateChoices: needToCreateChoices, useDeleteButtonInChoices: useDeleteButtonInChoices, searchEnabled: searchEnabled, needToDisableChoice: !savedPropertyValueExist, propertyHTML: propertyHTML, propertyId: property.id, propertyKey: property.key, value_type: property.format });
                     else
-                        propertiesForPrintWithoutDefaultValue.push({ needToCreateChoices: needToCreateChoices, needToDisableChoice: !savedPropertyValueExist, propertyHTML: propertyHTML, propertyId: property.id, propertyKey: property.key, value_type: property.format });
+                        propertiesForPrintWithoutDefaultValue.push({ needToCreateChoices: needToCreateChoices, useDeleteButtonInChoices: useDeleteButtonInChoices, searchEnabled: searchEnabled, needToDisableChoice: !savedPropertyValueExist, propertyHTML: propertyHTML, propertyId: property.id, propertyKey: property.key, value_type: property.format });
                 }
 
                 await loadCollections();
@@ -2307,7 +2316,12 @@ ${captionText}
                     propertiesListForSaving.push({ KeyForAnytypeAPI: propertieForPrint.propertyKey, IdInHTML: propertieForPrint.propertyId + "_SO", value_type: propertieForPrint.value_type });
 
                     if (propertieForPrint.needToCreateChoices) {
-                        initializeChoicesWithColor(document.getElementById(propertieForPrint.propertyId + "_SO"), propertieForPrint.needToDisableChoice);
+                        initializeChoicesWithColor(
+                            document.getElementById(propertieForPrint.propertyId + "_SO"), 
+                            propertieForPrint.needToDisableChoice, 
+                            propertieForPrint.useDeleteButtonInChoices,
+                            propertieForPrint.searchEnabled
+                        );
                     }
                 }
 
@@ -2319,7 +2333,12 @@ ${captionText}
                     propertiesListForSaving.push({ KeyForAnytypeAPI: propertieForPrint.propertyKey, IdInHTML: propertieForPrint.propertyId + "_SO", value_type: propertieForPrint.value_type });
 
                     if (propertieForPrint.needToCreateChoices) {
-                        initializeChoicesWithColor(document.getElementById(propertieForPrint.propertyId + "_SO"), propertieForPrint.needToDisableChoice);
+                        initializeChoicesWithColor(
+                            document.getElementById(propertieForPrint.propertyId + "_SO"), 
+                            propertieForPrint.needToDisableChoice, 
+                            propertieForPrint.useDeleteButtonInChoices,
+                            propertieForPrint.searchEnabled
+                        );
                     }
                 }
 

@@ -179,10 +179,10 @@
       "WidthOfPopap": "Ширина окна (%): ",
       "FilledProperties": "Заполненные свойства",
       "FilledPropertiesSetting": "При открытии формы заполненые свойства свернуты",
-      "none_file": "📄 Ничего 📄",
-      "image_by_url": "📄 Картинка со страницы 📄",
-      "html_file": "📄 Страница как HTML файл 📄",
-      "screenshot": "📄 Скриншот страницы 📄",
+      "none_file": "📎 Ничего 📎",
+      "image_by_url": "📎 Картинка со страницы 📎",
+      "html_file": "📎 Страница как HTML файл 📎",
+      "screenshot": "📎 Скриншот страницы 📎",
       "FileNameFormat": "Формат имени файла"
     },
     {

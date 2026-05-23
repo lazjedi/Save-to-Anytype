@@ -475,18 +475,31 @@
                         />
                     </svg>`
     }
-    // TODO: добавить иконку файла - это иконка серепки
+    else if (property == "editable") {
+        return `<svg fill="var(--section-title-color)" style="margin-bottom: 10px; height: 16px; width: 16px;
+        version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" 
+        xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 206.5 206.5" 
+        xml:space="preserve" stroke="var(--section-title-color)"><g id="SVGRepo_bgCarrier" stroke-width="0">
+        </g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round">
+        </g><g id="SVGRepo_iconCarrier"> 
+        <path d="M201.5,175.343H66.241l22.758-6.293c1.019-0.154,2.001-0.608,
+        2.787-1.393l95.336-95.336 c0.938-0.938,1.464-2.209,1.464-3.535s-0.527-2.598-1.464-3.535L169.77,
+        47.898L67.363,150.305l11.243,11.243l-18.325,5.068 l-17.152-17.152l5.068-18.325l12.096,
+        12.096L162.699,40.828l-18.206-18.206c-1.953-1.953-5.118-1.953-7.071,0l-95.336,95.336 c-0.756,
+        0.756-1.228,1.732-1.389,2.776l-15.102,54.609H5c-2.761,0-5,2.238-5,5s2.239,5,5,5h196.5c2.761,
+        0,5-2.238,5-5 S204.261,175.343,201.5,175.343z"></path> </g></svg>`
+    }
     else if (property == "files") {
-        return `<svg style="margin-bottom: 10px; height: 16px; width: 16px; fill: var(--section-title-color)"
-                        viewBox="1 -1 23 23" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M21 8.5v9.25A3.25 3.25 0 0 1 17.75 21H6.25A3.25 3.25 0 0 1 3 17.75V8.5zm-7.005 2.195q-.996 0-1.582.532t-.586 1.441q0 
-                        .522.266.93q.267.408.725.642a1.94 1.94 0 0 0-.85.698a1.8 1.8 0 0 0-.302 1.026q0 .933.637 1.484Q12.94 18 14 18q1.054 0 
-                        1.69-.55q.634-.549.634-1.486q0-.566-.3-1.016a2.03 2.03 0 0 0-.857-.708q.464-.234.732-.642q.27-.408.269-.93q0-.908-.586-1.44q-.586-.533-1.587-.533m-3.775.074h-.152l-2.773 
-                        1.02v1.001l1.743-.596v5.708h1.182zm3.77 3.96q.518 0 .833.324q.315.325.315.852q0 
-                        .543-.3.845q-.3.303-.838.303q-.537 0-.842-.313q-.306-.312-.306-.835q0-.532.31-.854t.828-.322m.005-3.081q.454 0 
-                        .723.3t.268.764q0 .488-.266.776q-.265.288-.72.288t-.72-.288q-.267-.287-.266-.776q0-.493.263-.779q.264-.285.718-.285M17.75 3A3.25 3.25 0 0 1 21 
-                        6.25V7H3v-.75A3.25 3.25 0 0 1 6.25 3z" 
-                        />
+        return `<svg style="margin-bottom: 10px; height: 16px; width: 16px; fill: none"
+                        viewBox="1 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                        <g id="SVGRepo_iconCarrier"> <path d="M7.9175 17.8068L15.8084 10.2535C16.7558 
+                        9.34668 16.7558 7.87637 15.8084 6.96951C14.861 6.06265 13.325 6.06265 12.3776 
+                        6.96951L4.54387 14.4681C2.74382 16.1911 2.74382 18.9847 4.54387 20.7077C6.34391 
+                        22.4308 9.26237 22.4308 11.0624 20.7077L19.0105 13.0997C21.6632 10.5605 21.6632 
+                        6.44362 19.0105 3.90441C16.3578 1.3652 12.0569 1.3652 9.40419 3.90441L3 10.0346" 
+                        stroke="var(--section-title-color)" stroke-width="1.5" stroke-linecap="round"></path> </g>
                     </svg>`
     }
 
