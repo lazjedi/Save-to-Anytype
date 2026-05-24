@@ -1,8 +1,6 @@
-﻿// Anytype API Base URL
-const API_BASE_URL = 'http://localhost:31009/v1';
+﻿const API_BASE_URL = 'http://localhost:31009/v1';
 const API_VERSION = '2025-11-08';
 
-// constants
 const DEFAULT_ACCENT_COLOR = '#ff3030ff';
 
 // State
@@ -22,7 +20,6 @@ let state = {
 };
 
 let WasJustOpened = true;
-
 let themeSelectChoices = null;
 let languageSelectChoices = null;
 let whatDoOnStartSelectChoices = null;
@@ -30,28 +27,19 @@ let spaceSelectChoices = null;
 let typeSelectChoices = null;
 let collectionSelectChoices = null;
 let templateSelectChoices = null;
-
 let selectedSpaceId = null;
-
 let selectedType = null;
-
 let propertiesListForSaving = [];
-
 let propertiesListSpawned = [];
-
 let SelectedSpaceName = null;
 let AllSpaces = null;
 let allObjects = [];
 let allCollections = [];
 let allTemplatesForObject = [];
 let currentForm = null;
-
 let CashedTypes = null;
-
 let URLWasRejected = false;
-
 let WasSubscribeToggleCollapsedButton = false;
-
 let turndownService = undefined;
 
 // Running the extension's main method after loading the DOM
