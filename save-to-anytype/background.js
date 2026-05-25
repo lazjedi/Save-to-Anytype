@@ -19,15 +19,42 @@ consoleLog('Background script loading...');
 function findLargestVisibleImage() {
     const imgs = Array.from(document.querySelectorAll("img"));
 
-    let largestImg = null;
-    let largestArea = 0;
+    const isValidImageSource = (source) => {
+        if (!source || typeof source !== "string") return false;
+        const normalized = source.trim();
+        if (!normalized) return false;
 
-    imgs.forEach(img => {
+        // Skip obvious non-image and unsupported image formats for this use case.
+        if (normalized.startsWith("data:image/svg+xml") || /\.svg([?#].*)?$/i.test(normalized)) return false;
+        if (/\.js([?#].*)?$/i.test(normalized)) return false;
+
+        // Accept data image urls and common raster sources.
+        if (normalized.startsWith("data:image/")) return true;
+        return /\.(png|jpe?g|webp|gif|bmp|avif)([?#].*)?$/i.test(normalized) || /^https?:\/\//i.test(normalized);
+    };
+
+    let bestVisibleSource = "";
+    let bestVisibleArea = 0;
+
+    const viewportWidth = window.innerWidth || document.documentElement.clientWidth || 0;
+    const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 0;
+
+    imgs.forEach((img) => {
+        const imageSource = img.currentSrc || img.src || "";
+        if (!isValidImageSource(imageSource)) return;
+
+        // Only use actual loaded image elements.
+        if (img.naturalWidth <= 1 || img.naturalHeight <= 1) return;
+
         const rect = img.getBoundingClientRect();
-
-        // Пропускаем скрытые элементы
         if (rect.width <= 0 || rect.height <= 0) return;
-        if (!img.src) return;
+
+        // Strictly visible on screen: element must intersect viewport.
+        const visibleWidth = Math.max(0, Math.min(rect.right, viewportWidth) - Math.max(rect.left, 0));
+        const visibleHeight = Math.max(0, Math.min(rect.bottom, viewportHeight) - Math.max(rect.top, 0));
+        if (visibleWidth <= 0 || visibleHeight <= 0) return;
+
+        const renderedVisibleArea = visibleWidth * visibleHeight;
 
         const style = window.getComputedStyle(img);
         if (
@@ -36,26 +63,31 @@ function findLargestVisibleImage() {
             parseFloat(style.opacity) === 0
         ) return;
 
-        // Пропускаем “пустые” изображения
-        if (img.naturalWidth <= 1 || img.naturalHeight <= 1) return;
+        // Verify visibility at the center of visible region (not just element center).
+        const visibleCenterX = Math.max(0, Math.min(viewportWidth, Math.max(rect.left, 0) + visibleWidth / 2));
+        const visibleCenterY = Math.max(0, Math.min(viewportHeight, Math.max(rect.top, 0) + visibleHeight / 2));
+        let topElement = document.elementFromPoint(visibleCenterX, visibleCenterY);
 
-        // Проверяем, что хотя бы центр изображения видим и не перекрыт
-        const cx = rect.left + rect.width / 2;
-        const cy = rect.top + rect.height / 2;
-        const topElement = document.elementFromPoint(cx, cy);
+        // Ignore our own overlay when checking if image is occluded.
+        if (topElement?.id === "save-to-anytype-overlay" || topElement?.closest?.("#save-to-anytype-overlay")) {
+            const overlay = document.getElementById("save-to-anytype-overlay");
+            if (overlay) {
+                const prevPointerEvents = overlay.style.pointerEvents;
+                overlay.style.pointerEvents = "none";
+                topElement = document.elementFromPoint(visibleCenterX, visibleCenterY);
+                overlay.style.pointerEvents = prevPointerEvents;
+            }
+        }
 
-        if (!img.contains(topElement) && topElement !== img) return;
+        if (topElement && !img.contains(topElement) && topElement !== img) return;
 
-        // Площадь на экране
-        const area = rect.width * rect.height;
-
-        if (area > largestArea) {
-            largestArea = area;
-            largestImg = img;
+        if (renderedVisibleArea > bestVisibleArea) {
+            bestVisibleArea = renderedVisibleArea;
+            bestVisibleSource = imageSource;
         }
     });
 
-    return largestImg?.src || null;
+    return bestVisibleSource || "";
 }
 
 function findDescription() {
@@ -146,6 +178,63 @@ async function uploadFile(uploadUrl, file, token, apiVersion) {
 
     formData.append("file", file);
 
+    // You can test the files by simply downloading them
+    const testFileDownloading = true;
+    if (testFileDownloading) {
+        try {
+            if (!chrome.downloads || typeof chrome.downloads.download !== "function") {
+                const currentPermissions = chrome?.runtime?.getManifest?.()?.permissions || [];
+                console.error(
+                    '[TEST DOWNLOAD] chrome.downloads API is not available. ' +
+                    'Add permission "downloads" to save-to-anytype/manifest.json -> permissions[]. ' +
+                    `Current permissions: ${JSON.stringify(currentPermissions)}`
+                );
+                throw new Error("chrome.downloads API is not available");
+            }
+
+            const toDataUrl = async (blob) => {
+                if (typeof FileReader !== "undefined") {
+                    return await new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onload = () => resolve(reader.result);
+                        reader.onerror = () => reject(reader.error || new Error("FileReader failed"));
+                        reader.readAsDataURL(blob);
+                    });
+                }
+
+                const arrayBuffer = await blob.arrayBuffer();
+                const bytes = new Uint8Array(arrayBuffer);
+                let binary = "";
+                for (let i = 0; i < bytes.length; i += 1) {
+                    binary += String.fromCharCode(bytes[i]);
+                }
+                const base64 = btoa(binary);
+                const mime = blob.type || "application/octet-stream";
+                return `data:${mime};base64,${base64}`;
+            };
+
+            const downloadUrl = await toDataUrl(file);
+            const downloadFileName = file?.name || "save-to-anytype-test-file.bin";
+
+            console.log(`[TEST DOWNLOAD] Starting test download for file: ${downloadFileName}, size: ${file.size} bytes, type: ${file.type}`);
+
+            await chrome.downloads.download({
+                url: downloadUrl,
+                filename: downloadFileName,
+                saveAs: false,
+                conflictAction: "uniquify"
+            });
+
+            return {
+                success: true,
+                testDownload: true,
+                fileName: downloadFileName
+            };
+        } catch (error) {
+            throw new Error(`Test file download failed: ${error?.message || error}`);
+        }
+    }
+
     const response = await fetch(uploadUrl, {
         method: "POST",
         headers: {
@@ -170,7 +259,8 @@ async function uploadFile(uploadUrl, file, token, apiVersion) {
     return await response.json();
 }
 
-async function uploadImageFromUrl(uploadUrl, imageUrl, token, apiVersion) {
+async function uploadImageFromUrl(uploadUrl, imageUrl, token, apiVersion, fileName) {
+    consoleLog("Get image from URL: ", imageUrl);
     const response =
         await fetch(imageUrl);
 
@@ -188,7 +278,7 @@ async function uploadImageFromUrl(uploadUrl, imageUrl, token, apiVersion) {
 
     const file = new File(
         [blob],
-        `image.${extension}`,
+        fileName ? `${fileName}.${extension}` : `image.${extension}`,
         {
             type: blob.type
         }
@@ -202,7 +292,7 @@ async function uploadImageFromUrl(uploadUrl, imageUrl, token, apiVersion) {
     );
 }
 
-async function uploadHtmlPage(uploadUrl, pageUrl, token, apiVersion) {
+async function uploadHtmlPage(uploadUrl, pageUrl, token, apiVersion, fileName) {
     const response =
         await fetch(pageUrl);
 
@@ -217,7 +307,7 @@ async function uploadHtmlPage(uploadUrl, pageUrl, token, apiVersion) {
 
     const file = new File(
         [html],
-        "page.html",
+        fileName + ".html" || "page.html",
         {
             type: "text/html"
         }
@@ -231,24 +321,16 @@ async function uploadHtmlPage(uploadUrl, pageUrl, token, apiVersion) {
     );
 }
 
-async function uploadScreenshot(uploadUrl, token, apiVersion) {
-    const dataUrl =
-        await chrome.tabs.captureVisibleTab(
-            null,
-            {
-                format: "png"
-            }
-        );
-
+async function uploadScreenshot(uploadUrl, token, apiVersion, fileName, screenshotUrl) {
     const response =
-        await fetch(dataUrl);
+        await fetch(screenshotUrl);
 
     const blob =
         await response.blob();
 
     const file = new File(
         [blob],
-        "screenshot.png",
+        fileName + ".png" || "screenshot.png",
         {
             type: "image/png"
         }
@@ -415,6 +497,11 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         return true;
     }
 
+    if (request.action === "GET_screenshotUrl") {
+        sendResponse(screenshotUrl);
+        return true;
+    }
+
     if (request.action === "executeScript_findLargestVisibleImage") {
         chrome.scripting.executeScript(
             {
@@ -459,60 +546,87 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 
     if (request.action === "executeScript_UploadImageFromUrl") {
         (async () => {
-            const result =
-                await uploadImageFromUrl(
-                    request.uploadUrl,
-                    request.imageUrl,
-                    request.token,
-                    request.apiVersion
-                );
+            try {
+                const result =
+                    await uploadImageFromUrl(
+                        request.uploadUrl,
+                        request.imageUrl,
+                        request.token,
+                        request.apiVersion,
+                        request.fileName
+                    );
 
-            sendResponse({
-                success: true,
-                data: result
-            });
-
-            return;
+                sendResponse({
+                    success: true,
+                    data: result
+                });
+            } catch (error) {
+                consoleError("executeScript_UploadImageFromUrl failed", error?.message || error);
+                sendResponse({
+                    success: false,
+                    error: String(error?.message || error)
+                });
+            }
         })();
+        return true;
     }
 
     if (request.action === "executeScript_UploadHtmlFile") {
         (async () => {
-            const result =
-                await uploadHtmlPage(
-                    request.uploadUrl,
-                    request.pageUrl,
-                    request.token,
-                    request.apiVersion
-                );
+            try {
+                const result =
+                    await uploadHtmlPage(
+                        request.uploadUrl,
+                        request.pageUrl,
+                        request.token,
+                        request.apiVersion,
+                        request.fileName
+                    );
 
-            sendResponse({
-                success: true,
-                data: result
-            });
-
-            return;
+                sendResponse({
+                    success: true,
+                    data: result
+                });
+            } catch (error) {
+                consoleError("executeScript_UploadHtmlFile failed", error?.message || error);
+                sendResponse({
+                    success: false,
+                    error: String(error?.message || error)
+                });
+            }
         })();
+        return true;
     }
 
     if (request.action === "executeScript_UploadScreenshot") {
         (async () => {
-            const result =
-                await uploadScreenshot(
-                    request.uploadUrl,
-                    request.token,
-                    request.apiVersion
-                );
+            try {
+                const result =
+                    await uploadScreenshot(
+                        request.uploadUrl,
+                        request.token,
+                        request.apiVersion,
+                        request.fileName,
+                        screenshotUrl
+                    );
 
-            sendResponse({
-                success: true,
-                data: result
-            });
-
-            return;
+                sendResponse({
+                    success: true,
+                    data: result
+                });
+            } catch (error) {
+                consoleError("executeScript_UploadScreenshot failed", error?.message || error);
+                sendResponse({
+                    success: false,
+                    error: String(error?.message || error)
+                });
+            }
         })();
+        return true;
     }
 });
+
+let screenshotUrl = null;
 
 chrome.action.onClicked.addListener(async (tab) => {
     const url = tab.url;
@@ -538,6 +652,15 @@ chrome.action.onClicked.addListener(async (tab) => {
         });
         await chrome.action.openPopup();
     } else {
+
+        screenshotUrl =
+            await chrome.tabs.captureVisibleTab(
+                null,
+                {
+                    format: "png"
+                }
+            );
+
         chrome.tabs.sendMessage(tab.id, { action: "TOGGLE_OVERLAY" });
     }
 });

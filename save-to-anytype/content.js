@@ -1,5 +1,3 @@
-// Content script for capturing selected text
-
 // Listen for messages from background script
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === "getSelection") {
@@ -48,7 +46,6 @@ function toggleOverlay() {
 
     function onClickOutside(event) {
         if (!overlay.contains(event.target)) {
-            console.log("deleted-save-to-anytype");
             overlay.remove();
             document.removeEventListener('mousedown', onClickOutside);
         }

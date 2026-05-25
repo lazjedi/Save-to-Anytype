@@ -41,6 +41,11 @@ let CashedTypes = null;
 let URLWasRejected = false;
 let WasSubscribeToggleCollapsedButton = false;
 let turndownService = undefined;
+const choiceImagePreviewByValue = new Map();
+let choiceImagePreviewElement = null;
+let choiceImagePreviewImage = null;
+let choiceImagePreviewBound = false;
+let choiceImagePreviewCurrentValue = null;
 
 // Running the extension's main method after loading the DOM
 if (document.readyState === "complete" || document.readyState === "interactive") {
@@ -188,6 +193,102 @@ async function localPopapInited() {
             </label>`;
     }
 
+    function attachFileNameFormatInputGuard(inputOrId) {
+        const input = typeof inputOrId === 'string'
+            ? document.getElementById(inputOrId)
+            : inputOrId;
+
+        if (!input || input.dataset.fileNameFormatGuardAttached === 'true') return;
+
+        input.dataset.fileNameFormatGuardAttached = 'true';
+
+        const sanitizeValue = (value) => value
+            .replace(/ /g, '-')
+            .replace(/[^\p{L}0-9_<>+()\-]/gu, '');
+
+        const insertSanitizedText = (text) => {
+            const sanitizedText = sanitizeValue(text);
+
+            if (!sanitizedText) return;
+
+            const start = input.selectionStart ?? input.value.length;
+            const end = input.selectionEnd ?? input.value.length;
+
+            input.setRangeText(sanitizedText, start, end, 'end');
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+        };
+
+        input.addEventListener('beforeinput', (event) => {
+            if (event.inputType && event.inputType.startsWith('insert') && typeof event.data === 'string') {
+                const sanitizedData = sanitizeValue(event.data);
+
+                if (sanitizedData !== event.data) {
+                    event.preventDefault();
+                    insertSanitizedText(event.data);
+                }
+            }
+        });
+
+        input.addEventListener('paste', (event) => {
+            const pastedText = event.clipboardData?.getData('text') ?? '';
+            const sanitizedText = sanitizeValue(pastedText);
+
+            if (sanitizedText !== pastedText) {
+                event.preventDefault();
+                insertSanitizedText(pastedText);
+            }
+        });
+
+        input.addEventListener('input', () => {
+            const sanitizedValue = sanitizeValue(input.value);
+
+            if (sanitizedValue !== input.value) {
+                input.value = sanitizedValue;
+            }
+        });
+    }
+
+    function ReplaceDataInFileName(rawFileName) {
+        const sourceValue = String(rawFileName ?? '');
+        const now = new Date();
+        const twoDigits = (value) => String(value).padStart(2, '0');
+
+        const currentTime = `${twoDigits(now.getHours())}-${twoDigits(now.getMinutes())}`;
+        const currentDate = `${twoDigits(now.getDate())}-${twoDigits(now.getMonth() + 1)}-${now.getFullYear()}`;
+        const currentDateAlt = `${twoDigits(now.getMonth() + 1)}-${twoDigits(now.getDate())}-${now.getFullYear()}`;
+
+        const pageUrl = GetPagePropiertie("page_url") || '';
+        const tabTitle = GetPagePropiertie("tab_title") || '';
+
+        let siteName = '';
+        try {
+            siteName = new URL(pageUrl).hostname.replace(/^www\./i, '');
+        } catch {
+            siteName = '';
+        }
+
+        const tokenReplacements = {
+            '<time>': currentTime,
+            '<date>': currentDate,
+            '<date_alt>': currentDateAlt,
+            '<random_id>': generateRandomId(),
+            '<site_name>': siteName,
+            '<tab_title>': tabTitle
+        };
+
+        let result = sourceValue;
+        for (const [token, replacementValue] of Object.entries(tokenReplacements)) {
+            result = result.split(token).join(String(replacementValue ?? ''));
+        }
+
+        result = result
+            .replace(/ /g, '-')
+            .replace(/[^\p{L}0-9_<>+()\-]/gu, '')
+            .replace(/[<>]/g, '');
+
+        return result;
+    }
+
     function createTurndownService() {
         const service = new TurndownService({
             headingStyle: 'atx',
@@ -262,13 +363,120 @@ ${captionText}
         chrome.runtime.sendMessage({ message: messageText, type: "error", args: argsL });
     }
 
-    function CreateImageReferenceForChoices(img, value) {
+    function ensureChoiceImageHoverPreviewHandlers() {
+        if (choiceImagePreviewBound) return;
+        choiceImagePreviewBound = true;
+
+        const getChoiceItem = (target) => {
+            if (!target || typeof target.closest !== 'function') return null;
+            return target.closest('.choices__item[data-value]');
+        };
+
+        const ensurePreviewElement = () => {
+            if (choiceImagePreviewElement) return;
+
+            choiceImagePreviewElement = document.createElement('div');
+            choiceImagePreviewElement.className = 'choice-image-preview';
+
+            choiceImagePreviewImage = document.createElement('img');
+            choiceImagePreviewImage.className = 'choice-image-preview-image';
+
+            choiceImagePreviewElement.appendChild(choiceImagePreviewImage);
+            document.body.appendChild(choiceImagePreviewElement);
+        };
+
+        const hidePreview = () => {
+            if (!choiceImagePreviewElement) return;
+            choiceImagePreviewElement.style.display = 'none';
+            choiceImagePreviewCurrentValue = null;
+        };
+
+        const updatePreviewPosition = (event) => {
+            if (!choiceImagePreviewElement || choiceImagePreviewElement.style.display === 'none') return;
+
+            const offsetX = -50;
+            const offsetY = 18;
+
+            const maxLeft = Math.max(0, window.innerWidth - choiceImagePreviewElement.offsetWidth - 8);
+            const maxTop = Math.max(0, window.innerHeight - choiceImagePreviewElement.offsetHeight - 8);
+
+            const left = Math.min(maxLeft, event.clientX + offsetX);
+            const top = Math.min(maxTop, event.clientY + offsetY);
+
+            choiceImagePreviewElement.style.left = `${left}px`;
+            choiceImagePreviewElement.style.top = `${top}px`;
+        };
+
+        document.addEventListener('mouseover', (event) => {
+            const item = getChoiceItem(event.target);
+            if (!item) return;
+
+            const value = item.getAttribute('data-value') || '';
+            const previewUrl = choiceImagePreviewByValue.get(value);
+            if (!previewUrl) return;
+
+            ensurePreviewElement();
+
+            choiceImagePreviewCurrentValue = value;
+            choiceImagePreviewImage.src = previewUrl;
+            choiceImagePreviewElement.style.display = 'block';
+
+            updatePreviewPosition(event);
+        });
+
+        document.addEventListener('mousemove', (event) => {
+            updatePreviewPosition(event);
+        });
+
+        document.addEventListener('mouseout', (event) => {
+            const item = getChoiceItem(event.target);
+            if (!item) return;
+
+            const relatedItem = getChoiceItem(event.relatedTarget);
+            if (relatedItem === item) return;
+
+            const value = item.getAttribute('data-value') || '';
+            if (value === choiceImagePreviewCurrentValue) {
+                hidePreview();
+            }
+        });
+    }
+
+    function CreateImageReferenceForChoices(img, value, createPopapOnHover) {
+        const rawValue = String(value ?? '');
         const escapedValue = (typeof CSS !== 'undefined' && CSS.escape)
-            ? CSS.escape(value)
-            : value.replace(/"/g, '\\"');
+            ? CSS.escape(rawValue)
+            : rawValue.replace(/"/g, '\\"');
+
+        const isImageUrl = /^(https?:)?\/\//.test(img) || img.startsWith('data:');
+
+        const getPreviewSource = () => {
+            if (isImageUrl) return img;
+
+            const previewText = String(img ?? '').trim();
+            if (!previewText) return '';
+
+            const escapedPreviewText = previewText
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+
+            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="320" height="220" viewBox="0 0 320 220"><rect width="320" height="220" rx="12" fill="#111827"/><text x="160" y="114" text-anchor="middle" dominant-baseline="middle" font-size="96" font-family="Segoe UI Emoji, Apple Color Emoji, Noto Color Emoji, sans-serif">${escapedPreviewText}</text></svg>`;
+            return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+        };
+
+        if (createPopapOnHover) {
+            ensureChoiceImageHoverPreviewHandlers();
+            const previewSource = getPreviewSource();
+            if (previewSource) {
+                choiceImagePreviewByValue.set(rawValue, previewSource);
+                choiceImagePreviewByValue.set(escapedValue, previewSource);
+            }
+        }
 
         if (document.head.querySelector(`style[data-choices-value="${escapedValue}"]`)) return;
-        const isImageUrl = /^(https?:)?\/\//.test(img) || img.startsWith('data:');
 
         const style = document.createElement("style");
         style.dataset.choicesValue = escapedValue;
@@ -350,36 +558,39 @@ ${captionText}
         { id: "screenshot", nameKey: "screenshot", function: UploadScreenshot },
     ];
 
-    async function UploadImageFromUrl() {
+    async function UploadImageFromUrl(fileName) {
         const responce = await chrome.runtime.sendMessage({
             action: "executeScript_UploadImageFromUrl",
             uploadUrl: `${API_BASE_URL}/spaces/${selectedSpaceId}/files`,
             imageUrl: GetPagePropiertie("page_image"),
             token: state.apiKey,
-            apiVersion: API_VERSION
+            apiVersion: API_VERSION,
+            fileName: fileName
         });
 
         return responce;
     }
 
-    async function UploadHtmlPage() {
+    async function UploadHtmlPage(fileName) {
         const responce = await chrome.runtime.sendMessage({
             action: "executeScript_UploadHtmlFile",
             uploadUrl: `${API_BASE_URL}/spaces/${selectedSpaceId}/files`,
             pageUrl: GetPagePropiertie("page_url"),
             token: state.apiKey,
-            apiVersion: API_VERSION
+            apiVersion: API_VERSION,
+            fileName: fileName
         });
 
         return responce;
     }
 
-    async function UploadScreenshot() {
+    async function UploadScreenshot(fileName) {
         const responce = await chrome.runtime.sendMessage({
             action: "executeScript_UploadScreenshot",
             uploadUrl: `${API_BASE_URL}/spaces/${selectedSpaceId}/files`,
             token: state.apiKey,
-            apiVersion: API_VERSION
+            apiVersion: API_VERSION,
+            fileName: fileName
         });
 
         return responce;
@@ -398,7 +609,8 @@ ${captionText}
         { id: "page_image", nameKey: "page_image", value: "null o_O" },
         { id: "page_description", nameKey: "page_description", value: "null o_O" },
         { id: "page_content", nameKey: "page_content", value: "" },
-        { id: "selected_text_page", nameKey: "selected_text_page", value: "" }
+        { id: "selected_text_page", nameKey: "selected_text_page", value: "" },
+        { id: "page_screenshotUrl", nameKey: "page_screenshotUrl", value: "" }
     ];
 
     try {
@@ -450,6 +662,14 @@ ${captionText}
             consoleLog("Founded content: " + markdown);
 
             WebPagePropierties.find(p => p.id == "page_content").value = markdown || '';
+
+            WebPagePropierties.find(p => p.id == "page_content").value = markdown || '';
+
+            const resultScreenshotUrl = await chrome.runtime.sendMessage({
+                action: "GET_screenshotUrl"
+            });
+
+            WebPagePropierties.find(p => p.id == "page_screenshotUrl").value = resultScreenshotUrl || '';
         }
 
         elements.SaveToAnytypeVersion.innerText = chrome.runtime.getManifest().version;
@@ -461,6 +681,23 @@ ${captionText}
         console.error(error);
         URLWasRejected = true;
         showBlockSection(true);
+    }
+
+    for (let index = 0; index < filesPropierties.length; index++) {
+        if (filesPropierties[index].id === "image_by_url") {
+            CreateImageReferenceForChoices(
+                GetPagePropiertie("page_image") || "",
+                filesPropierties[index].id,
+                true
+            );
+        }
+        else if (filesPropierties[index].id === "screenshot") {
+            CreateImageReferenceForChoices(
+                GetPagePropiertie("page_screenshotUrl") || "",
+                filesPropierties[index].id,
+                true
+            );
+        }
     }
 
     function GetPagePropiertie(propiertie_key) {
@@ -1137,11 +1374,14 @@ ${captionText}
 
             for (let index = 0; index < propertiesListForSaving.length; index++) {
                 const obj = propertiesListForSaving[index];
+                const fileNameFormatObj = document.getElementById(obj?.AnytypeProperty.key + "_file_name_format");
+                const needToAddFileNameFormat = fileNameFormatObj && obj?.AnytypeProperty.format === "files";
 
                 propertiesList.push(
                     {
                         AnytypeProperty: obj?.AnytypeProperty,
-                        SelectedValueByUser: obj?.choice?.getValue(true)
+                        SelectedValueByUser: obj?.choice?.getValue(true),
+                        ...(needToAddFileNameFormat ? { FileNameFormat: fileNameFormatObj.value } : {})
                     }
                 );
             }
@@ -1164,7 +1404,7 @@ ${captionText}
             showMainSection();
         }
         catch (error) {
-            console.log(error);
+            console.error(error);
         }
     });
 
@@ -1830,16 +2070,22 @@ ${captionText}
                             </div>
                             <div class="poperty-head">
                                 ` + GetPropertyIconSVG("editable") + `
-                                <div class="section-title">` + Localize("FileNameFormat", state.language) + `</div>
+                                <div class="section-title-with-tooltip">` + Localize("FileNameFormat", state.language) + `
+                                    <div id="fileNameTipButton" class="btn-file-name-top-tip">
+                                        ?
+                                    </div>
+                                </div>
                             </div>
                             <div class="form-group">
                                 <input
                                     type="text"
                                     id="` + property.key + `_file_name_format"
                                     name="` + property.key + `_file_name_format"
+                                    placeholder="` + Localize("FileNameFormatPlaceholder", state.language) + `"
+                                    value="<date>-<tab_title>"
                                     required
                                     minlength="1"
-                                    maxlength="25"
+                                    maxlength="60"
                                     size="10" />
                             </div>
                         </div>
@@ -1850,6 +2096,10 @@ ${captionText}
                     elements.propertiesListHandler.appendChild(propertyHTML);
                     propertiesListSpawned.push(propertyHTML);
 
+                    if (property.format === "files") {
+                        attachFileNameFormatInputGuard(property.key + "_file_name_format");
+                    }
+
                     choice = new Choices(document.getElementById(property.key), {
                         removeItemButton:
                             property.format === "files" ? false : true,
@@ -1859,6 +2109,10 @@ ${captionText}
                             false,
                     });
                 }
+
+                document.querySelectorAll('[id="fileNameTipButton"]').forEach((element) => {
+                    attachTooltip(element, "FileNameTooltip", 200);
+                });
 
                 propertiesListForSaving.push(
                     { AnytypeProperty: property, choice: choice }
@@ -2013,6 +2267,7 @@ ${captionText}
 
             const initializeChoicesWithColor = (selectElement, needToDisableChoice,
                 useDeleteButtonInChoices = true, searchEnabled = true) => {
+
                 const choice = new Choices(selectElement, {
                     removeItemButton: useDeleteButtonInChoices,
                     searchEnabled: searchEnabled,
@@ -2117,6 +2372,10 @@ ${captionText}
                         && savedProperty.SelectedValueByUser !== null && savedProperty.SelectedValueByUser !== "null"
                         && savedProperty.SelectedValueByUser !== undefined && savedProperty.SelectedValueByUser.length > 0;
 
+                    const savedPropertyFileFormatNameExist = savedProperty !== null && savedProperty !== undefined
+                        && savedProperty.FileNameFormat !== null && savedProperty.FileNameFormat !== "null"
+                        && savedProperty.FileNameFormat !== undefined && savedProperty.FileNameFormat.length > 0;
+
                     consoleLog('Found saved property: ', savedProperty);
 
                     if (property.name === "Created by") continue; // we don't need this
@@ -2208,24 +2467,45 @@ ${captionText}
                         useDeleteButtonInChoices = false;
                         searchEnabled = false;
 
-                        // TODO: здесь добавляем предпоказ имени и картинки
+                        // TODO: здесь добавляем предпоказ картинки
                         propertyHTML.innerHTML = `
-                            <div class="poperty-head">
-                                ` + GetPropertyIconSVG(property.format) + `
-                                <div class="section-title">` + property.name + `</div>
-                            </div>
-                            <div class="form-group">
-                                <select id="` + property.id + `_SO">
-                                    ${filesPropierties.map(o => `
-                                        <option 
-                                            value="${o.id}"
-                                            ` + ((savedPropertyValueExist && savedProperty.SelectedValueByUser.includes(o.id)) ? "selected" : "") + `
-                                        >
-                                            ${Localize(o.nameKey, state.language) || o.id}
-                                        </option>
-                                        `).join("")
-                            }
-                                </select>
+                            <div class="file-selector-group">
+                                <div class="poperty-head">
+                                    ` + GetPropertyIconSVG(property.format) + `
+                                    <div class="section-title">` + property.name + `</div>
+                                </div>
+                                <div class="form-group">
+                                    <select id="` + property.id + `_SO">
+                                        ${filesPropierties.map(o => `
+                                            <option 
+                                                value="${o.id}"
+                                                ` + ((savedPropertyValueExist && savedProperty.SelectedValueByUser.includes(o.id)) ? "selected" : "") + `
+                                            >
+                                                ${Localize(o.nameKey, state.language) || o.id}
+                                            </option>
+                                            `).join("")}
+                                    </select>
+                                </div>
+                                <div class="poperty-head">
+                                    ` + GetPropertyIconSVG("editable") + `
+                                    <div class="section-title-with-tooltip">` + Localize("FileNameFormat", state.language) + `
+                                        <div id="fileNameTipButton" class="btn-file-name-top-tip">
+                                            ?
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <input
+                                        type="text"
+                                        id="` + property.key + `_file_name_format_SO"
+                                        name="` + property.key + `_file_name_format_SO"
+                                        placeholder="` + Localize("FileNameFormatPlaceholder", state.language) + `"
+                                        value="` + ReplaceDataInFileName(savedPropertyFileFormatNameExist ? savedProperty.FileNameFormat : "<date>-<tab_title>") + `"
+                                        required
+                                        minlength="1"
+                                        maxlength="60"
+                                        size="10" />
+                                </div>
                             </div>
                         `;
                     }
@@ -2313,39 +2593,54 @@ ${captionText}
                     elements.propertiesSaveObjectListWithDefaultValueHandler.classList.add('hidden');
                 }
 
+                const appendPrintedProperty = (propertieForPrint, targetElement) => {
+                    targetElement.appendChild(propertieForPrint.propertyHTML);
+
+                    propertiesListForSaving.push({
+                        KeyForAnytypeAPI: propertieForPrint.propertyKey,
+                        IdInHTML: propertieForPrint.propertyId + "_SO",
+                        value_type: propertieForPrint.value_type
+                    });
+
+                    if (propertieForPrint.value_type === "files") {
+                        attachFileNameFormatInputGuard(propertieForPrint.propertyKey + "_file_name_format_SO");
+                    }
+
+                    // HERE
+                    if (propertieForPrint.needToCreateChoices) {
+                        if (propertieForPrint.value_type === "files") {
+                            const choicesInstance = new Choices(document.getElementById(propertieForPrint.propertyId + "_SO"), {
+                                removeItemButton: propertieForPrint.useDeleteButtonInChoices,
+                                searchEnabled: propertieForPrint.searchEnabled,
+                                shouldSort: false
+                            });
+                        }
+                        else {
+                            initializeChoicesWithColor(
+                                document.getElementById(propertieForPrint.propertyId + "_SO"),
+                                propertieForPrint.needToDisableChoice,
+                                propertieForPrint.useDeleteButtonInChoices,
+                                propertieForPrint.searchEnabled
+                            );
+                        }
+                    }
+                };
+
                 for (let index = 0; index < propertiesForPrintWithoutDefaultValue.length; index++) {
                     const propertieForPrint = propertiesForPrintWithoutDefaultValue[index];
 
-                    elements.propertiesSaveObjectListWithoutDefaultValueHandler.appendChild(propertieForPrint.propertyHTML);
-
-                    propertiesListForSaving.push({ KeyForAnytypeAPI: propertieForPrint.propertyKey, IdInHTML: propertieForPrint.propertyId + "_SO", value_type: propertieForPrint.value_type });
-
-                    if (propertieForPrint.needToCreateChoices) {
-                        initializeChoicesWithColor(
-                            document.getElementById(propertieForPrint.propertyId + "_SO"),
-                            propertieForPrint.needToDisableChoice,
-                            propertieForPrint.useDeleteButtonInChoices,
-                            propertieForPrint.searchEnabled
-                        );
-                    }
+                    appendPrintedProperty(propertieForPrint, elements.propertiesSaveObjectListWithoutDefaultValueHandler);
                 }
 
                 for (let index = 0; index < propertiesForPrintWithDefaultValue.length; index++) {
                     const propertieForPrint = propertiesForPrintWithDefaultValue[index];
 
-                    elements.propertiesSaveObjectListWithDefaultValueHandlerContent.appendChild(propertieForPrint.propertyHTML);
-
-                    propertiesListForSaving.push({ KeyForAnytypeAPI: propertieForPrint.propertyKey, IdInHTML: propertieForPrint.propertyId + "_SO", value_type: propertieForPrint.value_type });
-
-                    if (propertieForPrint.needToCreateChoices) {
-                        initializeChoicesWithColor(
-                            document.getElementById(propertieForPrint.propertyId + "_SO"),
-                            propertieForPrint.needToDisableChoice,
-                            propertieForPrint.useDeleteButtonInChoices,
-                            propertieForPrint.searchEnabled
-                        );
-                    }
+                    appendPrintedProperty(propertieForPrint, elements.propertiesSaveObjectListWithDefaultValueHandlerContent);
                 }
+
+                document.querySelectorAll('[id="fileNameTipButton"]').forEach((element) => {
+                    attachTooltip(element, "FileNameTooltip", 200);
+                });
 
                 elements.propertiesSaveObjectListWithDefaultValueHandlerToggleText.textContent = Localize("FilledProperties", state.language);
 
@@ -2429,33 +2724,23 @@ ${captionText}
                     if (selectedFileType != "none_file") {
                         consoleLog("selected File Type: ", selectedFileType);
 
-                        // TODO: убрать это, когда адрес апи добавят
-                        const response = await fetch(`${API_BASE_URL}/spaces/${selectedSpaceId}/files`, {
-                            method: "POST",
-                            headers: {
-                                Authorization: `Bearer ${state.apiKey}`,
-                                'Content-Type': 'multipart/form-data',
-                                'Accept': 'application/json',
-                                'Anytype-Version': API_VERSION
-                            },
-                            body: "dfsf"
-                        });
-                        if (!response.ok) {
+                        const fileName = ReplaceDataInFileName(document.getElementById(propiertyPrinted.KeyForAnytypeAPI + "_file_name_format_SO").value);
 
-                            const errorText =
-                                await response.text();
-
-                            throw new Error(
-                                `File upload failed: status: ${response.status}, errorText: ${errorText}`
-                            );
-                        }
-                        // TODO: убрать это, когда адрес апи добавят
+                        consoleLog("file name: ", fileName);
 
                         const selectedFilePropiertie = filesPropierties.find(p => p.id === selectedFileType);
 
                         if (selectedFilePropiertie?.function) {
-                            const responce = await selectedFilePropiertie.function();
+                            const responce = await selectedFilePropiertie.function(fileName);
                             consoleLog("file function responce: ", responce);
+                            console.error("ТУТ НАДО ЭТОТ ОТВЕТ ПРОКИНУТЬ В НУЖНОЕ СВОЙСТВО");
+                            console.error(responce);
+                            /*
+                            properties_final_list.push(
+                                { key: propiertyPrinted.KeyForAnytypeAPI, 
+                                    [propiertyPrinted.value_type]: responce 
+                                });
+                            */
                         }
                     }
                 }
@@ -2582,7 +2867,11 @@ ${captionText}
 
     //#region Tips
 
-    function attachTooltip(element, textKey) {
+    function attachTooltip(element, textKey, xOffset = 10) {
+        if (!element || element.dataset.tooltipAttached === 'true') return;
+
+        element.dataset.tooltipAttached = 'true';
+
         let tooltip = null;
 
         element.addEventListener("mouseenter", () => {
@@ -2592,14 +2881,18 @@ ${captionText}
             document.body.appendChild(tooltip);
 
             const updatePosition = (e) => {
-                tooltip.style.left = (e.clientX - 10) + "px";
+                tooltip.style.left = (e.clientX - xOffset) + "px";
                 tooltip.style.top = (e.clientY + 30) + "px";
             };
 
             element._tooltipMoveHandler = updatePosition;
 
             element.addEventListener("mousemove", updatePosition);
-            setTimeout(() => tooltip.style.opacity = "1", 10);
+            setTimeout(() => {
+                if (tooltip) {
+                    tooltip.style.opacity = "1"
+                }
+            }, 10);
         });
 
         element.addEventListener("mouseleave", () => {

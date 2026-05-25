@@ -135,6 +135,27 @@ body {
   transform: translateY(-1px);
 }
 
+.btn-file-name-top-tip {
+    position: relative;
+    width: 25px;
+    height: 25px;
+    top: -5px;
+    padding: 0px;
+    background: var(--background-focus);
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: help;
+    margin-left: 5px;
+}
+
+.btn-file-name-top-tip:hover {
+  transform: translateY(-1px);
+}
+
 .file-selector-group {
   padding: 9px;
   border: 2px solid var(--borders-color);
@@ -160,6 +181,24 @@ body {
 }
 .custom-tooltip.show {
   opacity: 1;
+}
+
+.choice-image-preview {
+  position: fixed;
+  pointer-events: none;
+  z-index: 2147483647;
+  display: none;
+  padding: 6px;
+  border-radius: 8px;
+  background: rgba(12, 12, 12, 0.95);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.choice-image-preview-image {
+  display: block;
+  max-width: 320px;
+  max-height: 220px;
+  border-radius: 4px;
 }
 
 .poperty-head {
@@ -440,6 +479,16 @@ h3 {
   margin-bottom: 10px;
   letter-spacing: 1px;
 }
+
+.section-title-with-tooltip {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--section-title-color);
+  margin-bottom: 10px;
+  letter-spacing: 1px;
+  display: flex;
+}
+
 .alert-loading-title {
   text-align: center;
   font-size: 16px;
