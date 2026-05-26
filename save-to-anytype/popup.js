@@ -2,6 +2,7 @@
 const API_VERSION = '2025-11-08';
 
 const DEFAULT_ACCENT_COLOR = '#ff3030ff';
+const FILLED_FIELDS_TOGGLE_SYMBOL = '^';
 
 // State
 let state = {
@@ -285,6 +286,14 @@ async function localPopapInited() {
             .replace(/ /g, '-')
             .replace(/[^\p{L}0-9_<>+()\-]/gu, '')
             .replace(/[<>]/g, '');
+
+        if (!result || result.length === 0) {
+            return currentDate;
+        }
+
+        if (result.length > 60) {
+            result = result.slice(0, 60);
+        }
 
         return result;
     }
@@ -2642,29 +2651,48 @@ ${captionText}
 
                 elements.propertiesSaveObjectListWithDefaultValueHandlerToggleText.textContent = Localize("FilledProperties", state.language);
 
+                elements.propertiesSaveObjectListWithDefaultValueHandlerToggleSign.textContent = FILLED_FIELDS_TOGGLE_SYMBOL;
+
+                let toggleSignAnimationTimer = null;
+
+                const playFilledFieldsToggleAnimation = () => {
+                    const signEl = elements.propertiesSaveObjectListWithDefaultValueHandlerToggleSign;
+
+                    signEl.classList.add('animate-on-toggle');
+
+                    if (toggleSignAnimationTimer !== null) {
+                        clearTimeout(toggleSignAnimationTimer);
+                    }
+
+                    toggleSignAnimationTimer = setTimeout(() => {
+                        signEl.classList.remove('animate-on-toggle');
+                        toggleSignAnimationTimer = null;
+                    }, 260);
+                };
+
+                const updateFilledFieldsToggleSign = () => {
+                    const isCollapsed = elements.propertiesSaveObjectListWithDefaultValueHandler.classList.contains('collapsed');
+
+                    elements.propertiesSaveObjectListWithDefaultValueHandlerToggleSign.classList.toggle('is-expanded', !isCollapsed);
+                };
+
                 if (state.collapseOnOpenForm == "true") {
                     if (!elements.propertiesSaveObjectListWithDefaultValueHandler.classList.contains('collapsed'))
                         elements.propertiesSaveObjectListWithDefaultValueHandler.classList.add('collapsed');
-
-                    elements.propertiesSaveObjectListWithDefaultValueHandlerToggleSign.textContent = "▼";
                 }
                 else {
                     if (elements.propertiesSaveObjectListWithDefaultValueHandler.classList.contains('collapsed'))
                         elements.propertiesSaveObjectListWithDefaultValueHandler.classList.remove('collapsed');
-
-                    elements.propertiesSaveObjectListWithDefaultValueHandlerToggleSign.textContent = "▲";
                 }
+
+                updateFilledFieldsToggleSign();
 
                 if (!WasSubscribeToggleCollapsedButton) {
                     WasSubscribeToggleCollapsedButton = true;
                     elements.propertiesSaveObjectListWithDefaultValueHandlerToggle.addEventListener('click', () => {
+                        playFilledFieldsToggleAnimation();
                         elements.propertiesSaveObjectListWithDefaultValueHandler.classList.toggle('collapsed');
-
-                        if (elements.propertiesSaveObjectListWithDefaultValueHandler.classList.contains('collapsed')) {
-                            elements.propertiesSaveObjectListWithDefaultValueHandlerToggleSign.textContent = "▼";
-                        } else {
-                            elements.propertiesSaveObjectListWithDefaultValueHandlerToggleSign.textContent = "▲";
-                        }
+                        updateFilledFieldsToggleSign();
                     });
                 }
 

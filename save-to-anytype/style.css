@@ -425,10 +425,7 @@ h3 {
   transition: all 0.3s ease;
   display: flex;
   justify-content: space-between;
-}
-
-.toggle-btn:hover {
-  scale: 1.02;
+  align-items: center;
 }
 
 .propertiesSaveObjectListWithDefaultValueHandlerContent {
@@ -438,6 +435,33 @@ h3 {
 .collapsed .propertiesSaveObjectListWithDefaultValueHandlerContent {
   display: none;
   transition: all 0.3s ease;
+}
+
+.filled-fields-expand-icon {
+  color: var(--filled-fields-expand-icon-color);
+  display: inline-block;
+  transform: rotate(90deg);
+  font-family: cursive;
+  font-size: 47px;
+  height: 44px;
+  position: relative;
+}
+
+.filled-fields-expand-icon.animate-on-toggle {
+  transition: all 0.25s ease;
+}
+
+.filled-fields-expand-icon.is-expanded {
+  transform: rotate(180deg);
+}
+
+.can-collapse {
+  padding-top: 6px;
+  padding-bottom: 0px;
+}
+
+.toggle-btn:hover {
+  scale: 1.02;
 }
 
 .collapsed::after {
@@ -930,10 +954,6 @@ button {
   background: var(--borders-color);
   color: var(--card-color);
   border-color: var(--input-focus-color);
-}
-
-.filled-fields-expand-icon {
-  color: var(--filled-fields-expand-icon-color);
 }
 
 strong {
