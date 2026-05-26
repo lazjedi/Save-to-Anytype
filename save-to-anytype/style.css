@@ -788,7 +788,7 @@ button {
 }
 
 #saveObjectSectionAnimation {
-  padding-bottom: 15px;
+  padding-bottom: 30px;
   animation: slideIn 0.5s ease;
 }
 
