@@ -57,6 +57,10 @@
   background: var(--back-color) !important;
 }
 
+html {
+  overscroll-behavior: contain;
+}
+
 * {
   margin: 0;
   padding: 0;

@@ -52,7 +52,7 @@
   "sidebar_action": {
     "default_icon": "/assets/icon16.png",
     "default_title": "Save to Anytype",
-    "default_panel": "sidepanel.html"
+    "default_panel": "popup.html"
   },
   "content_scripts": [
     {
