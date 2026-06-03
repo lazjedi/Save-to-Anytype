@@ -303,6 +303,7 @@ async function uploadHtmlPage(uploadUrl, pageUrl, token, apiVersion, fileName) {
         apiVersion
     );
 }
+// END
 
 async function uploadScreenshot(uploadUrl, token, apiVersion, fileName, screenshotUrl) {
     const response =
