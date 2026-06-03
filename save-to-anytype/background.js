@@ -117,58 +117,30 @@ function findDescription() {
     return '';
 }
 
+// Web clipping
+// Web clipping
+
 function extractPageText() {
     try {
         if (!document || !document.body) {
             throw new Error('Document body not found');
         }
 
-        const getIframeContent = (iframe) => {
-            try {
-                const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
-                if (!iframeDoc || !iframeDoc.body) return '';
-                const iframeClone = iframeDoc.body.cloneNode(true);
-                iframeClone.querySelectorAll('script, style, nav, footer, aside, .ads, .comments').forEach(el => el.remove());
-                return `<div class="iframe-content">${iframeClone.innerHTML}</div>`;
-            } catch (e) {
-                return '';
-            }
-        };
-
-        const bodyClone = document.body.cloneNode(true);
-
-        const iframes = document.querySelectorAll('iframe');
-        let iframeContents = [];
-        iframes.forEach((iframe) => {
-            const content = getIframeContent(iframe);
-            if (content) iframeContents.push(content);
-        });
-
-        const unwanted = bodyClone.querySelectorAll(
-            'script, style, nav, footer, aside, .ads, .comments, [role="complementary"], .cookie-banner, .popup, .overlay, .modal, #save-to-anytype-overlay'
-        );
-        unwanted.forEach(el => el.remove());
-
-        const mainSelectors = ['main', 'article', '.content', '.post', '.entry', '[role="main"]', '#content', '.main'];
-        let mainContent = null;
-
-        for (const selector of mainSelectors) {
-            const found = bodyClone.querySelector(selector);
-            if (found && found.innerHTML.trim().length > 100) {
-                mainContent = found;
-                break;
-            }
+        if (typeof Defuddle === 'undefined') {
+            throw new Error('Defuddle is not loaded');
         }
 
-        let finalContent = mainContent ? mainContent.innerHTML : bodyClone.innerHTML;
+        const documentClone = document.cloneNode(true);
+        const result = new Defuddle(documentClone).parse();
 
-        if (iframeContents.length > 0) {
-            finalContent += '<h2>Embedded Content</h2>' + iframeContents.join('<hr>');
+        if (!result || !result.content) {
+            throw new Error('Defuddle could not parse the page');
         }
 
-        return finalContent;
+        return result.content;
 
     } catch (error) {
+        console.error("Content Extraction Error: ", error);
         return "PAGE PARSE ERROR";
     }
 }
@@ -546,11 +518,24 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         chrome.scripting.executeScript(
             {
                 target: request.target,
-                func: extractPageText
+                files: ["Libraries/Defuddle.js"]
             },
-            (result) => {
-                consoleLog(result);
-                sendResponse(result);
+            () => {
+                if (chrome.runtime.lastError) {
+                    consoleError('Failed to inject Defuddle.js:', chrome.runtime.lastError.message);
+                    sendResponse([{ result: "PAGE PARSE ERROR" }]);
+                    return;
+                }
+                chrome.scripting.executeScript(
+                    {
+                        target: request.target,
+                        func: extractPageText
+                    },
+                    (result) => {
+                        consoleLog(result);
+                        sendResponse(result);
+                    }
+                );
             }
         );
         return true;

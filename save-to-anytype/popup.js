@@ -307,6 +307,9 @@ async function localPopapInited() {
             emDelimiter: '_'
         });
 
+        // GFM plugin
+        service.use(turndownPluginGfm.gfm);
+
         service.keep(['iframe', 'script', 'style']);
 
         service.addRule('figures', {
@@ -318,12 +321,7 @@ async function localPopapInited() {
                     const alt = img.getAttribute('alt') || '';
                     const src = img.getAttribute('src') || '';
                     const captionText = caption ? caption.textContent : '';
-                    return `
-
-![${alt}](${src})
-${captionText}
-
-`;
+                    return `![${alt}](${src})\n${captionText}`;
                 }
                 return content;
             }
