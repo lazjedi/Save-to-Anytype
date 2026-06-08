@@ -222,7 +222,6 @@ async function uploadFile(uploadUrl, file, token, apiVersion) {
         method: "POST",
         headers: {
             Authorization: `Bearer ${token}`,
-            'Content-Type': 'multipart/form-data',
             'Accept': 'application/json',
             'Anytype-Version': apiVersion,
             redirect: 'follow'

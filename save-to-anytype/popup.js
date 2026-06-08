@@ -555,7 +555,14 @@ async function localPopapInited() {
 
     //#region Files work
 
-    // TODO: тут описать, как добавлять новые типы файлов для сохранени
+    /*
+        HOW TO ADD A NEW SAVE FILE TYPE:
+        1) Add a new object to the filesPropierties array with a unique id, localization keys and a file upload function
+        2) Create the loading function itself, which will send a message to background.js to execute the desired script on the page and return the result
+        3) In background.js, add processing for a new file type in a message listener that executes scripts on the page
+        4) It must receive the required file from the page, then call the uploadFile method and return the result of its work
+    */
+
     let filesPropierties = [
         { id: "none_file", nameKey: "none_file", function: async () => null },
         { id: "image_by_url", nameKey: "image_by_url", function: UploadImageFromUrl },
@@ -2768,19 +2775,18 @@ async function localPopapInited() {
                             const responce = await selectedFilePropiertie.function(fileName);
                             consoleLog("file function responce: ", responce);
 
-                            // TODO: ТУТ НАДО ЭТОТ ОТВЕТ ПРОКИНУТЬ В НУЖНОЕ СВОЙСТВО
-                            console.error("ТУТ НАДО ЭТОТ ОТВЕТ ПРОКИНУТЬ В НУЖНОЕ СВОЙСТВО");
-                            console.error(responce);
-
                             if (responce?.data?.testDownload)
                                 continue;
 
-                            /*
-                            properties_final_list.push(
-                                { key: propiertyPrinted.KeyForAnytypeAPI, 
-                                    [propiertyPrinted.value_type]: responce 
-                                });
-                            */
+                            if (responce?.data?.object_id) {
+                                consoleLog("add file with id: ", responce.data.object_id);
+
+                                properties_final_list.push(
+                                    {
+                                        key: propiertyPrinted.KeyForAnytypeAPI,
+                                        [propiertyPrinted.value_type]: [responce.data.object_id]
+                                    });
+                            }
                         }
                     }
                 }
