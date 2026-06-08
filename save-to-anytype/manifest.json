@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Save to Anytype",
-  "version": "0.1.8",
+  "version": "0.2.0",
   "description": "Save important web pages with your selected text in Markdown format to Anytype.",
   "permissions": [
     "scripting",
@@ -40,6 +40,7 @@
       "resources": [
         "style.css",
         "popup.html",
+        "property-icons.js",
         "popup.js",
         "popupBlocked.html",
         "popupBlocked.js",
@@ -53,7 +54,7 @@
     }
   ],
   "side_panel": {
-    "default_path": "sidepanel.html"
+    "default_path": "popup.html"
   },
   "content_scripts": [
     {
@@ -61,5 +62,6 @@
       "js": ["content.js"],
       "run_at": "document_end"
     }
-  ]
+  ],
+  "default_locale": "en"
 }
