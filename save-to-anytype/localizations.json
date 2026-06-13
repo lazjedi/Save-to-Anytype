@@ -99,7 +99,11 @@
       "StringsRemovedFromTabTitle": "Strings removed from tab title",
       "StringsRemovedFromTabTitlePlaceholder": "\"Download \", \"watch online\", \"free online\"",
       "StringsRemovedFromTabTitleTooltip": "You can set strings here that will be removed from the tab title when adding it to an object. Strings are entered in quotes separated by commas, for example:\n\"Download \", \"watch online\", \"free online\"\n\nThese strings will be removed",
-      "TextAreaBlocksHeightPx": "Text input block height - in pixels:"
+      "TextAreaBlocksHeightPx": "Text input block height - in pixels:",
+      "page_selector": "🔗 Select element from page 🔗",
+      "element_selector_class": "Selected class:",
+      "element_selector_text": "Text",
+      "PageSelectorTooltip": "You can select an element on the page whose text will be added to the object.\n\nTo select an element, press the 👆 button and choose an element on the page.\n\nThe object will be searched by the CSS class of the selected element. Therefore, it is recommended to choose elements with unique classes to avoid confusion with other elements on the page."
     },
     {
       "languageName": "Русский",
@@ -200,7 +204,11 @@
       "StringsRemovedFromTabTitle": "Строки, удаляемые из названия вкладки",
       "StringsRemovedFromTabTitlePlaceholder": "\"Скачать \", \"смотреть онлайн\", \"онлайн бесплатно\"",
       "StringsRemovedFromTabTitleTooltip": "Вы можете задать здесь строки, которые будут удаляться из названия вкладки при его добавлении в объект. Строки вводятся в кавычках через запятую, например, так:\n\"Скачать \", \"смотреть онлайн\", \"онлайн бесплатно\"\n\nЭти строки будут удалены",
-      "TextAreaBlocksHeightPx": "Высота блоков для ввода текста - в пикселях:"
+      "TextAreaBlocksHeightPx": "Высота блоков для ввода текста - в пикселях:",
+      "page_selector":  "🔗 Выбрать элемент со страницы 🔗",
+      "element_selector_class":  "Выбранный класс:",
+      "element_selector_text":  "Текст",
+      "PageSelectorTooltip":  "Вы можете выбрать элемент на странице, текст из которого будет добавляться в объект.\n\nДля выбора элемента нажмите на кнопку 👆 и выберите элемент на странице.\n\nПоиск объекта будет осуществляться по CSS классу элемента, который вы выберете. Поэтому рекомендуется выбирать элементы с уникальными классами, чтобы избежать путаницы с другими элементами на странице."
     },
     {
       "languageName": "Türkçe",
@@ -301,7 +309,11 @@
       "StringsRemovedFromTabTitle": "Sekme başlığından kaldırılan yazılar",
       "StringsRemovedFromTabTitlePlaceholder": "\"İndir \", \"çevrimiçi izle\", \"ücretsiz çevrimiçi\"",
       "StringsRemovedFromTabTitleTooltip": "Nesneye eklenirken sekme başlığından kaldırılacak yazıları burada belirleyebilirsiniz. Yazılar tırnak işaretleri içinde virgülle ayrılarak girilir, örneğin:\n\"İndir \", \"çevrimiçi izle\", \"ücretsiz çevrimiçi\"\n\nBu yazılar silinecek",
-      "TextAreaBlocksHeightPx": "Metin giriş bloklarının yüksekliği - piksel cinsinden:"
+      "TextAreaBlocksHeightPx": "Metin giriş bloklarının yüksekliği - piksel cinsinden:",
+      "page_selector": "🔗 Sayfadan öğe seç 🔗",
+      "element_selector_class": "Seçilen sınıf:",
+      "element_selector_text": "Metin",
+      "PageSelectorTooltip": "Sayfada metni nesneye eklenecek bir öğe seçebilirsiniz.\n\nBir öğe seçmek için 👆 düğmesine basın ve sayfada bir öğe seçin.\n\nNesne araması, seçtiğiniz öğenin CSS sınıfına göre yapılacaktır. Bu nedenle, sayfadaki diğer öğelerle karışıklığı önlemek için benzersiz sınıflara sahip öğeleri seçmeniz önerilir."
     },
     {
       "languageName": "Deutsch",
@@ -402,7 +414,11 @@
       "StringsRemovedFromTabTitle": "Aus Registerkartentitel entfernte Zeichenketten",
       "StringsRemovedFromTabTitlePlaceholder": "\"Download \", \"online ansehen\", \"kostenlos online\"",
       "StringsRemovedFromTabTitleTooltip": "Sie können hier die Zeichenketten angeben, die beim Hinzufügen zum Objekt aus dem Registerkartentitel entfernt werden. Die Zeichenketten werden in Anführungszeichen eingegeben und durch Kommas getrennt, zum Beispiel:\n\"Download \", \"online ansehen\", \"kostenlos online\"\n\nDiese Zeichenketten werden entfernt",
-      "TextAreaBlocksHeightPx": "Höhe der Texteingabeblöcke - in Pixeln:"
+      "TextAreaBlocksHeightPx": "Höhe der Texteingabeblöcke - in Pixeln:",
+      "page_selector": "🔗 Element von der Seite auswählen 🔗",
+      "element_selector_class": "Ausgewählte Klasse:",
+      "element_selector_text": "Text",
+      "PageSelectorTooltip": "Sie können ein Element auf der Seite auswählen, dessen Text dem Objekt hinzugefügt wird.\n\nUm ein Element auszuwählen, drücken Sie die Schaltfläche 👆 und wählen Sie ein Element auf der Seite aus.\n\nDie Objektsuche erfolgt über die CSS-Klasse des ausgewählten Elements. Daher wird empfohlen, Elemente mit eindeutigen Klassen auszuwählen, um Verwechslungen mit anderen Elementen auf der Seite zu vermeiden."
     },
     {
       "languageName": "Français",
@@ -503,7 +519,11 @@
       "StringsRemovedFromTabTitle": "Chaînes supprimées du titre de l'onglet",
       "StringsRemovedFromTabTitlePlaceholder": "\"Télécharger \", \"regarder en ligne\", \"gratuit en ligne\"",
       "StringsRemovedFromTabTitleTooltip": "Vous pouvez spécifier ici les chaînes qui seront supprimées du titre de l'onglet lors de son ajout à l'objet. Les chaînes sont entrées entre guillemets séparées par des virgules, par exemple:\n\"Télécharger \", \"regarder en ligne\", \"gratuit en ligne\"\n\nCes chaînes seront supprimées",
-      "TextAreaBlocksHeightPx": "Hauteur des blocs de saisie de texte - en pixels:"
+      "TextAreaBlocksHeightPx": "Hauteur des blocs de saisie de texte - en pixels:",
+      "page_selector": "🔗 Sélectionner un élément sur la page 🔗",
+      "element_selector_class": "Classe sélectionnée :",
+      "element_selector_text": "Texte",
+      "PageSelectorTooltip": "Vous pouvez sélectionner un élément de la page dont le texte sera ajouté à l'objet.\n\nPour sélectionner un élément, appuyez sur le bouton 👆 et choisissez un élément sur la page.\n\nLa recherche de l'objet sera effectuée selon la classe CSS de l'élément sélectionné. Il est donc recommandé de choisir des éléments avec des classes uniques pour éviter toute confusion avec d'autres éléments de la page."
     },
     {
       "languageName": "Español",
@@ -604,7 +624,11 @@
       "StringsRemovedFromTabTitle": "Cadenas eliminadas del título de la pestaña",
       "StringsRemovedFromTabTitlePlaceholder": "\"Descargar \", \"ver en línea\", \"gratis en línea\"",
       "StringsRemovedFromTabTitleTooltip": "Puede especificar aquí las cadenas que se eliminarán del título de la pestaña al agregarlo al objeto. Las cadenas se ingresan entre comillas separadas por comas, por ejemplo:\n\"Descargar \", \"ver en línea\", \"gratis en línea\"\n\nEstas cadenas serán eliminadas",
-      "TextAreaBlocksHeightPx": "Altura de los bloques de entrada de texto - en píxeles:"
+      "TextAreaBlocksHeightPx": "Altura de los bloques de entrada de texto - en píxeles:",
+      "page_selector": "🔗 Seleccionar elemento de la página 🔗",
+      "element_selector_class": "Clase seleccionada:",
+      "element_selector_text": "Texto",
+      "PageSelectorTooltip": "Puede seleccionar un elemento de la página cuyo texto se agregará al objeto.\n\nPara seleccionar un elemento, pulse el botón 👆 y elija un elemento en la página.\n\nLa búsqueda del objeto se realizará por la clase CSS del elemento seleccionado. Por lo tanto, se recomienda elegir elementos con clases únicas para evitar confusiones con otros elementos de la página."
     },
     {
       "languageName": "Italiano",
@@ -705,7 +729,11 @@
       "StringsRemovedFromTabTitle": "Stringhe rimosse dal titolo della scheda",
       "StringsRemovedFromTabTitlePlaceholder": "\"Scarica \", \"guarda online\", \"gratis online\"",
       "StringsRemovedFromTabTitleTooltip": "È possibile specificare qui le stringhe che verranno rimosse dal titolo della scheda quando viene aggiunto all'oggetto. Le stringhe vengono immesse tra virgolette separate da virgole, ad esempio:\n\"Scarica \", \"guarda online\", \"gratis online\"\n\nQueste stringhe verranno rimosse",
-      "TextAreaBlocksHeightPx": "Altezza dei blocchi di input testo - in pixel:"
+      "TextAreaBlocksHeightPx": "Altezza dei blocchi di input testo - in pixel:",
+      "page_selector": "🔗 Seleziona elemento dalla pagina 🔗",
+      "element_selector_class": "Classe selezionata:",
+      "element_selector_text": "Testo",
+      "PageSelectorTooltip": "Puoi selezionare un elemento della pagina il cui testo verrà aggiunto all'oggetto.\n\nPer selezionare un elemento, premi il pulsante 👆 e scegli un elemento nella pagina.\n\nLa ricerca dell'oggetto verrà effettuata in base alla classe CSS dell'elemento selezionato. Per questo motivo, si consiglia di scegliere elementi con classi uniche per evitare confusione con altri elementi della pagina."
     },
     {
       "languageName": "中文",
@@ -806,7 +834,11 @@
       "StringsRemovedFromTabTitle": "从标签页标题中删除的字符串",
       "StringsRemovedFromTabTitlePlaceholder": "\"下载 \", \"在线观看\", \"免费在线\"",
       "StringsRemovedFromTabTitleTooltip": "您可以在此处指定将在添加到对象时从标签页标题中删除的字符串。字符串以引号形式输入，由逗号分隔，例如：\n\"下载 \", \"在线观看\", \"免费在线\"\n\n这些字符串将被删除",
-      "TextAreaBlocksHeightPx": "文本输入块高度 - 以像素为单位:"
+      "TextAreaBlocksHeightPx": "文本输入块高度 - 以像素为单位:",
+      "page_selector": "🔗 从页面选择元素 🔗",
+      "element_selector_class": "已选类：",
+      "element_selector_text": "文本",
+      "PageSelectorTooltip": "您可以选择页面上的一个元素，其文本将被添加到对象中。\n\n要选择元素，请按下 👆 按钮并在页面上选择一个元素。\n\n对象将根据您所选元素的 CSS 类进行查找。因此，建议选择具有唯一类名的元素，以避免与页面上的其他元素混淆。"
     },
     {
       "languageName": "Polski",
@@ -907,7 +939,11 @@
       "StringsRemovedFromTabTitle": "Ciągi znaków usuwane z tytułu karty",
       "StringsRemovedFromTabTitlePlaceholder": "\"Pobierz \", \"obejrzyj online\", \"bezpłatnie online\"",
       "StringsRemovedFromTabTitleTooltip": "Możesz tutaj określić ciągi znaków, które zostaną usunięte z tytułu karty po dodaniu do obiektu. Ciągi znaków są wprowadzane w cudzysłowiach oddzielone przecinkami, na przykład:\n\"Pobierz \", \"obejrzyj online\", \"bezpłatnie online\"\n\nTe ciągi znaków zostaną usunięte",
-      "TextAreaBlocksHeightPx": "Wysokość bloków wprowadzania tekstu - w pikselach:"
+      "TextAreaBlocksHeightPx": "Wysokość bloków wprowadzania tekstu - w pikselach:",
+      "page_selector": "🔗 Wybierz element ze strony 🔗",
+      "element_selector_class": "Wybrana klasa:",
+      "element_selector_text": "Tekst",
+      "PageSelectorTooltip": "Możesz wybrać element na stronie, którego tekst zostanie dodany do obiektu.\n\nAby wybrać element, naciśnij przycisk 👆 i wybierz element na stronie.\n\nWyszukiwanie obiektu będzie odbywać się na podstawie klasy CSS wybranego elementu. Dlatego zaleca się wybieranie elementów z unikalnymi klasami, aby uniknąć pomyłek z innymi elementami na stronie."
     },
     {
       "languageName": "한국어",
@@ -1008,7 +1044,11 @@
       "StringsRemovedFromTabTitle": "탭 제목에서 제거할 문자열",
       "StringsRemovedFromTabTitlePlaceholder": "\"다운로드 \", \"온라인으로 보기\", \"무료 온라인\"",
       "StringsRemovedFromTabTitleTooltip": "여기서 객체에 추가할 때 탭 제목에서 제거할 문자열을 지정할 수 있습니다. 문자열은 따옴표로 입력되고 쉼표로 구분됩니다. 예:\n\"다운로드 \", \"온라인으로 보기\", \"무료 온라인\"\n\n이 문자열들이 제거됩니다",
-      "TextAreaBlocksHeightPx": "텍스트 입력 블록 높이 - 픽셀 단위:"
+      "TextAreaBlocksHeightPx": "텍스트 입력 블록 높이 - 픽셀 단위:",
+      "page_selector": "🔗 페이지에서 요소 선택 🔗",
+      "element_selector_class": "선택된 클래스:",
+      "element_selector_text": "텍스트",
+      "PageSelectorTooltip": "페이지에서 텍스트가 객체에 추가될 요소를 선택할 수 있습니다.\n\n요소를 선택하려면 👆 버튼을 누르고 페이지에서 요소를 선택하세요.\n\n객체 검색은 선택한 요소의 CSS 클래스 기준으로 수행됩니다. 따라서 페이지의 다른 요소와 혼동되지 않도록 고유한 클래스를 가진 요소를 선택하는 것이 좋습니다."
     },
     {
       "languageName": "日本語",
@@ -1109,7 +1149,11 @@
       "StringsRemovedFromTabTitle": "タブのタイトルから削除される文字列",
       "StringsRemovedFromTabTitlePlaceholder": "\"ダウンロード \", \"オンラインで視聴\", \"無料オンライン\"",
       "StringsRemovedFromTabTitleTooltip": "オブジェクトに追加する際にタブのタイトルから削除される文字列をここで指定できます。文字列は引用符で囲まれ、カンマで区切られます。例:\n\"ダウンロード \", \"オンラインで視聴\", \"無料オンライン\"\n\nこれらの文字列が削除されます",
-      "TextAreaBlocksHeightPx": "テキスト入力ブロックの高さ - ピクセル:"
+      "TextAreaBlocksHeightPx": "テキスト入力ブロックの高さ - ピクセル:",
+      "page_selector": "🔗 ページから要素を選択 🔗",
+      "element_selector_class": "選択したクラス:",
+      "element_selector_text": "テキスト",
+      "PageSelectorTooltip": "ページ上で、そのテキストをオブジェクトに追加する要素を選択できます。\n\n要素を選択するには、👆 ボタンを押してページ上の要素を選択してください。\n\nオブジェクトの検索は、選択した要素の CSS クラスに基づいて行われます。ページ上の他の要素との混同を避けるため、固有のクラスを持つ要素を選択することをおすすめします。"
     },
     {
       "languageName": "हिन्दी",
@@ -1210,7 +1254,11 @@
       "StringsRemovedFromTabTitle": "टैब शीर्षक से हटाई गई स्ट्रिंग्स",
       "StringsRemovedFromTabTitlePlaceholder": "\"डाउनलोड \", \"ऑनलाइन देखें\", \"मुफ्त ऑनलाइन\"",
       "StringsRemovedFromTabTitleTooltip": "आप यहां स्ट्रिंग्स निर्दिष्ट कर सकते हैं जो ऑब्जेक्ट में जोड़ते समय टैब शीर्षक से हटाई जाएंगी। स्ट्रिंग्स उद्धरण चिन्हों में दर्ज की जाती हैं और अल्पविराम से अलग की जाती हैं, उदाहरण के लिए:\n\"डाउनलोड \", \"ऑनलाइन देखें\", \"मुफ्त ऑनलाइन\"\n\nये स्ट्रिंग्स हटाई जाएंगी",
-      "TextAreaBlocksHeightPx": "टेक्स्ट इनपुट ब्लॉकों की ऊंचाई - पिक्सेल में:"
+      "TextAreaBlocksHeightPx": "टेक्स्ट इनपुट ब्लॉकों की ऊंचाई - पिक्सेल में:",
+      "page_selector": "🔗 पेज से तत्व चुनें 🔗",
+      "element_selector_class": "चयनित क्लास:",
+      "element_selector_text": "टेक्स्ट",
+      "PageSelectorTooltip": "आप पेज पर ऐसा तत्व चुन सकते हैं जिसका टेक्स्ट ऑब्जेक्ट में जोड़ा जाएगा.\n\nतत्व चुनने के लिए 👆 बटन दबाएँ और पेज पर तत्व चुनें.\n\nऑब्जेक्ट की खोज आपके चुने हुए तत्व की CSS क्लास के आधार पर की जाएगी. इसलिए, पेज के अन्य तत्वों के साथ भ्रम से बचने के लिए यूनिक क्लास वाले तत्व चुनने की सलाह दी जाती है."
     },
     {
       "languageName": "Беларуская",
@@ -1311,7 +1359,11 @@
       "StringsRemovedFromTabTitle": "Радкі, удаленыя з загалоўка ўкладкі",
       "StringsRemovedFromTabTitlePlaceholder": "\"Сцягнуць \", \"глядзець онлайн\", \"бясплатна онлайн\"",
       "StringsRemovedFromTabTitleTooltip": "Вы можаце вказаць тут радкі, якія будуць удаленыя з загалоўка ўкладкі пры дабаванні да объекта. Радкі ўводзяцца ў двойных цытатах, раздзеленыя коскамі, напрыклад:\n\"Сцягнуць \", \"глядзець онлайн\", \"бясплатна онлайн\"\n\nЭтыя радкі будуць удаленыя",
-      "TextAreaBlocksHeightPx": "Вышыня блокаў уводу тэксту - у пікселях:"
+      "TextAreaBlocksHeightPx": "Вышыня блокаў уводу тэксту - у пікселях:",
+      "page_selector": "🔗 Выбраць элемент са старонкі 🔗",
+      "element_selector_class": "Выбраны клас:",
+      "element_selector_text": "Тэкст",
+      "PageSelectorTooltip": "Вы можаце выбраць элемент на старонцы, тэкст з якога будзе дадавацца ў аб'ект.\n\nКаб выбраць элемент, націсніце кнопку 👆 і выберыце элемент на старонцы.\n\nПошук аб'екта будзе выконвацца па CSS-класе выбранага элемента. Таму рэкамендуецца выбіраць элементы з унікальнымі класамі, каб пазбегнуць блытаніны з іншымі элементамі на старонцы."
     },
     {
       "languageName": "Čeština",
@@ -1412,7 +1464,11 @@
       "StringsRemovedFromTabTitle": "Řetězce odstraněné z názvu karty",
       "StringsRemovedFromTabTitlePlaceholder": "\"Stáhnout \", \"sledovat online\", \"zdarma online\"",
       "StringsRemovedFromTabTitleTooltip": "Zde můžete určit řetězce, které budou odstraněny z názvu karty při přidání do objektu. Řetězce se zadávají v uvozovkách oddělené čárkami, například:\n\"Stáhnout \", \"sledovat online\", \"zdarma online\"\n\nTyto řetězce budou odstraněny",
-      "TextAreaBlocksHeightPx": "Výška bloků pro zadávání textu - v pixelech:"
+      "TextAreaBlocksHeightPx": "Výška bloků pro zadávání textu - v pixelech:",
+      "page_selector": "🔗 Vybrat prvek ze stránky 🔗",
+      "element_selector_class": "Vybraná třída:",
+      "element_selector_text": "Text",
+      "PageSelectorTooltip": "Můžete vybrat prvek na stránce, jehož text bude přidán do objektu.\n\nChcete-li vybrat prvek, stiskněte tlačítko 👆 a vyberte prvek na stránce.\n\nVyhledávání objektu bude probíhat podle CSS třídy vybraného prvku. Proto se doporučuje vybírat prvky s jedinečnými třídami, aby nedošlo k záměně s jinými prvky na stránce."
     },
     {
       "languageName": "Dansk",
@@ -1513,7 +1569,11 @@
       "StringsRemovedFromTabTitle": "Strenge fjernet fra fanetitel",
       "StringsRemovedFromTabTitlePlaceholder": "\"Download \", \"se online\", \"gratis online\"",
       "StringsRemovedFromTabTitleTooltip": "Her kan du angive strenge, der skal fjernes fra fanetitlen, når den tilføjes til objektet. Strengene indtastes i anførselstegn adskilt af kommaer, for eksempel:\n\"Download \", \"se online\", \"gratis online\"\n\nDisse strenge fjernes",
-      "TextAreaBlocksHeightPx": "Højden på tekstinputblokke - i pixels:"
+      "TextAreaBlocksHeightPx": "Højden på tekstinputblokke - i pixels:",
+      "page_selector": "🔗 Vælg element fra siden 🔗",
+      "element_selector_class": "Valgt klasse:",
+      "element_selector_text": "Tekst",
+      "PageSelectorTooltip": "Du kan vælge et element på siden, hvis tekst bliver tilføjet til objektet.\n\nFor at vælge et element skal du trykke på 👆-knappen og vælge et element på siden.\n\nObjektet søges ud fra CSS-klassen for det valgte element. Derfor anbefales det at vælge elementer med unikke klasser for at undgå forveksling med andre elementer på siden."
     },
     {
       "languageName": "فارسی",
@@ -1614,7 +1674,11 @@
       "StringsRemovedFromTabTitle": "رشته‌هایی که از عنوان تب حذف می‌شوند",
       "StringsRemovedFromTabTitlePlaceholder": "\"دانلود \", \"تماشای آنلاین\", \"رایگان آنلاین\"",
       "StringsRemovedFromTabTitleTooltip": "می‌توانید در اینجا رشته‌هایی را مشخص کنید که هنگام افزودن به شیء از عنوان تب حذف شوند. رشته‌ها درون علائم نقل‌قول وارد شده و با کاما جدا می‌شوند، برای مثال:\n\"دانلود \", \"تماشای آنلاین\", \"رایگان آنلاین\"\n\nاین رشته‌ها حذف خواهند شد",
-      "TextAreaBlocksHeightPx": "ارتفاع بلوک های ورودی متن - بر حسب پیکسل:"
+      "TextAreaBlocksHeightPx": "ارتفاع بلوک های ورودی متن - بر حسب پیکسل:",
+      "page_selector": "🔗 انتخاب عنصر از صفحه 🔗",
+      "element_selector_class": "کلاس انتخاب\u200cشده:",
+      "element_selector_text": "متن",
+      "PageSelectorTooltip": "شما می‌توانید عنصری را در صفحه انتخاب کنید که متن آن به آبجکت اضافه شود.\n\nبرای انتخاب عنصر، دکمه 👆 را بزنید و یک عنصر را در صفحه انتخاب کنید.\n\nجستجوی آبجکت بر اساس کلاس CSS عنصری که انتخاب می‌کنید انجام می‌شود. بنابراین توصیه می‌شود عناصری با کلاس‌های منحصربه‌فرد انتخاب کنید تا با عناصر دیگر صفحه اشتباه نشود."
     },
     {
       "languageName": "Bahasa Indonesia",
@@ -1715,7 +1779,11 @@
       "StringsRemovedFromTabTitle": "String yang dihapus dari judul tab",
       "StringsRemovedFromTabTitlePlaceholder": "\"Unduh \", \"tonton online\", \"gratis online\"",
       "StringsRemovedFromTabTitleTooltip": "Anda dapat menentukan string di sini yang akan dihapus dari judul tab saat menambahkannya ke objek. String dimasukkan dalam tanda kutip dipisahkan dengan koma, misalnya:\n\"Unduh \", \"tonton online\", \"gratis online\"\n\nString ini akan dihapus",
-      "TextAreaBlocksHeightPx": "Tinggi blok input teks - dalam piksel:"
+      "TextAreaBlocksHeightPx": "Tinggi blok input teks - dalam piksel:",
+      "page_selector": "🔗 Pilih elemen dari halaman 🔗",
+      "element_selector_class": "Kelas terpilih:",
+      "element_selector_text": "Teks",
+      "PageSelectorTooltip": "Anda dapat memilih elemen pada halaman yang teksnya akan ditambahkan ke objek.\n\nUntuk memilih elemen, tekan tombol 👆 lalu pilih elemen pada halaman.\n\nPencarian objek akan dilakukan berdasarkan kelas CSS dari elemen yang Anda pilih. Karena itu, disarankan memilih elemen dengan kelas yang unik agar tidak tertukar dengan elemen lain di halaman."
     },
     {
       "languageName": "Lietuvių",
@@ -1816,7 +1884,11 @@
       "StringsRemovedFromTabTitle": "Eilutės pašalintos iš skirtuko pavadinimo",
       "StringsRemovedFromTabTitlePlaceholder": "\"Atsisiųsti \", \"žiūrėti internete\", \"nemokamai internete\"",
       "StringsRemovedFromTabTitleTooltip": "Čia galite nurodyti eilutes, kurios bus pašalintos iš skirtuko pavadinimo, kai jis įtraukiamas į objektą. Eilutės įvedamos skliausteliais ir atskiriamos kableliais, pavyzdžiui:\n\"Atsisiųsti \", \"žiūrėti internete\", \"nemokamai internete\"\n\nŠios eilutės bus pašalintos",
-      "TextAreaBlocksHeightPx": "Teksto įvesties blokų aukštis - pikseliais:"
+      "TextAreaBlocksHeightPx": "Teksto įvesties blokų aukštis - pikseliais:",
+      "page_selector": "🔗 Pasirinkti elementą iš puslapio 🔗",
+      "element_selector_class": "Pasirinkta klasė:",
+      "element_selector_text": "Tekstas",
+      "PageSelectorTooltip": "Galite pasirinkti puslapio elementą, kurio tekstas bus pridėtas prie objekto.\n\nNorėdami pasirinkti elementą, paspauskite mygtuką 👆 ir pasirinkite elementą puslapyje.\n\nObjekto paieška bus atliekama pagal pasirinkto elemento CSS klasę. Todėl rekomenduojama rinktis elementus su unikaliomis klasėmis, kad nesusimaišytų su kitais puslapio elementais."
     },
     {
       "languageName": "Nederlands",
@@ -1917,7 +1989,11 @@
       "StringsRemovedFromTabTitle": "Tekenreeksen verwijderd uit titelwerkblad",
       "StringsRemovedFromTabTitlePlaceholder": "\"Download \", \"online kijken\", \"gratis online\"",
       "StringsRemovedFromTabTitleTooltip": "U kunt hier tekenreeksen opgeven die uit de tabbladtitel worden verwijderd wanneer deze aan het object wordt toegevoegd. Tekenreeksen worden tussen aanhalingstekens ingevoerd gescheiden door komma's, bijvoorbeeld:\n\"Download \", \"online kijken\", \"gratis online\"\n\nDeze tekenreeksen worden verwijderd",
-      "TextAreaBlocksHeightPx": "Hoogte van tekstinvoerblokken - in pixels:"
+      "TextAreaBlocksHeightPx": "Hoogte van tekstinvoerblokken - in pixels:",
+      "page_selector": "🔗 Selecteer element van de pagina 🔗",
+      "element_selector_class": "Geselecteerde klasse:",
+      "element_selector_text": "Tekst",
+      "PageSelectorTooltip": "Je kunt een element op de pagina selecteren waarvan de tekst aan het object wordt toegevoegd.\n\nOm een element te selecteren, druk op de knop 👆 en kies een element op de pagina.\n\nEr wordt naar het object gezocht op basis van de CSS-klasse van het geselecteerde element. Daarom wordt aanbevolen elementen met unieke klassen te kiezen om verwarring met andere elementen op de pagina te voorkomen."
     },
     {
       "languageName": "Norsk",
@@ -2018,7 +2094,11 @@
       "StringsRemovedFromTabTitle": "Strenger fjernet fra fananavn",
       "StringsRemovedFromTabTitlePlaceholder": "\"Last ned \", \"se online\", \"gratis online\"",
       "StringsRemovedFromTabTitleTooltip": "Du kan angi strenger her som skal fjernes fra fanetittelen når den legges til objektet. Strenger angis i anførselstegn atskilt med kommaer, for eksempel:\n\"Last ned \", \"se online\", \"gratis online\"\n\nDisse strengene fjernes",
-      "TextAreaBlocksHeightPx": "Høyde på tekstinnskrivingsblokker - i piksler:"
+      "TextAreaBlocksHeightPx": "Høyde på tekstinnskrivingsblokker - i piksler:",
+      "page_selector": "🔗 Velg element fra siden 🔗",
+      "element_selector_class": "Valgt klasse:",
+      "element_selector_text": "Tekst",
+      "PageSelectorTooltip": "Du kan velge et element på siden, der teksten blir lagt til objektet.\n\nFor å velge et element, trykk på 👆-knappen og velg et element på siden.\n\nObjektsøket utføres etter CSS-klassen til elementet du velger. Derfor anbefales det å velge elementer med unike klasser for å unngå forveksling med andre elementer på siden."
     },
     {
       "languageName": "Português (Brasil)",
@@ -2119,7 +2199,11 @@
       "StringsRemovedFromTabTitle": "Strings removidas do título da aba",
       "StringsRemovedFromTabTitlePlaceholder": "\"Baixar \", \"assistir online\", \"grátis online\"",
       "StringsRemovedFromTabTitleTooltip": "Você pode especificar aqui as strings que serão removidas do título da aba ao adicioná-la ao objeto. As strings são inseridas entre aspas separadas por vírgulas, por exemplo:\n\"Baixar \", \"assistir online\", \"grátis online\"\n\nEstas strings serão removidas",
-      "TextAreaBlocksHeightPx": "Altura dos blocos de entrada de texto - em pixels:"
+      "TextAreaBlocksHeightPx": "Altura dos blocos de entrada de texto - em pixels:",
+      "page_selector": "🔗 Selecionar elemento da página 🔗",
+      "element_selector_class": "Classe selecionada:",
+      "element_selector_text": "Texto",
+      "PageSelectorTooltip": "Você pode selecionar um elemento da página cujo texto será adicionado ao objeto.\n\nPara selecionar um elemento, pressione o botão 👆 e escolha um elemento na página.\n\nA busca do objeto será feita pela classe CSS do elemento selecionado. Por isso, recomenda-se escolher elementos com classes únicas para evitar confusão com outros elementos da página."
     },
     {
       "languageName": "Română",
@@ -2220,7 +2304,11 @@
       "StringsRemovedFromTabTitle": "Șiruri eliminate din titlul filei",
       "StringsRemovedFromTabTitlePlaceholder": "\"Descărcați \", \"vizionați online\", \"gratuit online\"",
       "StringsRemovedFromTabTitleTooltip": "Puteți specifica aici șirurile care vor fi eliminate din titlul filei atunci când este adăugat la obiect. Șirurile se introduc între ghilimele, separate prin virgulă, de exemplu:\n\"Descărcați \", \"vizionați online\", \"gratuit online\"\n\nAceste șiruri vor fi eliminate",
-      "TextAreaBlocksHeightPx": "Înălțimea blocurilor de introducere a textului - în pixeli:"
+      "TextAreaBlocksHeightPx": "Înălțimea blocurilor de introducere a textului - în pixeli:",
+      "page_selector": "🔗 Selectează element de pe pagină 🔗",
+      "element_selector_class": "Clasa selectată:",
+      "element_selector_text": "Text",
+      "PageSelectorTooltip": "Puteți selecta un element de pe pagină al cărui text va fi adăugat în obiect.\n\nPentru a selecta un element, apăsați butonul 👆 și alegeți un element de pe pagină.\n\nCăutarea obiectului se va face după clasa CSS a elementului selectat. De aceea, se recomandă să alegeți elemente cu clase unice, pentru a evita confuzia cu alte elemente de pe pagină."
     },
     {
       "languageName": "Українська",
@@ -2321,7 +2409,11 @@
       "StringsRemovedFromTabTitle": "Рядки, що видаляються із заголовка вкладки",
       "StringsRemovedFromTabTitlePlaceholder": "\"Завантажити \", \"дивитися онлайн\", \"безкоштовно онлайн\"",
       "StringsRemovedFromTabTitleTooltip": "Тут можна вказати рядки, які будуть видалятися із заголовка вкладки під час додавання в об'єкт. Рядки вводяться в лапках через кому, наприклад:\n\"Завантажити \", \"дивитися онлайн\", \"безкоштовно онлайн\"\n\nЦі рядки буде видалено",
-      "TextAreaBlocksHeightPx": "Висота блоків для введення тексту - у пікселях:"
+      "TextAreaBlocksHeightPx": "Висота блоків для введення тексту - у пікселях:",
+      "page_selector": "🔗 Вибрати елемент зі сторінки 🔗",
+      "element_selector_class": "Вибраний клас:",
+      "element_selector_text": "Текст",
+      "PageSelectorTooltip": "Ви можете вибрати елемент на сторінці, текст з якого буде додаватися в об'єкт.\n\nЩоб вибрати елемент, натисніть кнопку 👆 і виберіть елемент на сторінці.\n\nПошук об'єкта здійснюватиметься за CSS-класом вибраного елемента. Тому рекомендується вибирати елементи з унікальними класами, щоб уникнути плутанини з іншими елементами на сторінці."
     },
     {
       "languageName": "Tiếng Việt",
@@ -2422,7 +2514,11 @@
       "StringsRemovedFromTabTitle": "Chuỗi bị xóa khỏi tiêu đề tab",
       "StringsRemovedFromTabTitlePlaceholder": "\"Tải xuống \", \"xem trực tuyến\", \"miễn phí trực tuyến\"",
       "StringsRemovedFromTabTitleTooltip": "Bạn có thể đặt tại đây các chuỗi sẽ bị xóa khỏi tiêu đề tab khi thêm vào đối tượng. Các chuỗi được nhập trong dấu ngoặc kép và phân tách bằng dấu phẩy, ví dụ:\n\"Tải xuống \", \"xem trực tuyến\", \"miễn phí trực tuyến\"\n\nCác chuỗi này sẽ bị xóa",
-      "TextAreaBlocksHeightPx": "Chiều cao các khối nhập văn bản - tính bằng pixel:"
+      "TextAreaBlocksHeightPx": "Chiều cao các khối nhập văn bản - tính bằng pixel:",
+      "page_selector": "🔗 Chọn phần tử từ trang 🔗",
+      "element_selector_class": "Lớp đã chọn:",
+      "element_selector_text": "Văn bản",
+      "PageSelectorTooltip": "Bạn có thể chọn một phần tử trên trang mà văn bản của nó sẽ được thêm vào đối tượng.\n\nĐể chọn phần tử, hãy nhấn nút 👆 và chọn một phần tử trên trang.\n\nViệc tìm đối tượng sẽ được thực hiện theo lớp CSS của phần tử bạn đã chọn. Vì vậy, nên chọn các phần tử có lớp duy nhất để tránh nhầm lẫn với các phần tử khác trên trang."
     }
   ]
 }

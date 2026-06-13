@@ -293,7 +293,7 @@ async function localPopapInited() {
         return result;
     }
 
-    function ReplaceDataInFileName(rawFileName) {
+    async function ReplaceDataInFileName(rawFileName) {
         const sourceValue = String(rawFileName ?? '');
         const now = new Date();
         const twoDigits = (value) => String(value).padStart(2, '0');
@@ -302,8 +302,8 @@ async function localPopapInited() {
         const currentDate = `${twoDigits(now.getDate())}-${twoDigits(now.getMonth() + 1)}-${now.getFullYear()}`;
         const currentDateAlt = `${twoDigits(now.getMonth() + 1)}-${twoDigits(now.getDate())}-${now.getFullYear()}`;
 
-        const pageUrl = GetPagePropiertie("page_url") || '';
-        let tabTitle = GetPagePropiertie("tab_title") || '';
+        const pageUrl = await GetPagePropiertie("page_url") || '';
+        let tabTitle = await GetPagePropiertie("tab_title") || '';
 
         // Remove strings from tab title based on user settings
         tabTitle = RemoveStringsFromTabTitle(tabTitle);
@@ -621,7 +621,7 @@ async function localPopapInited() {
         const responce = await chrome.runtime.sendMessage({
             action: "executeScript_UploadImageFromUrl",
             uploadUrl: `${API_BASE_URL}/spaces/${selectedSpaceId}/files`,
-            imageUrl: GetPagePropiertie("page_image"),
+            imageUrl: await GetPagePropiertie("page_image"),
             token: state.apiKey,
             apiVersion: API_VERSION,
             fileName: fileName
@@ -634,7 +634,7 @@ async function localPopapInited() {
         const responce = await chrome.runtime.sendMessage({
             action: "executeScript_UploadHtmlFile",
             uploadUrl: `${API_BASE_URL}/spaces/${selectedSpaceId}/files`,
-            pageUrl: GetPagePropiertie("page_url"),
+            pageUrl: await GetPagePropiertie("page_url"),
             token: state.apiKey,
             apiVersion: API_VERSION,
             fileName: fileName
@@ -670,7 +670,8 @@ async function localPopapInited() {
         { id: "page_image", nameKey: "page_image", value: "null o_O" },
         { id: "page_description", nameKey: "page_description", value: "null o_O" },
         { id: "page_content", nameKey: "page_content", value: "" },
-        { id: "selected_text_page", nameKey: "selected_text_page", value: "" }
+        { id: "selected_text_page", nameKey: "selected_text_page", value: "" },
+        { id: "page_selector", nameKey: "page_selector", value: "null o_O" }
     ];
 
     try {
@@ -746,7 +747,7 @@ async function localPopapInited() {
     for (let index = 0; index < filesPropierties.length; index++) {
         if (filesPropierties[index].id === "image_by_url") {
             CreateImageReferenceForChoices(
-                GetPagePropiertie("page_image") || "",
+                await GetPagePropiertie("page_image") || "",
                 filesPropierties[index].id,
                 true
             );
@@ -760,8 +761,41 @@ async function localPopapInited() {
         }
     }
 
-    function GetPagePropiertie(propiertie_key) {
-        return WebPagePropierties.find(p => p.id == propiertie_key).value;
+    async function GetPagePropiertie(propiertie_key) {
+        if (propiertie_key.includes("page_selector") == false) {
+            return WebPagePropierties.find(p => p.id == propiertie_key).value;
+        }
+        else {
+            const className = propiertie_key.replace("page_selector|", "");
+            if (!className || className === "no-class") {
+                return "";
+            }
+
+            const [tab] = chromeTABS || [];
+
+            if (!tab?.id) {
+                consoleError("GetPagePropiertie: active tab not found for page_selector");
+                return "";
+            }
+
+            try {
+                const response = await chrome.runtime.sendMessage({
+                    action: "executeScript_GetElementByClassName",
+                    target: { tabId: tab.id },
+                    className
+                });
+
+                if (response?.success) {
+                    return response.data || "";
+                }
+
+                consoleError("GetPagePropiertie: executeScript_GetElementByClassName failed", response?.error || "unknown error");
+                return "";
+            } catch (error) {
+                consoleError("GetPagePropiertie: page_selector failed", error?.message || error);
+                return "";
+            }
+        }
     }
 
     // Load selected text from storage
@@ -1471,14 +1505,30 @@ async function localPopapInited() {
                 const obj = propertiesListForSaving[index];
                 const fileNameFormatObj = document.getElementById(obj?.AnytypeProperty.key + "_file_name_format");
                 const needToAddFileNameFormat = fileNameFormatObj && obj?.AnytypeProperty.format === "files";
+                const isPageSelector = (obj?.choice?.getValue(true) && obj?.choice?.getValue(true).includes("page_selector")) ? true : false;
 
-                propertiesList.push(
-                    {
-                        AnytypeProperty: obj?.AnytypeProperty,
-                        SelectedValueByUser: obj?.choice?.getValue(true),
-                        ...(needToAddFileNameFormat ? { FileNameFormat: fileNameFormatObj.value } : {})
-                    }
-                );
+                if (isPageSelector) {
+                    consoleLog("page selector value: ", "page_selector|" + document.getElementById("pageSelector_" + obj?.AnytypeProperty.key + "_selected_class_value").innerText);
+                }
+
+                if (isPageSelector) {
+                    // For page_selector, store the actual selected element class instead of page property ID
+                    propertiesList.push(
+                        {
+                            AnytypeProperty: obj?.AnytypeProperty,
+                            SelectedValueByUser: "page_selector|" + document.getElementById("pageSelector_" + obj?.AnytypeProperty.key + "_selected_class_value").innerText,
+                            ...(needToAddFileNameFormat ? { FileNameFormat: fileNameFormatObj.value } : {})
+                        }
+                    );
+                } else {
+                    propertiesList.push(
+                        {
+                            AnytypeProperty: obj?.AnytypeProperty,
+                            SelectedValueByUser: obj?.choice?.getValue(true),
+                            ...(needToAddFileNameFormat ? { FileNameFormat: fileNameFormatObj.value } : {})
+                        }
+                    );
+                }
             }
 
             const form = {
@@ -2203,6 +2253,66 @@ async function localPopapInited() {
                         shouldSort:
                             false,
                     });
+
+                    // Add handler for page_selector selection in text properties
+                    if (property.format === "text") {
+                        const selectElement = document.getElementById(property.key);
+                        selectElement.addEventListener("change", function (e) {
+                            const selectedValue = this.value;
+                            const poperty_head = propertyHTML.querySelector(".poperty-head");
+                            const form_group = propertyHTML.querySelector(".form-group");
+
+                            // Remove existing button if any
+                            const existingBtn = poperty_head.querySelector(".btn-page-selector");
+                            if (existingBtn) existingBtn.remove();
+
+                            const existingselectedClassDIV = form_group.querySelector(".pageSelector_" + property.key + "_selected_class");
+                            if (existingselectedClassDIV) existingselectedClassDIV.remove();
+
+                            const existingPageSelectorTooltip = poperty_head.querySelector("#pageSelector_tooltip");
+                            if (existingPageSelectorTooltip) existingPageSelectorTooltip.remove();
+
+                            // Add button if page_selector is selected
+                            if (selectedValue === "page_selector") {
+                                const btn = document.createElement("button");
+                                btn.className = "btn-page-selector";
+                                btn.title = "Select element on page";
+                                btn.textContent = "👆";
+                                btn.addEventListener("click", function (e) {
+                                    e.preventDefault();
+                                    startPageElementSelection(property.key);
+                                });
+                                poperty_head.appendChild(btn);
+
+                                const tipDiv = document.createElement("div");
+                                tipDiv.className = "btn-file-name-top-tip";
+                                tipDiv.id = "pageSelector_tooltip";
+                                tipDiv.innerText = "?";
+                                poperty_head.appendChild(tipDiv);
+
+                                attachTooltip(tipDiv, "PageSelectorTooltip", 180);
+
+                                const selectedClassDIV = document.createElement("div");
+                                selectedClassDIV.className = "pageSelector_" + property.key + "_selected_class";
+                                selectedClassDIV.id = "pageSelector_" + property.key + "_selected_class";
+                                selectedClassDIV.style.display = "none";
+                                selectedClassDIV.style.marginTop = "-13px";
+                                selectedClassDIV.style.fontSize = "10px";
+                                selectedClassDIV.style.color = "var(--section-title-color)";
+                                selectedClassDIV.style.opacity = "0.8";
+
+                                selectedClassDIV.innerHTML = `
+                                    <span>` + Localize("element_selector_class", state.language) + ` </span>
+                                    <div 
+                                        id="pageSelector_` + property.key + `_selected_class_value"
+                                    >
+                                    </div>
+                                `;
+
+                                form_group.appendChild(selectedClassDIV);
+                            }
+                        });
+                    }
                 }
 
                 document.querySelectorAll('[id="fileNameTipButton"]').forEach((element) => {
@@ -2489,7 +2599,7 @@ async function localPopapInited() {
                         const printTextarea = property.key === "description" || property.key === "objectBodyKeySaveToAnytype";
 
                         if (savedPropertyValueExist) {
-                            value = GetPagePropiertie(savedProperty.SelectedValueByUser);
+                            value = await GetPagePropiertie(savedProperty.SelectedValueByUser);
 
                             // Apply string removal for tab_title
                             if (savedProperty.SelectedValueByUser === "tab_title") {
@@ -2599,7 +2709,7 @@ async function localPopapInited() {
                                         id="` + property.key + `_file_name_format_SO"
                                         name="` + property.key + `_file_name_format_SO"
                                         placeholder="` + Localize("FileNameFormatPlaceholder", state.language) + `"
-                                        value="` + ReplaceDataInFileName(savedPropertyFileFormatNameExist ? savedProperty.FileNameFormat : "<date>-<tab_title>") + `"
+                                        value="` + await ReplaceDataInFileName(savedPropertyFileFormatNameExist ? savedProperty.FileNameFormat : "<date>-<tab_title>") + `"
                                         required
                                         minlength="1"
                                         maxlength="60"
@@ -2705,7 +2815,6 @@ async function localPopapInited() {
                         attachFileNameFormatInputGuard(propertieForPrint.propertyKey + "_file_name_format_SO");
                     }
 
-                    // HERE
                     if (propertieForPrint.needToCreateChoices) {
                         if (propertieForPrint.value_type === "files") {
                             const choicesInstance = new Choices(document.getElementById(propertieForPrint.propertyId + "_SO"), {
@@ -2842,17 +2951,19 @@ async function localPopapInited() {
                     if (selectedFileType != "none_file") {
                         consoleLog("selected File Type: ", selectedFileType);
 
+                        const pageImageValue = await GetPagePropiertie("page_image");
+
                         if (selectedFileType == "image_by_url"
-                            && (GetPagePropiertie("page_image") == null
-                                || GetPagePropiertie("page_image") == undefined
-                                || GetPagePropiertie("page_image") == ""
-                                || GetPagePropiertie("page_image") == "null"
-                                || GetPagePropiertie("page_image") == "null o_O")) {
+                            && (pageImageValue == null
+                                || pageImageValue == undefined
+                                || pageImageValue == ""
+                                || pageImageValue == "null"
+                                || pageImageValue == "null o_O")) {
                             consoleLog("image_by_url selected but page_image property is empty, skipping file processing");
                             continue;
                         }
 
-                        const fileName = ReplaceDataInFileName(document.getElementById(propiertyPrinted.KeyForAnytypeAPI + "_file_name_format_SO").value);
+                        const fileName = await ReplaceDataInFileName(document.getElementById(propiertyPrinted.KeyForAnytypeAPI + "_file_name_format_SO").value);
 
                         consoleLog("file name: ", fileName);
 
@@ -2993,6 +3104,62 @@ async function localPopapInited() {
         } finally {
             elements.saveObjectBtnText.innerHTML = 'Save';
             elements.saveObjectBtn.disabled = false;
+        }
+    });
+
+    //#endregion
+
+    //#region PageElementSelector
+
+    function startPageElementSelection(inputFieldKey) {
+        const inputField = document.getElementById(inputFieldKey);
+        if (!inputField) return;
+
+        // Store the current input field key for later use
+        window.pageElementSelectorState = {
+            inputFieldKey: inputFieldKey,
+            selectedElementClass: ""
+        };
+
+        // Send message to content.js to start element selection mode
+        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+            if (tabs[0]) {
+                chrome.tabs.sendMessage(tabs[0].id, {
+                    action: "SET_ELEMENT_SELECTOR_LOCALIZATION",
+                    localization: {
+                        class: Localize("element_selector_class", state.language),
+                        text: Localize("element_selector_text", state.language)
+                    }
+                }, function (response) {
+                    // Localization sent
+                });
+
+                chrome.tabs.sendMessage(tabs[0].id, {
+                    action: "START_PAGE_ELEMENT_SELECTION"
+                }, function (response) {
+                    if (chrome.runtime.lastError) {
+                        console.error("Error sending message:", chrome.runtime.lastError);
+                        showStatus("Could not start element selector. Refresh the page.", "error");
+                    }
+                });
+            }
+        });
+
+        // Show status
+        showStatus("Click on an element to select it, ESC to cancel", "info");
+    }
+
+    // Listen for messages from content.js
+    chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+        if (request.action === "ELEMENT_SELECTED") {
+            const inputFieldKey = window.pageElementSelectorState?.inputFieldKey;
+            const selectedClass = document.getElementById("pageSelector_" + inputFieldKey + "_selected_class");
+            const selectedClassValue = document.getElementById("pageSelector_" + inputFieldKey + "_selected_class_value");
+            if (selectedClass && selectedClassValue) {
+                selectedClass.style.display = "block";
+                selectedClassValue.textContent = request.elementClass;
+            }
+            sendResponse({ received: true });
         }
     });
 
