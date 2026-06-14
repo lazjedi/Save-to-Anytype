@@ -61,9 +61,6 @@ if (document.readyState === "complete" || document.readyState === "interactive")
 }
 
 async function localPopapInited() {
-    // Detect browser API (Chrome uses 'chrome', Firefox uses 'browser')
-    const browserAPI = typeof browser !== 'undefined' ? browser : chrome;
-
     //#region Elements on page
 
     const elements = {
@@ -3133,7 +3130,7 @@ async function localPopapInited() {
 
     //#region PageElementSelector
 
-    function startPageElementSelection(inputFieldKey) {
+    async function startPageElementSelection(inputFieldKey) {
         const inputField = document.getElementById(inputFieldKey);
         if (!inputField) return;
 
@@ -3145,32 +3142,34 @@ async function localPopapInited() {
         };
 
         // Send message to content.js to start element selection mode
-        browserAPI.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-            if (tabs[0]) {
-                browserAPI.tabs.sendMessage(tabs[0].id, {
-                    action: "SET_ELEMENT_SELECTOR_LOCALIZATION",
-                    localization: {
-                        class: Localize("element_selector_class", state.language),
-                        text: Localize("element_selector_text", state.language)
-                    }
-                }, function (response) {
-                    // Localization sent
-                });
-
-                browserAPI.tabs.sendMessage(tabs[0].id, {
-                    action: "START_PAGE_ELEMENT_SELECTION"
-                }, function (response) {
-                    if (browserAPI.runtime.lastError) {
-                        console.error("Error sending message:", browserAPI.runtime.lastError);
-                        showStatus("Could not start element selector. Refresh the page.", "error");
-                    }
-                });
-            }
+        const tabs = await chrome.runtime.sendMessage({
+            action: "GET_TABS"
         });
+
+        if (tabs?.[0]) {
+            chrome.tabs.sendMessage(tabs[0].id, {
+                action: "SET_ELEMENT_SELECTOR_LOCALIZATION",
+                localization: {
+                    class: Localize("element_selector_class", state.language),
+                    text: Localize("element_selector_text", state.language)
+                }
+            }, function (response) {
+                // Localization sent
+            });
+
+            chrome.tabs.sendMessage(tabs[0].id, {
+                action: "START_PAGE_ELEMENT_SELECTION"
+            }, function (response) {
+                if (chrome.runtime.lastError) {
+                    console.error("Error sending message:", chrome.runtime.lastError);
+                    showStatus("Could not start element selector. Refresh the page.", "error");
+                }
+            });
+        }
     }
 
     // Listen for messages from content.js
-    browserAPI.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+    chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         if (request.action === "ELEMENT_SELECTED") {
             const inputFieldKey = window.pageElementSelectorState?.inputFieldKey;
             const selectedClass = document.getElementById("pageSelector_" + inputFieldKey + "_selected_class");
