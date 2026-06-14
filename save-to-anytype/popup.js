@@ -3,6 +3,9 @@ const API_VERSION = '2025-11-08';
 
 const DEFAULT_ACCENT_COLOR = '#ff3030ff';
 const FILLED_FIELDS_TOGGLE_SYMBOL = '^';
+const DEFAULT_TEXTAREA_HEIGHT_PX = 140;
+const MIN_TEXTAREA_HEIGHT_PX = 100;
+const MAX_TEXTAREA_HEIGHT_PX = 600;
 
 // State
 let state = {
@@ -16,7 +19,9 @@ let state = {
     zoom: null,
     height: null,
     width: null,
+    textAreaHeightPx: null,
     collapseOnOpenForm: null,
+    stringsRemovedFromTabTitle: null,
     forms: []
 };
 
@@ -124,7 +129,11 @@ async function localPopapInited() {
         heightRangeValue: document.getElementById('heightRangeValue'),
         heightCurrentRange: document.getElementById('heightCurrentRange'),
         widthRangeValue: document.getElementById('widthRangeValue'),
-        widthCurrentRange: document.getElementById('widthCurrentRange')
+        widthCurrentRange: document.getElementById('widthCurrentRange'),
+        textAreaHeightRangeValue: document.getElementById('textAreaHeightRangeValue'),
+        textAreaHeightCurrentRange: document.getElementById('textAreaHeightCurrentRange'),
+        stringsRemovedFromTabTitleInput: document.getElementById('stringsRemovedFromTabTitleInput'),
+        stringsRemovedFromTabTitleTipButton: document.getElementById('stringsRemovedFromTabTitleTipButton')
     };
 
     //#endregion
@@ -194,6 +203,16 @@ async function localPopapInited() {
             </label>`;
     }
 
+    function normalizeTextAreaHeightPx(value) {
+        const parsedValue = Number.parseInt(value, 10);
+
+        if (Number.isNaN(parsedValue)) {
+            return DEFAULT_TEXTAREA_HEIGHT_PX;
+        }
+
+        return Math.max(MIN_TEXTAREA_HEIGHT_PX, Math.min(MAX_TEXTAREA_HEIGHT_PX, parsedValue));
+    }
+
     function attachFileNameFormatInputGuard(inputOrId) {
         const input = typeof inputOrId === 'string'
             ? document.getElementById(inputOrId)
@@ -249,7 +268,32 @@ async function localPopapInited() {
         });
     }
 
-    function ReplaceDataInFileName(rawFileName) {
+    function RemoveStringsFromTabTitle(tabTitle) {
+        if (!state.stringsRemovedFromTabTitle || state.stringsRemovedFromTabTitle.trim().length === 0) {
+            return tabTitle;
+        }
+
+        let result = tabTitle;
+
+        // Parse strings enclosed in quotes, separated by commas
+        // Regex explanation: matches quoted strings, handles escaped quotes if needed
+        const quotedStringsRegex = /"([^"\\]*(?:\\.[^"\\]*)*)"/g;
+        let match;
+        const stringsToRemove = [];
+
+        while ((match = quotedStringsRegex.exec(state.stringsRemovedFromTabTitle)) !== null) {
+            stringsToRemove.push(match[1]);
+        }
+
+        // Remove each string from the tab title
+        for (const stringToRemove of stringsToRemove) {
+            result = result.split(stringToRemove).join('');
+        }
+
+        return result;
+    }
+
+    async function ReplaceDataInFileName(rawFileName) {
         const sourceValue = String(rawFileName ?? '');
         const now = new Date();
         const twoDigits = (value) => String(value).padStart(2, '0');
@@ -258,8 +302,11 @@ async function localPopapInited() {
         const currentDate = `${twoDigits(now.getDate())}-${twoDigits(now.getMonth() + 1)}-${now.getFullYear()}`;
         const currentDateAlt = `${twoDigits(now.getMonth() + 1)}-${twoDigits(now.getDate())}-${now.getFullYear()}`;
 
-        const pageUrl = GetPagePropiertie("page_url") || '';
-        const tabTitle = GetPagePropiertie("tab_title") || '';
+        const pageUrl = await GetPagePropiertie("page_url") || '';
+        let tabTitle = await GetPagePropiertie("tab_title") || '';
+
+        // Remove strings from tab title based on user settings
+        tabTitle = RemoveStringsFromTabTitle(tabTitle);
 
         let siteName = '';
         try {
@@ -574,7 +621,7 @@ async function localPopapInited() {
         const responce = await chrome.runtime.sendMessage({
             action: "executeScript_UploadImageFromUrl",
             uploadUrl: `${API_BASE_URL}/spaces/${selectedSpaceId}/files`,
-            imageUrl: GetPagePropiertie("page_image"),
+            imageUrl: await GetPagePropiertie("page_image"),
             token: state.apiKey,
             apiVersion: API_VERSION,
             fileName: fileName
@@ -587,7 +634,7 @@ async function localPopapInited() {
         const responce = await chrome.runtime.sendMessage({
             action: "executeScript_UploadHtmlFile",
             uploadUrl: `${API_BASE_URL}/spaces/${selectedSpaceId}/files`,
-            pageUrl: GetPagePropiertie("page_url"),
+            pageUrl: await GetPagePropiertie("page_url"),
             token: state.apiKey,
             apiVersion: API_VERSION,
             fileName: fileName
@@ -623,7 +670,8 @@ async function localPopapInited() {
         { id: "page_image", nameKey: "page_image", value: "null o_O" },
         { id: "page_description", nameKey: "page_description", value: "null o_O" },
         { id: "page_content", nameKey: "page_content", value: "" },
-        { id: "selected_text_page", nameKey: "selected_text_page", value: "" }
+        { id: "selected_text_page", nameKey: "selected_text_page", value: "" },
+        { id: "page_selector", nameKey: "page_selector", value: "null o_O" }
     ];
 
     try {
@@ -676,8 +724,6 @@ async function localPopapInited() {
 
             WebPagePropierties.find(p => p.id == "page_content").value = markdown || '';
 
-            WebPagePropierties.find(p => p.id == "page_content").value = markdown || '';
-
             const resultScreenshotUrl = await chrome.runtime.sendMessage({
                 action: "GET_screenshotUrl"
             });
@@ -699,7 +745,7 @@ async function localPopapInited() {
     for (let index = 0; index < filesPropierties.length; index++) {
         if (filesPropierties[index].id === "image_by_url") {
             CreateImageReferenceForChoices(
-                GetPagePropiertie("page_image") || "",
+                await GetPagePropiertie("page_image") || "",
                 filesPropierties[index].id,
                 true
             );
@@ -713,8 +759,38 @@ async function localPopapInited() {
         }
     }
 
-    function GetPagePropiertie(propiertie_key) {
-        return WebPagePropierties.find(p => p.id == propiertie_key).value;
+    async function GetPagePropiertie(propiertie_key) {
+        if (propiertie_key.includes("page_selector") == false) {
+            return WebPagePropierties.find(p => p.id == propiertie_key).value;
+        }
+        else {
+            const classNameAndDom = propiertie_key.replace("page_selector|", "");
+
+            const [tab] = chromeTABS || [];
+
+            if (!tab?.id) {
+                consoleError("GetPagePropiertie: active tab not found for page_selector");
+                return "";
+            }
+
+            try {
+                const response = await chrome.runtime.sendMessage({
+                    action: "executeScript_GetElementByClassName",
+                    target: { tabId: tab.id },
+                    classNameAndDom
+                });
+
+                if (response?.success) {
+                    return response.data || "";
+                }
+
+                consoleError("GetPagePropiertie: executeScript_GetElementByClassName failed", response?.error || "unknown error");
+                return "";
+            } catch (error) {
+                consoleError("GetPagePropiertie: page_selector failed", error?.message || error);
+                return "";
+            }
+        }
     }
 
     // Load selected text from storage
@@ -796,6 +872,10 @@ async function localPopapInited() {
 
         elements.widthRangeValue.value = state.width;
         elements.widthCurrentRange.textContent = state.width;
+
+        elements.textAreaHeightRangeValue.value = state.textAreaHeightPx;
+        elements.textAreaHeightCurrentRange.textContent = state.textAreaHeightPx;
+        linkCSS.style.setProperty('--object-body-min-height', `${state.textAreaHeightPx}px`);
     }
 
     elements.colorInput.addEventListener("change", () => {
@@ -828,7 +908,7 @@ async function localPopapInited() {
         const saved = await chrome.storage.local.get(
             ['apiKey', 'selectedSpaceId', 'theme', 'language', 'accentColor',
                 'whatDoOnStart', 'LastUsedForm', 'zoom', 'height', 'width',
-                'collapseOnOpenForm', 'forms']
+                'textAreaHeightPx', 'collapseOnOpenForm', 'stringsRemovedFromTabTitle', 'forms']
         );
 
         if (saved.apiKey) {
@@ -908,11 +988,20 @@ async function localPopapInited() {
             state.width = 24;
         }
 
+        state.textAreaHeightPx = normalizeTextAreaHeightPx(saved.textAreaHeightPx);
+
         if (saved.collapseOnOpenForm) {
             state.collapseOnOpenForm = saved.collapseOnOpenForm;
         }
         else {
             state.collapseOnOpenForm = "false";
+        }
+
+        if (saved.stringsRemovedFromTabTitle) {
+            state.stringsRemovedFromTabTitle = saved.stringsRemovedFromTabTitle;
+        }
+        else {
+            state.stringsRemovedFromTabTitle = "";
         }
 
         if (saved.forms) {
@@ -945,7 +1034,9 @@ async function localPopapInited() {
             zoom: state.zoom,
             height: state.height,
             width: state.width,
+            textAreaHeightPx: state.textAreaHeightPx,
             collapseOnOpenForm: state.collapseOnOpenForm,
+            stringsRemovedFromTabTitle: state.stringsRemovedFromTabTitle,
             forms: state.forms
         });
 
@@ -994,6 +1085,18 @@ async function localPopapInited() {
         ChangeTheme();
     });
 
+    elements.textAreaHeightRangeValue.addEventListener('input', () => {
+        const normalizedValue = normalizeTextAreaHeightPx(elements.textAreaHeightRangeValue.value);
+
+        state.textAreaHeightPx = normalizedValue;
+        elements.textAreaHeightRangeValue.value = normalizedValue;
+        elements.textAreaHeightCurrentRange.textContent = normalizedValue;
+
+        saveState();
+
+        ChangeTheme();
+    });
+
     elements.themeSelect.addEventListener('change', async (e) => {
         state.theme = themeSelectChoices.getValue(true);
 
@@ -1012,6 +1115,12 @@ async function localPopapInited() {
 
     elements.whatDoOnStartSelect.addEventListener('change', async (e) => {
         state.whatDoOnStart = whatDoOnStartSelectChoices.getValue(true);
+
+        saveState();
+    });
+
+    elements.stringsRemovedFromTabTitleInput.addEventListener('input', () => {
+        state.stringsRemovedFromTabTitle = elements.stringsRemovedFromTabTitleInput.value;
 
         saveState();
     });
@@ -1282,6 +1391,8 @@ async function localPopapInited() {
         languageSelectChoices.setChoiceByValue(state.language);
 
         elements.collapseInputSettings.checked = state.collapseOnOpenForm === "true";
+
+        elements.stringsRemovedFromTabTitleInput.value = state.stringsRemovedFromTabTitle || "";
     }
 
     function authSection() {
@@ -1389,14 +1500,33 @@ async function localPopapInited() {
                 const obj = propertiesListForSaving[index];
                 const fileNameFormatObj = document.getElementById(obj?.AnytypeProperty.key + "_file_name_format");
                 const needToAddFileNameFormat = fileNameFormatObj && obj?.AnytypeProperty.format === "files";
+                const isPageSelector = (obj?.choice?.getValue(true) && obj?.choice?.getValue(true).includes("page_selector")) ? true : false;
 
-                propertiesList.push(
-                    {
-                        AnytypeProperty: obj?.AnytypeProperty,
-                        SelectedValueByUser: obj?.choice?.getValue(true),
-                        ...(needToAddFileNameFormat ? { FileNameFormat: fileNameFormatObj.value } : {})
-                    }
-                );
+                if (isPageSelector) {
+                    consoleLog("page selector value: ", "page_selector|" + document.getElementById("pageSelector_" + obj?.AnytypeProperty.key + "_selected_class_value").innerText);
+                }
+
+                if (isPageSelector) {
+                    const selectedElementData = window.pageElementSelectorState?.selectedElementByInputFieldKey?.[obj?.AnytypeProperty.key] || {};
+                    // For page_selector, store the actual selected element class instead of page property ID
+                    propertiesList.push(
+                        {
+                            AnytypeProperty: obj?.AnytypeProperty,
+                            SelectedValueByUser: ("page_selector|"
+                                + (selectedElementData.elementClass || "no-class")
+                                + "|" + (selectedElementData.elementDOM || "")),
+                            ...(needToAddFileNameFormat ? { FileNameFormat: fileNameFormatObj.value } : {})
+                        }
+                    );
+                } else {
+                    propertiesList.push(
+                        {
+                            AnytypeProperty: obj?.AnytypeProperty,
+                            SelectedValueByUser: obj?.choice?.getValue(true),
+                            ...(needToAddFileNameFormat ? { FileNameFormat: fileNameFormatObj.value } : {})
+                        }
+                    );
+                }
             }
 
             const form = {
@@ -1857,9 +1987,12 @@ async function localPopapInited() {
 
                     let templatesForObject = []
 
+                    const commonTypes = ['page', 'note', 'task', 'bookmark'];
                     templatesForObject = templatesForObject.concat(typesTemplates.sort((a, b) => {
                         const aKey = a.key || a.type_key || '';
                         const bKey = b.key || b.type_key || '';
+                        const aIndex = commonTypes.indexOf(aKey);
+                        const bIndex = commonTypes.indexOf(bKey);
 
                         if (aIndex !== -1 && bIndex !== -1) return aIndex - bIndex;
                         if (aIndex !== -1) return -1;
@@ -2121,6 +2254,82 @@ async function localPopapInited() {
                         shouldSort:
                             false,
                     });
+
+                    if (property.format === "text" || property.format === "email"
+                        || property.format === "number" || property.format === "url"
+                        || property.format === "date" || property.format === "checkbox" || property.key === "description"
+                        || property.format === "phone") {
+
+                        const selectElement = document.getElementById(property.key);
+                        selectElement.addEventListener("change", function (e) {
+
+                            const selectedValue = this.value;
+                            const poperty_head = propertyHTML.querySelector(".poperty-head");
+                            const form_group = propertyHTML.querySelector(".form-group");
+
+                            // Remove existing button if any
+                            const existingBtn = poperty_head.querySelector(".btn-page-selector");
+                            if (existingBtn) existingBtn.remove();
+
+                            const existingselectedClassDIV = form_group.querySelector(".pageSelector_" + property.key + "_selected_class");
+                            if (existingselectedClassDIV) existingselectedClassDIV.remove();
+
+                            const existingPageSelectorTooltip = poperty_head.querySelector("#pageSelector_tooltip");
+                            if (existingPageSelectorTooltip) existingPageSelectorTooltip.remove();
+
+                            const existingSelectedTextPageTooltip = poperty_head.querySelector("#selected_text_page_tooltip");
+                            if (existingSelectedTextPageTooltip) existingSelectedTextPageTooltip.remove();
+
+                            // Add button if page_selector is selected
+                            if (selectedValue === "page_selector") {
+                                const btn = document.createElement("button");
+                                btn.className = "btn-page-selector";
+                                btn.title = Localize("Select-element-on-page", state.language);
+                                btn.textContent = "👆";
+                                btn.addEventListener("click", function (e) {
+                                    e.preventDefault();
+                                    startPageElementSelection(property.key);
+                                });
+                                poperty_head.appendChild(btn);
+
+                                const tipDiv = document.createElement("div");
+                                tipDiv.className = "btn-file-name-top-tip";
+                                tipDiv.id = "pageSelector_tooltip";
+                                tipDiv.innerText = "?";
+                                poperty_head.appendChild(tipDiv);
+
+                                attachTooltip(tipDiv, "PageSelectorTooltip", 180);
+
+                                const selectedClassDIV = document.createElement("div");
+                                selectedClassDIV.className = "pageSelector_" + property.key + "_selected_class";
+                                selectedClassDIV.id = "pageSelector_" + property.key + "_selected_class";
+                                selectedClassDIV.style.display = "none";
+                                selectedClassDIV.style.marginTop = "-13px";
+                                selectedClassDIV.style.fontSize = "10px";
+                                selectedClassDIV.style.color = "var(--section-title-color)";
+                                selectedClassDIV.style.opacity = "0.8";
+
+                                selectedClassDIV.innerHTML = `
+                                    <span>` + Localize("element_selector_class", state.language) + ` </span>
+                                    <div 
+                                        id="pageSelector_` + property.key + `_selected_class_value"
+                                    >
+                                    </div>
+                                `;
+
+                                form_group.appendChild(selectedClassDIV);
+                            }
+                            else if (selectedValue === "selected_text_page") {
+                                const tipDiv = document.createElement("div");
+                                tipDiv.className = "btn-file-name-top-tip";
+                                tipDiv.id = "selected_text_page_tooltip";
+                                tipDiv.innerText = "?";
+                                poperty_head.appendChild(tipDiv);
+
+                                attachTooltip(tipDiv, "SelectedTextPageTooltip", 150);
+                            }
+                        });
+                    }
                 }
 
                 document.querySelectorAll('[id="fileNameTipButton"]').forEach((element) => {
@@ -2407,7 +2616,17 @@ async function localPopapInited() {
                         const printTextarea = property.key === "description" || property.key === "objectBodyKeySaveToAnytype";
 
                         if (savedPropertyValueExist) {
-                            value = GetPagePropiertie(savedProperty.SelectedValueByUser);
+                            value = await GetPagePropiertie(savedProperty.SelectedValueByUser);
+
+                            // Apply string removal for tab_title
+                            if (savedProperty.SelectedValueByUser === "tab_title") {
+                                value = RemoveStringsFromTabTitle(value);
+                            }
+
+                            if (property.format === "number") {
+                                // Keep only digits so browser number input parses value consistently.
+                                value = String(value ?? "").replace(/\D+/g, "");
+                            }
                         }
 
                         propertyHTML.innerHTML = `
@@ -2512,7 +2731,7 @@ async function localPopapInited() {
                                         id="` + property.key + `_file_name_format_SO"
                                         name="` + property.key + `_file_name_format_SO"
                                         placeholder="` + Localize("FileNameFormatPlaceholder", state.language) + `"
-                                        value="` + ReplaceDataInFileName(savedPropertyFileFormatNameExist ? savedProperty.FileNameFormat : "<date>-<tab_title>") + `"
+                                        value="` + await ReplaceDataInFileName(savedPropertyFileFormatNameExist ? savedProperty.FileNameFormat : "<date>-<tab_title>") + `"
                                         required
                                         minlength="1"
                                         maxlength="60"
@@ -2618,7 +2837,6 @@ async function localPopapInited() {
                         attachFileNameFormatInputGuard(propertieForPrint.propertyKey + "_file_name_format_SO");
                     }
 
-                    // HERE
                     if (propertieForPrint.needToCreateChoices) {
                         if (propertieForPrint.value_type === "files") {
                             const choicesInstance = new Choices(document.getElementById(propertieForPrint.propertyId + "_SO"), {
@@ -2755,17 +2973,19 @@ async function localPopapInited() {
                     if (selectedFileType != "none_file") {
                         consoleLog("selected File Type: ", selectedFileType);
 
+                        const pageImageValue = await GetPagePropiertie("page_image");
+
                         if (selectedFileType == "image_by_url"
-                            && (GetPagePropiertie("page_image") == null
-                                || GetPagePropiertie("page_image") == undefined
-                                || GetPagePropiertie("page_image") == ""
-                                || GetPagePropiertie("page_image") == "null"
-                                || GetPagePropiertie("page_image") == "null o_O")) {
+                            && (pageImageValue == null
+                                || pageImageValue == undefined
+                                || pageImageValue == ""
+                                || pageImageValue == "null"
+                                || pageImageValue == "null o_O")) {
                             consoleLog("image_by_url selected but page_image property is empty, skipping file processing");
                             continue;
                         }
 
-                        const fileName = ReplaceDataInFileName(document.getElementById(propiertyPrinted.KeyForAnytypeAPI + "_file_name_format_SO").value);
+                        const fileName = await ReplaceDataInFileName(document.getElementById(propiertyPrinted.KeyForAnytypeAPI + "_file_name_format_SO").value);
 
                         consoleLog("file name: ", fileName);
 
@@ -2911,6 +3131,61 @@ async function localPopapInited() {
 
     //#endregion
 
+    //#region PageElementSelector
+
+    async function startPageElementSelection(inputFieldKey) {
+        const inputField = document.getElementById(inputFieldKey);
+        if (!inputField) return;
+
+        // Store the current input field key for later use
+        window.pageElementSelectorState = {
+            inputFieldKey: inputFieldKey,
+            selectedElementClass: "",
+            selectedElementByInputFieldKey: window.pageElementSelectorState?.selectedElementByInputFieldKey || {}
+        };
+
+        // Send message to background.js to forward to content.js
+        try {
+            await chrome.runtime.sendMessage({
+                action: "SET_ELEMENT_SELECTOR_LOCALIZATION",
+                localization: {
+                    class: Localize("element_selector_class", state.language),
+                    text: Localize("element_selector_text", state.language)
+                }
+            });
+
+            await chrome.runtime.sendMessage({
+                action: "START_PAGE_ELEMENT_SELECTION"
+            });
+        } catch (error) {
+            console.error("Error sending message:", error);
+            showStatus("Could not start element selector. Refresh the page.", "error");
+        }
+    }
+
+    // Listen for messages from content.js
+    chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+        if (request.action === "ELEMENT_SELECTED") {
+            const inputFieldKey = window.pageElementSelectorState?.inputFieldKey;
+            const selectedClass = document.getElementById("pageSelector_" + inputFieldKey + "_selected_class");
+            const selectedClassValue = document.getElementById("pageSelector_" + inputFieldKey + "_selected_class_value");
+            if (!window.pageElementSelectorState?.selectedElementByInputFieldKey) {
+                window.pageElementSelectorState = {
+                    ...(window.pageElementSelectorState || {}),
+                    selectedElementByInputFieldKey: {}
+                };
+            }
+            window.pageElementSelectorState.selectedElementByInputFieldKey[inputFieldKey] = request;
+            if (selectedClass && selectedClassValue) {
+                selectedClass.style.display = "block";
+                selectedClassValue.textContent = request.elementClass;
+            }
+            sendResponse({ received: true });
+        }
+    });
+
+    //#endregion
+
     //#region Tips
 
     function attachTooltip(element, textKey, xOffset = 10) {
@@ -2951,6 +3226,8 @@ async function localPopapInited() {
     }
 
     attachTooltip(elements.createFormTipButton, "CreateFormTip");
+
+    attachTooltip(elements.stringsRemovedFromTabTitleTipButton, "StringsRemovedFromTabTitleTooltip", 180);
 
     //#endregion
 

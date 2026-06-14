@@ -540,6 +540,36 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         return true;
     }
 
+    if (request.action === "executeScript_GetElementByClassName") {
+        const tabId = request?.target?.tabId;
+
+        if (!tabId) {
+            sendResponse({ success: false, error: "No tabId provided" });
+            return true;
+        }
+
+        chrome.tabs.sendMessage(
+            tabId,
+            {
+                action: "GET_ELEMENT_BY_CLASS_NAME",
+                classNameAndDom: request.classNameAndDom
+            },
+            (result) => {
+                if (chrome.runtime.lastError) {
+                    sendResponse({
+                        success: false,
+                        error: chrome.runtime.lastError.message
+                    });
+                    return;
+                }
+
+                sendResponse(result || { success: false, error: "Empty response" });
+            }
+        );
+
+        return true;
+    }
+
     if (request.action === "executeScript_UploadImageFromUrl") {
         (async () => {
             try {
@@ -618,6 +648,47 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
                 });
             }
         })();
+        return true;
+    }
+
+    if (request.action === "SET_ELEMENT_SELECTOR_LOCALIZATION") {
+        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+            if (tabs[0]) {
+                chrome.tabs.sendMessage(tabs[0].id, {
+                    action: "SET_ELEMENT_SELECTOR_LOCALIZATION",
+                    localization: request.localization
+                }, function (response) {
+                    if (chrome.runtime.lastError) {
+                        consoleError("Error sending localization to content:", chrome.runtime.lastError);
+                        sendResponse({ success: false, error: chrome.runtime.lastError.message });
+                    } else {
+                        sendResponse({ success: true });
+                    }
+                });
+            } else {
+                sendResponse({ success: false, error: "No active tab found" });
+            }
+        });
+        return true;
+    }
+
+    if (request.action === "START_PAGE_ELEMENT_SELECTION") {
+        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+            if (tabs[0]) {
+                chrome.tabs.sendMessage(tabs[0].id, {
+                    action: "START_PAGE_ELEMENT_SELECTION"
+                }, function (response) {
+                    if (chrome.runtime.lastError) {
+                        consoleError("Error starting element selection:", chrome.runtime.lastError);
+                        sendResponse({ success: false, error: chrome.runtime.lastError.message });
+                    } else {
+                        sendResponse({ success: true });
+                    }
+                });
+            } else {
+                sendResponse({ success: false, error: "No active tab found" });
+            }
+        });
         return true;
     }
 });
