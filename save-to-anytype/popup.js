@@ -724,8 +724,6 @@ async function localPopapInited() {
 
             WebPagePropierties.find(p => p.id == "page_content").value = markdown || '';
 
-            WebPagePropierties.find(p => p.id == "page_content").value = markdown || '';
-
             const resultScreenshotUrl = await chrome.runtime.sendMessage({
                 action: "GET_screenshotUrl"
             });
@@ -2325,7 +2323,7 @@ async function localPopapInited() {
                                 tipDiv.innerText = "?";
                                 poperty_head.appendChild(tipDiv);
 
-                                attachTooltip(tipDiv, "SelectedTextPageTooltip", 180);
+                                attachTooltip(tipDiv, "SelectedTextPageTooltip", 150);
                             }
                         });
                     }
