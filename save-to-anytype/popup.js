@@ -61,6 +61,9 @@ if (document.readyState === "complete" || document.readyState === "interactive")
 }
 
 async function localPopapInited() {
+    // Detect browser API (Chrome uses 'chrome', Firefox uses 'browser')
+    const browserAPI = typeof browser !== 'undefined' ? browser : chrome;
+
     //#region Elements on page
 
     const elements = {
@@ -3142,9 +3145,9 @@ async function localPopapInited() {
         };
 
         // Send message to content.js to start element selection mode
-        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+        browserAPI.tabs.query({ active: true, currentWindow: true }, function (tabs) {
             if (tabs[0]) {
-                chrome.tabs.sendMessage(tabs[0].id, {
+                browserAPI.tabs.sendMessage(tabs[0].id, {
                     action: "SET_ELEMENT_SELECTOR_LOCALIZATION",
                     localization: {
                         class: Localize("element_selector_class", state.language),
@@ -3154,11 +3157,11 @@ async function localPopapInited() {
                     // Localization sent
                 });
 
-                chrome.tabs.sendMessage(tabs[0].id, {
+                browserAPI.tabs.sendMessage(tabs[0].id, {
                     action: "START_PAGE_ELEMENT_SELECTION"
                 }, function (response) {
-                    if (chrome.runtime.lastError) {
-                        console.error("Error sending message:", chrome.runtime.lastError);
+                    if (browserAPI.runtime.lastError) {
+                        console.error("Error sending message:", browserAPI.runtime.lastError);
                         showStatus("Could not start element selector. Refresh the page.", "error");
                     }
                 });
@@ -3167,7 +3170,7 @@ async function localPopapInited() {
     }
 
     // Listen for messages from content.js
-    chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+    browserAPI.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         if (request.action === "ELEMENT_SELECTED") {
             const inputFieldKey = window.pageElementSelectorState?.inputFieldKey;
             const selectedClass = document.getElementById("pageSelector_" + inputFieldKey + "_selected_class");
