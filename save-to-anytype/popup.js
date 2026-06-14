@@ -3147,7 +3147,7 @@ async function localPopapInited() {
         });
 
         if (tabs?.[0]) {
-            chrome.tabs.sendMessage(tabs[0].id, {
+            chrome.runtime.sendMessage(tabs[0].id, {
                 action: "SET_ELEMENT_SELECTOR_LOCALIZATION",
                 localization: {
                     class: Localize("element_selector_class", state.language),
@@ -3157,7 +3157,7 @@ async function localPopapInited() {
                 // Localization sent
             });
 
-            chrome.tabs.sendMessage(tabs[0].id, {
+            chrome.runtime.sendMessage(tabs[0].id, {
                 action: "START_PAGE_ELEMENT_SELECTION"
             }, function (response) {
                 if (chrome.runtime.lastError) {
