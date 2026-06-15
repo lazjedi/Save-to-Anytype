@@ -540,6 +540,36 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         return true;
     }
 
+    if (request.action === "executeScript_GetElementByClassName") {
+        const tabId = request?.target?.tabId;
+
+        if (!tabId) {
+            sendResponse({ success: false, error: "No tabId provided" });
+            return true;
+        }
+
+        chrome.tabs.sendMessage(
+            tabId,
+            {
+                action: "GET_ELEMENT_BY_CLASS_NAME",
+                classNameAndDom: request.classNameAndDom
+            },
+            (result) => {
+                if (chrome.runtime.lastError) {
+                    sendResponse({
+                        success: false,
+                        error: chrome.runtime.lastError.message
+                    });
+                    return;
+                }
+
+                sendResponse(result || { success: false, error: "Empty response" });
+            }
+        );
+
+        return true;
+    }
+
     if (request.action === "executeScript_UploadImageFromUrl") {
         (async () => {
             try {

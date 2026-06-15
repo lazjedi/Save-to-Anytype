@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Save to Anytype",
-  "version": "0.2.0",
-  "description": "Save important web pages with your selected text in Markdown format to Anytype.",
+  "version": "0.2.1",
+  "description": "Save any web pages with advanced web clipper in Markdown format to Anytype.",
   "permissions": [
     "scripting",
     "activeTab",
