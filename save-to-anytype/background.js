@@ -125,15 +125,15 @@ function extractPageText() {
             throw new Error('Document body not found');
         }
 
-        if (typeof Defuddle === 'undefined') {
-            throw new Error('Defuddle is not loaded');
+        if (typeof defuddle === 'undefined') {
+            throw new Error('defuddle is not loaded');
         }
 
         const documentClone = document.cloneNode(true);
-        const result = new Defuddle(documentClone).parse();
+        const result = new defuddle(documentClone).parse();
 
         if (!result || !result.content) {
-            throw new Error('Defuddle could not parse the page');
+            throw new Error('defuddle could not parse the page');
         }
 
         return result.content;
@@ -517,11 +517,11 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         chrome.scripting.executeScript(
             {
                 target: request.target,
-                files: ["Libraries/Defuddle.js"]
+                files: ["Libraries/defuddle.js"]
             },
             () => {
                 if (chrome.runtime.lastError) {
-                    consoleError('Failed to inject Defuddle.js:', chrome.runtime.lastError.message);
+                    consoleError('Failed to inject defuddle.js:', chrome.runtime.lastError.message);
                     sendResponse([{ result: "PAGE PARSE ERROR" }]);
                     return;
                 }
