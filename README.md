@@ -13,6 +13,7 @@ Save important web pages with your selected text in Markdown format to Anytype. 
 - **Markdown Conversion**: Converts the extracted HTML content into Markdown format.
 - **Form system**: You can think of forms as templates. The most effective way to use Types created on Anytype. With unlimited properties.
 - **File management**: Managing images on web pages during web content saving with Anytype Files API.
+- **Element selector**: You can select a specific element on the page as a data source - you can parse strings and numbers.
 
 # Third-party Libraries
 
