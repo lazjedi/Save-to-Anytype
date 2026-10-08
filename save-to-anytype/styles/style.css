@@ -325,8 +325,8 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .new-form-icon {
-  mask: url(assets/new-form.svg) no-repeat center / contain;
-  -webkit-mask: url(assets/new-form.svg) no-repeat center / contain;
+  mask: url(../assets/new-form.svg) no-repeat center / contain;
+  -webkit-mask: url(../assets/new-form.svg) no-repeat center / contain;
   height: 200px;
   width: 200px;
 }
@@ -594,16 +594,16 @@ button {
 
 .cross-icon {
   background-color: var(--cross-icon-color);
-  mask: url(assets/cross.svg) no-repeat center / contain;
-  -webkit-mask: url(assets/cross.svg) no-repeat center / contain;
+  mask: url(../assets/cross.svg) no-repeat center / contain;
+  -webkit-mask: url(../assets/cross.svg) no-repeat center / contain;
   width: 20px;
   height: 20px;
 }
 
 .settings-icon {
   background-color: var(--settings-icon-color);
-  mask: url(assets/settings.svg) no-repeat center / contain;
-  -webkit-mask: url(assets/settings.svg) no-repeat center / contain;
+  mask: url(../assets/settings.svg) no-repeat center / contain;
+  -webkit-mask: url(../assets/settings.svg) no-repeat center / contain;
   width: 25px;
   height: 25px;
 }
@@ -612,8 +612,8 @@ button {
   width: 24px;
   height: 24px;
   background-color: var(--accent-color);
-  mask: url(assets/trash.svg) no-repeat center / contain;
-  -webkit-mask: url(assets/trash.svg) no-repeat center / contain;
+  mask: url(../assets/trash.svg) no-repeat center / contain;
+  -webkit-mask: url(../assets/trash.svg) no-repeat center / contain;
   opacity: 0.3;
   cursor: pointer;
   margin-left: 7px;
@@ -629,8 +629,8 @@ button {
   width: 24px;
   height: 24px;
   background-color: var(--accent-color);
-  mask: url(assets/dots.svg) no-repeat center / contain;
-  -webkit-mask: url(assets/dots.svg) no-repeat center / contain;
+  mask: url(../assets/dots.svg) no-repeat center / contain;
+  -webkit-mask: url(../assets/dots.svg) no-repeat center / contain;
   opacity: 0.3;
   cursor: pointer;
   margin-right: 7px;
@@ -962,7 +962,7 @@ strong {
   margin: 0;
 }
 .choices[data-type*="select-one"] .choices__button {
-  background-image: url("assets/cross.svg");
+  background-image: url("../assets/cross.svg");
   padding: 0;
   background-size: 8px;
   position: absolute;
@@ -1041,8 +1041,8 @@ strong {
   width: 10px;
   height: 10px;
   background-color: var(--choices-remove-icon);
-  mask: url(assets/cross.svg) no-repeat center / 10px 10px;
-  -webkit-mask: url(assets/cross.svg) no-repeat center / 10px 10px;
+  mask: url(../assets/cross.svg) no-repeat center / 10px 10px;
+  -webkit-mask: url(../assets/cross.svg) no-repeat center / 10px 10px;
   transform: translateY(-50%);
 }
 .margin-bottom15 {

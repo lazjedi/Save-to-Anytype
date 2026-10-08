@@ -22,17 +22,41 @@ Save important web pages with your selected text in Markdown format to Anytype. 
 - **[turndown-plugin-gfm](https://github.com/mixmark-io/turndown-plugin-gfm)**: Plugin that converts HTML tables to Markdown for Turndown.
 - **[jscolor](https://github.com/EastDesire/jscolor)**: JavaScript color picker.
 - **[Sortable](https://github.com/SortableJS/Sortable)**: Reordering the form list by drag-and-drop.
-- **[jquery](https://github.com/jquery/jquery)**: For CSS and animation stuff.
 - **[Choices](https://github.com/Choices-js/Choices)**: For textbox and text input settings.
+
+# Project Structure (Chrome version, `save-to-anytype/`)
+
+```
+manifest.json, rules.json
+assets/                  icons
+lib/                     third-party libraries
+localization/            localizations.json + localization-service.js
+styles/style.css
+src/
+  background/            service worker: messages, overlay, context menu, page scripts, file upload
+  content/               content scripts: overlay iframe, element selector
+  shared/                theme config, property icons, log formatting
+  popup-blocked/         popup for pages where the extension can't work
+  popup/                 the main popup (ES modules), entry point main.js
+    core/                constants, persisted state, DOM elements, i18n, logging
+    api/                 Anytype API client (pagination, errors)
+    page/                page data, markdown, file sources, file names, element selector
+    ui/                  sections, status, tooltips, theme, Choices helpers, property field markup
+    features/            auth, settings, forms list, form editor, saving an object
+```
 
 # Storage Using
 
 The extension stores the following using `chrome.storage.local`:
 
 - `apiKey`: Anytype API Key
-- `selectedSpaceId`: Selected space
+- `forms`: Saved forms
+- `LastUsedForm`: Id of the last used form
+- `theme`, `language`, `accentColor`, `whatDoOnStart`, `zoom`, `height`, `width`, `textAreaHeightPx`, `collapseOnOpenForm`, `stringsRemovedFromTabTitle`: Settings
 - `selectedText`: Temporarily selected text (5 seconds)
 - `selectedTextTimestamp`: Selection time
+
+The last page screenshot (for the "screenshot" file source) is kept in `chrome.storage.session`, it is replaced on every opening and cleared when the browser is closed.
 
 # Developers
 

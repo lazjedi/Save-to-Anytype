@@ -4,13 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Save to Anytype</title>
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="../../styles/style.css" />
   </head>
 
   <body>
     <div class="container">
       <div id="zoomContainer">
-        <h2><img src="assets/icon16.png" alt="" /> Save to Anytype</h2>
+        <h2><img src="../../assets/icon16.png" alt="" /> Save to Anytype</h2>
 
         <!-- Auth -->
         <div id="authSection" class="card">
@@ -92,7 +92,7 @@
             <div class="form-card">
               <img
                 class="new-form-icon"
-                src="assets/new-form.svg"
+                src="../../assets/new-form.svg"
                 alt="New Form"
               />
               <div data-locale-key="FormWelcomeText">
@@ -108,31 +108,6 @@
             </button>
           </div>
         </div>
-        <div id="mainSection" class="hidden">
-          <button id="settingsButton" class="btn-right-top">
-            <div id="settingsButtonIcon" class="settings-icon"></div>
-          </button>
-          <div id="mainSectionAnimation">
-            <div
-              id="handlerForLoadedForms"
-              class="card-smaller-padding column-flex-table"
-            ></div>
-            <div class="form-card">
-              <!--<img class="new-form-icon" src="assets/new-form.svg" alt="">-->
-              <div data-locale-key="FormWelcomeText">
-                You need create a form before saving an object to Anytype. You
-                can think of forms as templates. Forms reflect the way objects
-                are saved.
-              </div>
-            </div>
-            <button id="createFormButton" class="btn-primary">
-              <span id="createFormButtonText" data-locale-key="CreateForm"
-                >Create Form</span
-              >
-            </button>
-          </div>
-        </div>
-
         <div id="createFormSection" class="hidden">
           <div id="createFormTipButton" class="btn-left-top-tip">?</div>
 
@@ -163,7 +138,7 @@
                 </div>
               </div>
 
-              <div id="FormNameInputSection" class="form-group" class="hidden">
+              <div id="FormNameInputSection" class="form-group hidden">
                 <div class="section-title" data-locale-key="FormNameInput">
                   FormNameInput
                 </div>
@@ -273,7 +248,7 @@
                 <div class="section-title" data-locale-key="ChooseAccentColor">
                   choose an accent color
                 </div>
-                <input id="colorInput" class="jscolor" value="ab2567" />
+                <input id="colorInput" data-jscolor="" value="ab2567" />
               </div>
 
               <div class="form-group checkbox-rect">
@@ -511,6 +486,17 @@
               blockedSection
             </div>
           </div>
+
+          <!-- Shown only when the saved key could not log in -->
+          <div id="loadingDisconnectGroup" class="form-group hidden">
+            <button
+              id="loadingDisconnectBtn"
+              class="btn-danger"
+              data-locale-key="DisconnectAnytype"
+            >
+              Disconnect Anytype
+            </button>
+          </div>
         </div>
 
         <!-- Status messages -->
@@ -519,15 +505,12 @@
     </div>
   </body>
 
-  <script src="LocalizationService.js"></script>
-  <script src="Libraries/choices.min.js"></script>
-  <script src="Libraries/jquery-3.7.1.min.js"></script>
-  <script src="Libraries/Sortable.js"></script>
-  <script src="Libraries/jscolor.js"></script>
-  <script src="Libraries/turndown.js"></script>
-  <script src="Libraries/turndown-plugin-gfm.js"></script>
-  <script src="theme-config.js"></script>
-  <script src="property-icons.js"></script>
-  <script src="popup.js"></script>
-  <script src="sidepanel.js"></script>
+  <!-- Libraries (globals) -->
+  <script src="../../lib/choices.min.js"></script>
+  <script src="../../lib/Sortable.js"></script>
+  <script src="../../lib/jscolor.js"></script>
+  <script src="../../lib/turndown.js"></script>
+  <script src="../../lib/turndown-plugin-gfm.js"></script>
+
+  <script type="module" src="main.js"></script>
 </html>
